@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:perminda/presentation/features/login/pages/login_screen.dart';
 
 void main() {
   runApp(Perminda());
@@ -13,7 +14,7 @@ class Perminda extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Scaffold(),
+      home: LoginScreen(),
     );
   }
 }
