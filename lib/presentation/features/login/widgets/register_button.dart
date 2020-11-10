@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:perminda/presentation/features/registration/pages/register_screen.dart';
 
 class RegisterButton extends StatelessWidget {
   @override
@@ -17,7 +18,7 @@ class RegisterButton extends StatelessWidget {
         ),
       ),
       onPressed: () {
-        //TODO: Navigate to register screen
+        Navigator.pushNamed(context, RegisterScreen.route);
       },
     );
   }
