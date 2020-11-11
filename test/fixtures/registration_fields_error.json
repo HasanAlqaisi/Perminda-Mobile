@@ -1,0 +1,8 @@
+{
+    "username": [
+        "A user with this username is already exists."
+    ],
+    "email": [
+        "This field is required."
+    ]
+}
