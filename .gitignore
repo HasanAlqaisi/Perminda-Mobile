@@ -39,3 +39,5 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+lib/core/constants/sensetive_constants.dart
+*g.dart
