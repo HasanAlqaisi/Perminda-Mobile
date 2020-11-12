@@ -38,7 +38,7 @@ void main() {
     group('registerUser', () {
       final user = User.fromJson(json.decode(fixture('user.json')));
       test('should check if the device is online', () async {
-        final result = authRepo.registerUser('', '', '', '', '');
+        authRepo.registerUser('', '', '', '', '');
 
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);

@@ -21,6 +21,10 @@ void main() {
     registerBloc = RegisterBloc(registerUseCase: registrationUseCase);
   });
 
+  tearDown(() {
+    registerBloc.close();
+  });
+
   group('registerUseCase', () {
     final user = User.fromJson(json.decode(fixture('user.json')));
     test(

@@ -80,7 +80,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 firstName = value;
                 return LocalValidators.generalValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.userName?.first,
+              apiError: (state?.failure as FieldsFailure)?.firstName?.first,
             ),
             SizedBox(height: 20.0),
             RectangleTextField(
@@ -90,7 +90,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 lastName = value;
                 return LocalValidators.generalValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.userName?.first,
+              apiError: (state?.failure as FieldsFailure)?.lastName?.first,
             ),
             SizedBox(height: 20.0),
             RectangleTextField(
