@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/global_widgets/global_widgets.dart';
@@ -43,7 +44,10 @@ class _RegisterFormState extends State<RegisterForm> {
         }
         if (state is RegisterError) {
           if (state.failure is UnknownFailure) {
-          } else if (state.failure is NoInternetFailure) {}
+            Fluttertoast.showToast(msg: 'Unknown error, try again.');
+          } else if (state.failure is NoInternetFailure) {
+            Fluttertoast.showToast(msg: 'No internet connection.');
+          }
         }
       },
       builder: (context, state) {
