@@ -52,7 +52,7 @@ class _LoginFormState extends State<LoginForm> {
             PasswordField(hintText: 'Enter your password'),
             ForgotPasswordButton(),
             RectangleButton(
-              text: 'Login',
+              childWidget: Text('Login'),
               onPressed: () {
                 //TODO: Make a logining request
               },
