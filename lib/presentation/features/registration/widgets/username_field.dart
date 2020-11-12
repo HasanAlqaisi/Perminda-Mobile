@@ -9,7 +9,7 @@ class UsernameField extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 30.0),
       child: TextFormField(
         validator: (value) {
-          return LocalValidators.usernameValidation(value);
+          return LocalValidators.generalValidation(value);
         },
         keyboardType: TextInputType.name,
         decoration: InputDecoration(
