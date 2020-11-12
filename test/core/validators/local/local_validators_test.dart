@@ -42,7 +42,7 @@ void main() {
 
     group('usernameValidation', () {
       test('should return [$enterUsernameMessage] when username is empty', () {
-        final result = LocalValidators.usernameValidation('');
+        final result = LocalValidators.generalValidation('');
 
         expect(result, equals(enterUsernameMessage));
       });
@@ -50,13 +50,13 @@ void main() {
       test(
           'should return [$spacesInUsernameMessage] when username contains any spaces',
           () {
-        final result = LocalValidators.usernameValidation('ha sa n');
+        final result = LocalValidators.generalValidation('ha sa n');
 
         expect(result, equals(spacesInUsernameMessage));
       });
 
       test('should return null when everything is OK', () {
-        final result = LocalValidators.usernameValidation('hasan');
+        final result = LocalValidators.generalValidation('hasan');
 
         expect(result, equals(null));
       });

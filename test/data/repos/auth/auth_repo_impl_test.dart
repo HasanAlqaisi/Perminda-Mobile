@@ -96,4 +96,23 @@ void main() {
       });
     });
   });
+
+  group('device is offline', () {
+    setUp(() {
+      when(netWorkInfo.isConnected()).thenAnswer((_) async => false);
+    });
+
+    test('should return false if user has no connection', () async {
+      authRepo.registerUser('', '', '', '', '');
+      verify(netWorkInfo.isConnected());
+      expect(await netWorkInfo.isConnected(), false);
+    });
+
+    test('should return [noInternetFailure] if user has no connection',
+        () async {
+      final result = await authRepo.registerUser('', '', '', '', '');
+
+      expect(result, Left(NoInternetFailure()));
+    });
+  });
 }
