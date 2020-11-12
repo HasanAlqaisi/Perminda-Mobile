@@ -4,8 +4,10 @@ class RectangleTextField extends StatelessWidget {
   final String hintText;
   final Function validateRules;
   final IconData prefixIcon;
+  final String apiError;
 
-  RectangleTextField({this.hintText, this.validateRules, this.prefixIcon});
+  RectangleTextField(
+      {this.hintText, this.validateRules, this.prefixIcon, this.apiError});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,8 @@ class RectangleTextField extends StatelessWidget {
         },
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
+          errorMaxLines: 2,
+          errorText: apiError,
           isDense: true,
           prefixIcon: Icon(prefixIcon),
           hintText: hintText,

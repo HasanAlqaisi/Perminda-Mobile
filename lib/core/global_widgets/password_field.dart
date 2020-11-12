@@ -4,8 +4,10 @@ import 'package:perminda/core/validators/local/local_validators.dart';
 
 class PasswordField extends StatefulWidget {
   final String hintText;
+  final String apiError;
+  final Function validateRules;
 
-  const PasswordField({this.hintText});
+  const PasswordField({this.hintText, this.apiError, this.validateRules});
 
   @override
   _PasswordFieldState createState() => _PasswordFieldState();
@@ -20,10 +22,11 @@ class _PasswordFieldState extends State<PasswordField> {
       margin: EdgeInsets.symmetric(horizontal: 30.0),
       child: TextFormField(
         validator: (value) {
-          return LocalValidators.passwordValidation(value);
+          return widget.validateRules(value);
         },
         obscureText: _obscureText,
         decoration: InputDecoration(
+          errorText: widget.apiError,
           isDense: true,
           prefixIcon: Icon(Icons.vpn_key),
           suffixIcon: GestureDetector(

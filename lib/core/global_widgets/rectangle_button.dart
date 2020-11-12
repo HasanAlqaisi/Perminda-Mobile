@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class RectangleButton extends StatelessWidget {
-  final String text;
   final Function onPressed;
+  final Widget childWidget;
 
-  const RectangleButton({this.text, this.onPressed});
+  const RectangleButton({this.onPressed, this.childWidget});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -13,7 +14,7 @@ class RectangleButton extends StatelessWidget {
         color: Colors.blue,
         textColor: Colors.white,
         padding: EdgeInsets.symmetric(vertical: 15.0),
-        child: Text(text),
+        child: childWidget,
         onPressed: () {
           if (Form.of(context).validate()) {
             onPressed();
