@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-abstract class Failure extends Equatable {}
+abstract class Failure {}
 
-class FieldsFailure implements Failure {
+class FieldsFailure extends Equatable implements Failure {
   final List<String> firstName;
   final List<String> lastName;
   final List<String> userName;
@@ -28,27 +28,21 @@ class FieldsFailure implements Failure {
   }
 
   @override
-  String toString() {
-    return """
-    first name: $firstName
-    last name: $lastName
-    username: $userName
-    email: $email
-    password: $password
-    """;
-  }
-
-  @override
   List<Object> get props => [firstName, lastName, userName, email, password];
 
   @override
-  bool get stringify => false;
+  bool get stringify => true;
 }
 
-class UnknownFailure implements Failure {
+class UnknownFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [];
 
   @override
   bool get stringify => true;
+}
+
+class NoInternetFailure extends Equatable implements Failure {
+  @override
+  List<Object> get props => [];
 }
