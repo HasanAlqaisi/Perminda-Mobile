@@ -9,3 +9,9 @@ class UnknownException implements Exception {
 
   UnknownException({this.message});
 }
+
+class NonFieldsException implements Exception {
+  String message;
+
+  NonFieldsException({this.message});
+}

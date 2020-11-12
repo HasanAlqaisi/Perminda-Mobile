@@ -46,3 +46,18 @@ class NoInternetFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [];
 }
+
+class NonFieldsFailure extends Equatable implements Failure {
+  final List<String> errors;
+
+  NonFieldsFailure({this.errors});
+
+  @override
+  List<Object> get props => [errors];
+
+  factory NonFieldsFailure.fromNonFieldsException(Map<String, dynamic> body) {
+    return NonFieldsFailure(
+      errors: body['non_field_errors']?.cast<String>() as List<String> ?? null,
+    );
+  }
+}
