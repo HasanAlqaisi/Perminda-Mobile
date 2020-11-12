@@ -87,4 +87,57 @@ void main() {
       );
     });
   });
+
+  group('loginUser', () {
+    test('should return user token when if response is 200', () async {
+      when(client.post(
+        '$baseUrl/accounts/login/',
+        body: {
+          'username': '',
+          'password': '',
+        },
+      )).thenAnswer((_) async => http.Response(fixture('key.json'), 200));
+
+      final result = await remoteDataSource.loginUser('', '');
+      final expectedResult = (json.decode(fixture('key.json'))['key']);
+
+      expect(result, expectedResult);
+    });
+
+    test('should throw [NonFieldsException] if response is 400', () async {
+      when(client.post(
+        '$baseUrl/accounts/login/',
+        body: {
+          'username': '',
+          'password': '',
+        },
+      )).thenAnswer(
+          (_) async => http.Response(fixture('non_fields.json'), 400));
+
+      final result = remoteDataSource.loginUser;
+
+      expect(
+        () => result('', ''),
+        throwsA(isA<NonFieldsException>()),
+      );
+    });
+
+    test('should throw [UnknownException] if response is neither 400 nor 200', () async {
+      when(client.post(
+        '$baseUrl/accounts/login/',
+        body: {
+          'username': '',
+          'password': '',
+        },
+      )).thenAnswer(
+          (_) async => http.Response(fixture('non_fields.json'), 404));
+
+      final result = remoteDataSource.loginUser;
+
+      expect(
+        () => result('', ''),
+        throwsA(isA<UnknownException>()),
+      );
+    });
+  });
 }

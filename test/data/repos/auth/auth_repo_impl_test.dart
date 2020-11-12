@@ -95,6 +95,51 @@ void main() {
         expect(result, Left(UnknownFailure()));
       });
     });
+
+    group('loginUser', () {
+      test('should check if the device is online', () async {
+        authRepo.loginUser('', '');
+
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), true);
+      });
+
+      test('should return user token if the remote call success', () async {
+        final token = 'token';
+        when(remoteDataSource.loginUser('', '')).thenAnswer((_) async => token);
+
+        final result = await authRepo.loginUser('', '');
+
+        expect(result, Right(token));
+      });
+
+      test(
+          'should return [NonFieldsFailure] if the remote call throw [NonFieldsException]',
+          () async {
+        final nonFieldsFailure = NonFieldsFailure(
+          errors: ['Unable to log in with provided credentials.'],
+        );
+
+        when(remoteDataSource.loginUser('', ''))
+            .thenThrow(NonFieldsException(message: fixture('non_fields.json')));
+
+        final result = await authRepo.loginUser('', '');
+
+        expect(result, Left(nonFieldsFailure));
+      });
+
+      test(
+          'should return [UnknownFailure] if the remote call throws [UnknownException]',
+          () async {
+        when(remoteDataSource.loginUser('', '')).thenThrow(UnknownException());
+
+        final result = await authRepo.loginUser('', '');
+
+        verify(remoteDataSource.loginUser('', ''));
+
+        expect(result, Left(UnknownFailure()));
+      });
+    });
   });
 
   group('device is offline', () {
@@ -102,17 +147,28 @@ void main() {
       when(netWorkInfo.isConnected()).thenAnswer((_) async => false);
     });
 
-    test('should return false if user has no connection', () async {
-      authRepo.registerUser('', '', '', '', '');
-      verify(netWorkInfo.isConnected());
-      expect(await netWorkInfo.isConnected(), false);
+    group('registerUser', () {
+      test('should return false if user has no connection', () async {
+        authRepo.registerUser('', '', '', '', '');
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), false);
+      });
+
+      test('should return [noInternetFailure] if user has no connection',
+          () async {
+        final result = await authRepo.registerUser('', '', '', '', '');
+
+        expect(result, Left(NoInternetFailure()));
+      });
     });
 
-    test('should return [noInternetFailure] if user has no connection',
-        () async {
-      final result = await authRepo.registerUser('', '', '', '', '');
+    group('loginUser', () {
+      test('should return [NoInternetFailure] if user has no connection',
+          () async {
+        final result = await authRepo.loginUser('', '');
 
-      expect(result, Left(NoInternetFailure()));
+        expect(result, Left(NoInternetFailure()));
+      });
     });
   });
 }
