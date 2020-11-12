@@ -13,7 +13,7 @@ class LocalValidators {
   }
 
   static String generalValidation(String username) {
-    if (username.trim().isEmpty) return enterUsernameMessage;
+    if (username.trim().isEmpty) return requireFieldMessage;
     if (username.contains(' ')) return spacesInUsernameMessage;
     return null;
   }

@@ -7,5 +7,5 @@ const enterValidEmailMessage = 'Enter a valid email';
 
 const enterPasswordMessage = 'Please Enter your password';
 
-const enterUsernameMessage = 'Enter a username';
+const requireFieldMessage = 'This field is required';
 const spacesInUsernameMessage = 'Username shoudn\'t contain spaces';
