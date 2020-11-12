@@ -13,6 +13,8 @@ abstract class AuthRemoteDataSource {
     String email,
     String password,
   );
+
+  Future<String> loginUser(String username, String password);
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -42,6 +44,25 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return User.fromJson(json.decode(response.body));
     } else if (response.statusCode == 400) {
       throw FieldsException(body: response.body);
+    } else {
+      throw UnknownException(message: response.body);
+    }
+  }
+
+  @override
+  Future<String> loginUser(String username, String password) async {
+    final response = await client.post(
+      '$baseUrl/accounts/login/',
+      body: {
+        'username': username,
+        'password': password,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['key'];
+    } else if (response.statusCode == 400) {
+      throw NonFieldsException(message: response.body);
     } else {
       throw UnknownException(message: response.body);
     }

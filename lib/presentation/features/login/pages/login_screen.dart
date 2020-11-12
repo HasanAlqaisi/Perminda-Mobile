@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/global_widgets/global_widgets.dart';
 import 'package:perminda/core/validators/local/local_validators.dart';
+import 'package:perminda/presentation/features/login/bloc/login_bloc.dart';
 import 'package:perminda/presentation/features/login/widgets/widgets.dart';
+import 'package:perminda/injection_container.dart' as di;
 
 class LoginScreen extends StatelessWidget {
   static const route = '/';
@@ -10,9 +16,12 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: LoginForm(),
+      body: BlocProvider(
+        create: (context) => di.sl<LoginBloc>(),
+        child: SafeArea(
+          child: Center(
+            child: LoginForm(),
+          ),
         ),
       ),
     );
@@ -33,6 +42,33 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginError) {
+          if (state.failure is NonFieldsFailure) {
+            Fluttertoast.showToast(
+                msg: (state.failure as NonFieldsFailure)?.errors?.first);
+          } else if (state.failure is UnknownFailure) {
+            Fluttertoast.showToast(msg: 'Unknown error, try again.');
+          } else if (state.failure is NoInternetFailure) {
+            Fluttertoast.showToast(msg: 'No internet connection');
+          }
+        } else if (state is LoginSuccess) {
+          //TODO: Naviage to the home screen
+        }
+      },
+      builder: (context, state) {
+        if (state is LoginInProgress)
+          return _buildForm(inProgress: true);
+        else
+          return _buildForm(inProgress: false);
+      },
+    );
+  }
+
+  Form _buildForm({bool inProgress}) {
+    String username, password;
+
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -42,19 +78,31 @@ class _LoginFormState extends State<LoginForm> {
           children: [
             LogoImage(),
             RectangleTextField(
-              hintText: 'Enter your email',
-              prefixIcon: Icons.email,
+              hintText: 'Username',
+              prefixIcon: FontAwesomeIcons.user,
               validateRules: (value) {
-                return LocalValidators.emailValidation(value);
+                username = value;
+                return LocalValidators.generalValidation(value);
               },
             ),
             SizedBox(height: 30.0),
-            PasswordField(hintText: 'Enter your password'),
+            PasswordField(
+              hintText: 'Password',
+              validateRules: (value) {
+                password = value;
+                return LocalValidators.passwordValidation(value);
+              },
+            ),
             ForgotPasswordButton(),
             RectangleButton(
-              childWidget: Text('Login'),
+              childWidget: inProgress
+                  ? CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                      strokeWidth: 3,
+                    )
+                  : Text('Login'),
               onPressed: () {
-                //TODO: Make a logining request
+                context.read<LoginBloc>().add(LoginClicked(username, password));
               },
             ),
             RegisterButton(),

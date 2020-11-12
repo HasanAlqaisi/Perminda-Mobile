@@ -32,4 +32,23 @@ class AuthRepoImpl extends AuthRepo {
       return Left(NoInternetFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, String>> loginUser(
+      String username, String password) async {
+    if (await netWorkInfo.isConnected()) {
+      try {
+        final result = await remoteDataSource.loginUser(username, password);
+        return Right(result);
+      } on NonFieldsException catch (error) {
+        return Left(NonFieldsFailure.fromNonFieldsException(
+            json.decode(error.message)));
+      } on UnknownException catch(error){
+        print(error.message);
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(NoInternetFailure());
+    }
+  }
 }
