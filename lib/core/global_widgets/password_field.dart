@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:perminda/core/validators/local/local_validators.dart';
 
 class PasswordField extends StatefulWidget {
   final String hintText;
@@ -26,6 +25,7 @@ class _PasswordFieldState extends State<PasswordField> {
         },
         obscureText: _obscureText,
         decoration: InputDecoration(
+          errorMaxLines: 2,
           errorText: widget.apiError,
           isDense: true,
           prefixIcon: Icon(Icons.vpn_key),
