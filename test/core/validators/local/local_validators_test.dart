@@ -41,10 +41,10 @@ void main() {
     });
 
     group('usernameValidation', () {
-      test('should return [$enterUsernameMessage] when username is empty', () {
+      test('should return [$requireFieldMessage] when username is empty', () {
         final result = LocalValidators.generalValidation('');
 
-        expect(result, equals(enterUsernameMessage));
+        expect(result, equals(requireFieldMessage));
       });
 
       test(
