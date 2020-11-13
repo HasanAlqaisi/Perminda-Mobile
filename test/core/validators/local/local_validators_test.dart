@@ -5,10 +5,10 @@ import 'package:perminda/core/validators/local/local_validators.dart';
 void main() {
   group('LocalValidators', () {
     group('emailValidation', () {
-      test('should return [$enterEmailMessage] when email is empty', () {
+      test('should return [$requireFieldMessage] when email is empty', () {
         final result = LocalValidators.emailValidation('');
 
-        expect(result, equals(enterEmailMessage));
+        expect(result, equals(requireFieldMessage));
       });
 
       test(
@@ -26,37 +26,15 @@ void main() {
       });
     });
 
-    group('passwordValidation', () {
-      test('should return [$enterPasswordMessage] when password is empty', () {
-        final result = LocalValidators.passwordValidation('');
-
-        expect(result, equals(enterPasswordMessage));
-      });
-
-      test('should return null when everything is OK', () {
-        final result = LocalValidators.passwordValidation('01010101');
-
-        expect(result, equals(null));
-      });
-    });
-
-    group('usernameValidation', () {
-      test('should return [$requireFieldMessage] when username is empty', () {
+    group('generalValidation', () {
+      test('should return [$requireFieldMessage] when password is empty', () {
         final result = LocalValidators.generalValidation('');
 
         expect(result, equals(requireFieldMessage));
       });
 
-      test(
-          'should return [$spacesInUsernameMessage] when username contains any spaces',
-          () {
-        final result = LocalValidators.generalValidation('ha sa n');
-
-        expect(result, equals(spacesInUsernameMessage));
-      });
-
       test('should return null when everything is OK', () {
-        final result = LocalValidators.generalValidation('hasan');
+        final result = LocalValidators.generalValidation('01010101');
 
         expect(result, equals(null));
       });
