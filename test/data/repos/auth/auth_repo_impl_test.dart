@@ -140,6 +140,31 @@ void main() {
         expect(result, Left(UnknownFailure()));
       });
     });
+
+    group('forgotPassword', () {
+      test('should check if the device is online', () async {
+        authRepo.forgotPassword('');
+
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), true);
+      });
+      test('should return a string if call is successful', () async {
+        when(remoteDataSource.forgotPassword('')).thenAnswer((_) async => '');
+
+        final result = await authRepo.forgotPassword('');
+
+        expect(result, Right(''));
+      });
+
+      test('should return [UnknownFailure] if call throws [UnknownException]',
+          () async {
+        when(remoteDataSource.forgotPassword('')).thenThrow(UnknownException());
+
+        final result = await authRepo.forgotPassword('');
+
+        expect(result, Left(UnknownFailure()));
+      });
+    });
   });
 
   group('device is offline', () {
@@ -166,6 +191,21 @@ void main() {
       test('should return [NoInternetFailure] if user has no connection',
           () async {
         final result = await authRepo.loginUser('', '');
+
+        expect(result, Left(NoInternetFailure()));
+      });
+    });
+
+    group('forgotPassword', () {
+      test('should return false if user has no connection', () async {
+        authRepo.forgotPassword('');
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), false);
+      });
+
+      test('should return [noInternetFailure] if user has no connection',
+          () async {
+        final result = await authRepo.forgotPassword('');
 
         expect(result, Left(NoInternetFailure()));
       });

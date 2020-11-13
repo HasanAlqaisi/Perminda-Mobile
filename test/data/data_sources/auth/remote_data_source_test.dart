@@ -100,7 +100,6 @@ void main() {
 
       final result = await remoteDataSource.loginUser('', '');
       final expectedResult = (json.decode(fixture('key.json'))['key']);
-
       expect(result, expectedResult);
     });
 
@@ -122,7 +121,8 @@ void main() {
       );
     });
 
-    test('should throw [UnknownException] if response is neither 400 nor 200', () async {
+    test('should throw [UnknownException] if response is neither 400 nor 200',
+        () async {
       when(client.post(
         '$baseUrl/accounts/login/',
         body: {
@@ -139,5 +139,34 @@ void main() {
         throwsA(isA<UnknownException>()),
       );
     });
+  });
+
+  group('forgotPassword', () {
+    test('should return success message if response code is 200', () async {
+      when(client
+              .post('$baseUrl/accounts/password/reset/', body: {'email': ''}))
+          .thenAnswer((_) async => http.Response(fixture('detail.json'), 200));
+
+      final result = await remoteDataSource.forgotPassword('');
+      final expectedResult = (json.decode(fixture('detail.json'))['detail']);
+
+      expect(result, expectedResult);
+    });
+  });
+
+  test('should throw [UnknownException] if response is not 200', () async {
+    when(client.post(
+      '$baseUrl/accounts/password/reset/',
+      body: {
+        'email': '',
+      },
+    )).thenAnswer((_) async => http.Response(fixture('detail.json'), 400));
+
+    final result = remoteDataSource.forgotPassword;
+
+    expect(
+      () => result(''),
+      throwsA(isA<UnknownException>()),
+    );
   });
 }
