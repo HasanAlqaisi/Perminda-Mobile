@@ -15,6 +15,8 @@ abstract class AuthRemoteDataSource {
   );
 
   Future<String> loginUser(String username, String password);
+
+  Future<String> forgotPassword(String email);
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -63,6 +65,18 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return json.decode(response.body)['key'];
     } else if (response.statusCode == 400) {
       throw NonFieldsException(message: response.body);
+    } else {
+      throw UnknownException(message: response.body);
+    }
+  }
+
+  @override
+  Future<String> forgotPassword(String email) async {
+    final response = await client
+        .post('$baseUrl/accounts/password/reset/', body: {'email': email});
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['detail'];
     } else {
       throw UnknownException(message: response.body);
     }

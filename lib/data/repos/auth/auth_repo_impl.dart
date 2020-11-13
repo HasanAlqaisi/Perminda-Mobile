@@ -43,8 +43,22 @@ class AuthRepoImpl extends AuthRepo {
       } on NonFieldsException catch (error) {
         return Left(NonFieldsFailure.fromNonFieldsException(
             json.decode(error.message)));
-      } on UnknownException catch(error){
+      } on UnknownException catch (error) {
         print(error.message);
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(NoInternetFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> forgotPassword(String email) async {
+    if (await netWorkInfo.isConnected()) {
+      try {
+        final result = await remoteDataSource.forgotPassword(email);
+        return Right(result);
+      } on UnknownException {
         return Left(UnknownFailure());
       }
     } else {
