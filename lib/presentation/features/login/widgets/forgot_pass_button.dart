@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:perminda/presentation/features/forgot_password/pages/forgot_password_screen.dart';
 
 class ForgotPasswordButton extends StatelessWidget {
   @override
@@ -10,7 +11,7 @@ class ForgotPasswordButton extends StatelessWidget {
         child: FlatButton(
             highlightColor: Colors.white,
             onPressed: () {
-              //TODO: Navigate to forgot password screen
+              Navigator.pushNamed(context, ForgotPassScreen.route);
             },
             child: Text(
               'Forgot password?',

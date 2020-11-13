@@ -78,6 +78,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     if (response.statusCode == 200) {
       return json.decode(response.body)['detail'];
     } else {
+      print('ERROR ${response.statusCode} =>>' + response.body);
       throw UnknownException(message: response.body);
     }
   }
