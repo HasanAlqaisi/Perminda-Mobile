@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:perminda/core/constants/constants.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/global_widgets/global_widgets.dart';
 import 'package:perminda/core/validators/local/local_validators.dart';
@@ -49,9 +50,9 @@ class _LoginFormState extends State<LoginForm> {
             Fluttertoast.showToast(
                 msg: (state.failure as NonFieldsFailure)?.errors?.first);
           } else if (state.failure is UnknownFailure) {
-            Fluttertoast.showToast(msg: 'Unknown error, try again.');
+            Fluttertoast.showToast(msg: unknownErrorMessage);
           } else if (state.failure is NoInternetFailure) {
-            Fluttertoast.showToast(msg: 'No internet connection');
+            Fluttertoast.showToast(msg: noInternetMessage);
           }
         } else if (state is LoginSuccess) {
           //TODO: Naviage to the home screen
@@ -66,7 +67,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Form _buildForm({bool inProgress}) {
+  Widget _buildForm({bool inProgress}) {
     String username, password;
 
     return Form(
@@ -90,7 +91,7 @@ class _LoginFormState extends State<LoginForm> {
               hintText: 'Password',
               validateRules: (value) {
                 password = value;
-                return LocalValidators.passwordValidation(value);
+                return LocalValidators.generalValidation(value);
               },
             ),
             ForgotPasswordButton(),
@@ -101,9 +102,15 @@ class _LoginFormState extends State<LoginForm> {
                       strokeWidth: 3,
                     )
                   : Text('Login'),
-              onPressed: () {
-                context.read<LoginBloc>().add(LoginClicked(username, password));
-              },
+              onPressed: inProgress
+                  ? null
+                  : () {
+                      if (_formKey.currentState.validate()) {
+                        context
+                            .read<LoginBloc>()
+                            .add(LoginClicked(username, password));
+                      }
+                    },
             ),
             RegisterButton(),
           ],

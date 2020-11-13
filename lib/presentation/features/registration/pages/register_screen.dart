@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:perminda/core/constants/constants.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/global_widgets/global_widgets.dart';
 import 'package:perminda/core/validators/local/local_validators.dart';
@@ -44,29 +45,29 @@ class _RegisterFormState extends State<RegisterForm> {
         }
         if (state is RegisterError) {
           if (state.failure is UnknownFailure) {
-            Fluttertoast.showToast(msg: 'Unknown error, try again.');
+            Fluttertoast.showToast(msg: unknownErrorMessage);
           } else if (state.failure is NoInternetFailure) {
-            Fluttertoast.showToast(msg: 'No internet connection.');
+            Fluttertoast.showToast(msg: noInternetMessage);
           }
         }
       },
       builder: (context, state) {
         if (state is RegisterError) {
           if (state.failure is FieldsFailure) {
-            return _buildForm(state, false);
+            return _buildForm(state: state, inProgress: false);
           } else {
-            return _buildForm(null, false);
+            return _buildForm(state: null, inProgress: false);
           }
         } else if (state is RegisterInProgress) {
-          return _buildForm(null, true);
+          return _buildForm(state: null, inProgress: true);
         } else {
-          return _buildForm(null, false);
+          return _buildForm(state: null, inProgress: false);
         }
       },
     );
   }
 
-  Widget _buildForm(RegisterError state, bool inProgress) {
+  Widget _buildForm({RegisterError state, bool inProgress}) {
     String firstName, lastName, username, email, password;
 
     return Form(
@@ -122,7 +123,7 @@ class _RegisterFormState extends State<RegisterForm> {
               apiError: (state?.failure as FieldsFailure)?.password?.first,
               validateRules: (value) {
                 password = value;
-                return LocalValidators.passwordValidation(value);
+                return LocalValidators.generalValidation(value);
               },
             ),
             SizedBox(height: 20.0),
@@ -131,15 +132,19 @@ class _RegisterFormState extends State<RegisterForm> {
                   ? CircularProgressIndicator(
                       backgroundColor: Colors.white, strokeWidth: 3)
                   : Text('Register'),
-              onPressed: () {
-                context.read<RegisterBloc>().add(RegisterClicked(
-                      firstName: firstName,
-                      lastName: lastName,
-                      username: username,
-                      email: email,
-                      password: password,
-                    ));
-              },
+              onPressed: inProgress
+                  ? null
+                  : () {
+                      if (_formKey.currentState.validate()) {
+                        context.read<RegisterBloc>().add(RegisterClicked(
+                              firstName: firstName,
+                              lastName: lastName,
+                              username: username,
+                              email: email,
+                              password: password,
+                            ));
+                      }
+                    },
             ),
           ],
         ),

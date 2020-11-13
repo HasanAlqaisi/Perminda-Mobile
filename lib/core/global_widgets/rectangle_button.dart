@@ -16,9 +16,7 @@ class RectangleButton extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 15.0),
         child: childWidget,
         onPressed: () {
-          if (Form.of(context).validate()) {
-            onPressed();
-          }
+          onPressed();
         },
       ),
     );
