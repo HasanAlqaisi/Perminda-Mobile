@@ -1,7 +1,9 @@
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:perminda/data/data_sources/auth/remote_data_source.dart';
+import 'package:perminda/domain/usecases/auth/forgot_password.dart';
 import 'package:perminda/domain/usecases/auth/register_user.dart';
+import 'package:perminda/presentation/features/forgot_password/bloc/forgot_password_bloc.dart';
 import 'package:perminda/presentation/features/login/bloc/login_bloc.dart';
 
 import 'core/network/network_info.dart';
@@ -19,12 +21,16 @@ void init() {
   // bloc
   sl.registerFactory(() => RegisterBloc(registerUseCase: sl()));
   sl.registerFactory(() => LoginBloc(loginUserUseCase: sl()));
+  sl.registerFactory(() => ForgotPasswordBloc(forgotPassUseCase: sl()));
 
   // registerUseCase
   sl.registerLazySingleton(() => RegisterUserUseCase(authRepo: sl()));
 
   // loginUserUseCase
   sl.registerLazySingleton(() => LoginUserUseCase(authRepo: sl()));
+
+  // forgotPassUseCase
+  sl.registerLazySingleton(() => ForgotPassUseCase(authRepo: sl()));
 
   // AuthRepo
   sl.registerLazySingleton<AuthRepo>(
