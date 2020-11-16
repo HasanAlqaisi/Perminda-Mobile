@@ -11,6 +11,7 @@ abstract class AuthRemoteDataSource {
     String lastName,
     String username,
     String email,
+    String phone,
     String password,
   );
 
@@ -30,15 +31,17 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     String lastName,
     String username,
     String email,
+    String phone,
     String password,
   ) async {
     final response = await client.post(
-      '$baseUrl/accounts/registration/',
+      '$baseUrl/api/accounts/registration/',
       body: {
         'first_name': '$firstName',
         'last_name': '$lastName',
         'username': '$username',
         'email': '$email',
+        'phone_number': '$phone',
         'password': '$password',
       },
     );
@@ -54,7 +57,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   @override
   Future<String> loginUser(String username, String password) async {
     final response = await client.post(
-      '$baseUrl/accounts/login/',
+      '$baseUrl/api/accounts/login/',
       body: {
         'username': username,
         'password': password,
@@ -73,7 +76,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   @override
   Future<String> forgotPassword(String email) async {
     final response = await client
-        .post('$baseUrl/accounts/password/reset/', body: {'email': email});
+        .post('$baseUrl/api/accounts/password/reset/', body: {'email': email});
 
     if (response.statusCode == 200) {
       return json.decode(response.body)['detail'];

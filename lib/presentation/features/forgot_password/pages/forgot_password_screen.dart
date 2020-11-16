@@ -71,6 +71,7 @@ class ForgotPassDesign extends StatelessWidget {
               RectangleTextField(
                 hintText: 'Email',
                 prefixIcon: Icons.email,
+                widthMargin: 30.0,
                 validateRules: (value) {
                   email = value;
                   return LocalValidators.emailValidation(value);

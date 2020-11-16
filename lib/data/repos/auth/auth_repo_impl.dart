@@ -17,11 +17,11 @@ class AuthRepoImpl extends AuthRepo {
 
   @override
   Future<Either<Failure, User>> registerUser(String firstName, String lastName,
-      String username, String email, String password) async {
+      String username, String email, String phone, String password) async {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteDataSource.registerUser(
-            firstName, lastName, username, email, password);
+            firstName, lastName, username, email, phone, password);
         return Right(result);
       } on FieldsException catch (error) {
         return Left(FieldsFailure.fromFieldsException(json.decode(error.body)));

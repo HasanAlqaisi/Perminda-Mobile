@@ -13,9 +13,10 @@ class RegisterUserUseCase {
     String lastName,
     String username,
     String email,
+    String phone,
     String password,
   ) async {
     return await authRepo.registerUser(
-        firstName, lastName, username, email, password);
+        firstName, lastName, username, email, phone, password);
   }
 }

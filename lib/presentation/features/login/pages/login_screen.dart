@@ -81,6 +81,7 @@ class _LoginFormState extends State<LoginForm> {
             RectangleTextField(
               hintText: 'Username',
               prefixIcon: FontAwesomeIcons.user,
+              widthMargin: 30.0,
               validateRules: (value) {
                 username = value;
                 return LocalValidators.generalValidation(value);

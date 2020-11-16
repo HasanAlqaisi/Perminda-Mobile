@@ -68,7 +68,7 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   Widget _buildForm({RegisterError state, bool inProgress}) {
-    String firstName, lastName, username, email, password;
+    String firstName, lastName, username, email, phone, password;
 
     return Form(
       key: _formKey,
@@ -81,16 +81,18 @@ class _RegisterFormState extends State<RegisterForm> {
             RectangleTextField(
               hintText: 'First name',
               prefixIcon: FontAwesomeIcons.user,
+              widthMargin: 30.0,
               validateRules: (value) {
                 firstName = value;
                 return LocalValidators.generalValidation(value);
               },
               apiError: (state?.failure as FieldsFailure)?.firstName?.first,
             ),
-            SizedBox(height: 20.0),
+            SizedBox(height: 20),
             RectangleTextField(
               hintText: 'Last name',
               prefixIcon: FontAwesomeIcons.user,
+              widthMargin: 30.0,
               validateRules: (value) {
                 lastName = value;
                 return LocalValidators.generalValidation(value);
@@ -101,6 +103,7 @@ class _RegisterFormState extends State<RegisterForm> {
             RectangleTextField(
               hintText: 'Username',
               prefixIcon: FontAwesomeIcons.user,
+              widthMargin: 30.0,
               validateRules: (value) {
                 username = value;
                 return LocalValidators.generalValidation(value);
@@ -111,11 +114,23 @@ class _RegisterFormState extends State<RegisterForm> {
             RectangleTextField(
               hintText: 'Email',
               prefixIcon: Icons.email,
+              widthMargin: 30.0,
               validateRules: (value) {
                 email = value;
                 return LocalValidators.emailValidation(value);
               },
               apiError: (state?.failure as FieldsFailure)?.email?.first,
+            ),
+            SizedBox(height: 20.0),
+            RectangleTextField(
+              hintText: '+7...',
+              prefixIcon: FontAwesomeIcons.phone,
+              widthMargin: 30.0,
+              validateRules: (value) {
+                phone = LocalValidators.phoneHandledValidation(value);
+                return LocalValidators.generalValidation(value);
+              },
+              apiError: (state?.failure as FieldsFailure)?.lastName?.first,
             ),
             SizedBox(height: 20.0),
             PasswordField(
@@ -141,6 +156,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               lastName: lastName,
                               username: username,
                               email: email,
+                              phone: phone,
                               password: password,
                             ));
                       }

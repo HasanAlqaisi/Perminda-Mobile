@@ -5,14 +5,15 @@ class RectangleTextField extends StatelessWidget {
   final Function validateRules;
   final IconData prefixIcon;
   final String apiError;
+  final double widthMargin;
 
   RectangleTextField(
-      {this.hintText, this.validateRules, this.prefixIcon, this.apiError});
+      {this.hintText, this.validateRules, this.prefixIcon, this.apiError, this.widthMargin});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 30.0),
+      margin: EdgeInsets.symmetric(horizontal: widthMargin),
       child: TextFormField(
         validator: (value) {
           return validateRules(value);

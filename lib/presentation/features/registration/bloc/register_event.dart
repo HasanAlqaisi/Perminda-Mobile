@@ -12,13 +12,15 @@ class RegisterClicked extends RegisterEvent {
   final String lastName;
   final String username;
   final String email;
+  final String phone;
   final String password;
-  
+
   RegisterClicked({
     this.firstName,
     this.lastName,
     this.username,
     this.email,
+    this.phone,
     this.password,
   });
 }
