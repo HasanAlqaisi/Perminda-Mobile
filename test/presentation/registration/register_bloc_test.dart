@@ -30,8 +30,8 @@ void main() {
     test(
         'should emit [RegisterInProgress, RegisterSuccess] when call is success',
         () {
-      when(registrationUseCase(
-              user.firstName, user.lastName, user.username, user.email, null))
+      when(registrationUseCase(user.firstName, user.lastName, user.username,
+              user.email, '', null))
           .thenAnswer((_) async => Right(user));
 
       final expectedStates = [
@@ -47,13 +47,14 @@ void main() {
           lastName: user.lastName,
           username: user.username,
           email: user.email,
+          phone: '',
           password: null));
     });
 
     test('should emit [RegisterInProgress, registerError] when call failed',
         () {
-      when(registrationUseCase(
-              user.firstName, user.lastName, user.username, user.email, null))
+      when(registrationUseCase(user.firstName, user.lastName, user.username,
+              user.email, '', null))
           .thenAnswer((_) async => Left(FieldsFailure()));
 
       final expectedStates = [
@@ -69,6 +70,7 @@ void main() {
           lastName: user.lastName,
           username: user.username,
           email: user.email,
+          phone: '',
           password: null));
     });
   });

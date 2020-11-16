@@ -38,7 +38,7 @@ void main() {
     group('registerUser', () {
       final user = User.fromJson(json.decode(fixture('user.json')));
       test('should check if the device is online', () async {
-        authRepo.registerUser('', '', '', '', '');
+        authRepo.registerUser('', '', '', '', '', '');
 
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
@@ -46,14 +46,14 @@ void main() {
 
       test('should return [User] if the remote call success', () async {
         when(remoteDataSource.registerUser(user.firstName, user.lastName,
-                user.username, user.email, '3489'))
+                user.username, user.email, '', '3489'))
             .thenAnswer((_) async => user);
 
-        final result = await authRepo.registerUser(
-            user.firstName, user.lastName, user.username, user.email, '3489');
+        final result = await authRepo.registerUser(user.firstName,
+            user.lastName, user.username, user.email, '', '3489');
 
-        verify(remoteDataSource.registerUser(
-            user.firstName, user.lastName, user.username, user.email, '3489'));
+        verify(remoteDataSource.registerUser(user.firstName, user.lastName,
+            user.username, user.email, '', '3489'));
 
         expect(result, Right(user));
       });
@@ -66,15 +66,15 @@ void main() {
           userName: ['A user with this username is already exists.'],
         );
         when(remoteDataSource.registerUser(user.firstName, user.lastName,
-                user.username, user.email, '3489'))
+                user.username, user.email, '', '3489'))
             .thenThrow(FieldsException(
                 body: fixture('registration_fields_error.json')));
 
-        final result = await authRepo.registerUser(
-            user.firstName, user.lastName, user.username, user.email, '3489');
+        final result = await authRepo.registerUser(user.firstName,
+            user.lastName, user.username, user.email, '', '3489');
 
-        verify(remoteDataSource.registerUser(
-            user.firstName, user.lastName, user.username, user.email, '3489'));
+        verify(remoteDataSource.registerUser(user.firstName, user.lastName,
+            user.username, user.email, '', '3489'));
 
         expect(result, Left(fieldsFailure));
       });
@@ -83,14 +83,14 @@ void main() {
           'should return [UnknownFailure] if the remote call throws [UnknownException]',
           () async {
         when(remoteDataSource.registerUser(user.firstName, user.lastName,
-                user.username, user.email, '3489'))
+                user.username, user.email, '', '3489'))
             .thenThrow(UnknownException());
 
-        final result = await authRepo.registerUser(
-            user.firstName, user.lastName, user.username, user.email, '3489');
+        final result = await authRepo.registerUser(user.firstName,
+            user.lastName, user.username, user.email, '', '3489');
 
-        verify(remoteDataSource.registerUser(
-            user.firstName, user.lastName, user.username, user.email, '3489'));
+        verify(remoteDataSource.registerUser(user.firstName, user.lastName,
+            user.username, user.email, '', '3489'));
 
         expect(result, Left(UnknownFailure()));
       });
@@ -174,14 +174,14 @@ void main() {
 
     group('registerUser', () {
       test('should return false if user has no connection', () async {
-        authRepo.registerUser('', '', '', '', '');
+        authRepo.registerUser('', '', '', '', '', '');
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), false);
       });
 
       test('should return [noInternetFailure] if user has no connection',
           () async {
-        final result = await authRepo.registerUser('', '', '', '', '');
+        final result = await authRepo.registerUser('', '', '', '', '', '');
 
         expect(result, Left(NoInternetFailure()));
       });

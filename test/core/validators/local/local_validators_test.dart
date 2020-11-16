@@ -39,5 +39,22 @@ void main() {
         expect(result, equals(null));
       });
     });
+
+    group('phoneHandledValidation', () {
+      test('should return phone starts with [+] if user input like [7..]', () {
+        final result = LocalValidators.phoneHandledValidation('7709393184');
+        expect(result, '+7709393184');
+      });
+
+      test('should return phone starts with [+] and zero deleted if user input like [07..]', () {
+        final result = LocalValidators.phoneHandledValidation('07709393184');
+        expect(result, '+7709393184');
+      });
+
+      test('should return phone without zero if user input like [+07..]', () {
+        final result = LocalValidators.phoneHandledValidation('+07709393184');
+        expect(result, '+7709393184');
+      });
+    });
   });
 }

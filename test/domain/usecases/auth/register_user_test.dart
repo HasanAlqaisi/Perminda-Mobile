@@ -23,9 +23,9 @@ void main() {
 
   test('should call [registerUser] from the [AuthRepo]', () {
     registerUserUseCase(
-        user.firstName, user.lastName, user.username, user.email, '3489');
+        user.firstName, user.lastName, user.username, user.email, '', '3489');
 
     verify(authRepo.registerUser(
-        user.firstName, user.lastName, user.username, user.email, '3489'));
+        user.firstName, user.lastName, user.username, user.email, '', '3489'));
   });
 }

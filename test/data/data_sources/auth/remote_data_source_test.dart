@@ -26,30 +26,32 @@ void main() {
 
     test('should return [User] if response is 201', () async {
       when(client.post(
-        '$baseUrl/accounts/registration/',
+        '$baseUrl/api/accounts/registration/',
         body: {
           'first_name': 'Hasan',
           'last_name': 'AlQaisi',
           'username': 'hasan4',
           'email': 'hasan.alqaisi2000@gmail.com',
+          'phone_number': '',
           'password': '3489',
         },
       )).thenAnswer((_) async => http.Response(fixture('user.json'), 201));
 
       final result = await remoteDataSource.registerUser(
-          user.firstName, user.lastName, user.username, user.email, '3489');
+          user.firstName, user.lastName, user.username, user.email, '', '3489');
 
       expect(result, user);
     });
 
     test('should throw [FieldsException] if response is 400', () async {
       when(client.post(
-        '$baseUrl/accounts/registration/',
+        '$baseUrl/api/accounts/registration/',
         body: {
           'first_name': 'Hasan',
           'last_name': 'AlQaisi',
           'username': 'hasan4',
           'email': 'hasan.alqaisi2000@gmail.com',
+          'phone_number': '',
           'password': '3489',
         },
       )).thenAnswer((_) async =>
@@ -58,8 +60,8 @@ void main() {
       final result = remoteDataSource.registerUser;
 
       expect(
-        () => result(
-            user.firstName, user.lastName, user.username, user.email, '3489'),
+        () => result(user.firstName, user.lastName, user.username, user.email,
+            '', '3489'),
         throwsA(isA<FieldsException>()),
       );
     });
@@ -67,12 +69,13 @@ void main() {
     test('should throw [UnkownException] if response is not 201 or 400',
         () async {
       when(client.post(
-        '$baseUrl/accounts/registration/',
+        '$baseUrl/api/accounts/registration/',
         body: {
           'first_name': 'Hasan',
           'last_name': 'AlQaisi',
           'username': 'hasan4',
           'email': 'hasan.alqaisi2000@gmail.com',
+          'phone_number': '',
           'password': '3489',
         },
       )).thenAnswer((_) async =>
@@ -81,8 +84,8 @@ void main() {
       final result = remoteDataSource.registerUser;
 
       expect(
-        () => result(
-            user.firstName, user.lastName, user.username, user.email, '3489'),
+        () => result(user.firstName, user.lastName, user.username, user.email,
+            '', '3489'),
         throwsA(isA<UnknownException>()),
       );
     });
@@ -91,7 +94,7 @@ void main() {
   group('loginUser', () {
     test('should return user token when if response is 200', () async {
       when(client.post(
-        '$baseUrl/accounts/login/',
+        '$baseUrl/api/accounts/login/',
         body: {
           'username': '',
           'password': '',
@@ -105,7 +108,7 @@ void main() {
 
     test('should throw [NonFieldsException] if response is 400', () async {
       when(client.post(
-        '$baseUrl/accounts/login/',
+        '$baseUrl/api/accounts/login/',
         body: {
           'username': '',
           'password': '',
@@ -124,7 +127,7 @@ void main() {
     test('should throw [UnknownException] if response is neither 400 nor 200',
         () async {
       when(client.post(
-        '$baseUrl/accounts/login/',
+        '$baseUrl/api/accounts/login/',
         body: {
           'username': '',
           'password': '',
@@ -143,8 +146,8 @@ void main() {
 
   group('forgotPassword', () {
     test('should return success message if response code is 200', () async {
-      when(client
-              .post('$baseUrl/accounts/password/reset/', body: {'email': ''}))
+      when(client.post('$baseUrl/api/accounts/password/reset/',
+              body: {'email': ''}))
           .thenAnswer((_) async => http.Response(fixture('detail.json'), 200));
 
       final result = await remoteDataSource.forgotPassword('');
@@ -156,7 +159,7 @@ void main() {
 
   test('should throw [UnknownException] if response is not 200', () async {
     when(client.post(
-      '$baseUrl/accounts/password/reset/',
+      '$baseUrl/api/accounts/password/reset/',
       body: {
         'email': '',
       },
