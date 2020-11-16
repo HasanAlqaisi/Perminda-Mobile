@@ -7,6 +7,7 @@ class FieldsFailure extends Equatable implements Failure {
   final List<String> lastName;
   final List<String> userName;
   final List<String> email;
+  final List<String> phone;
   final List<String> password;
 
   FieldsFailure({
@@ -14,6 +15,7 @@ class FieldsFailure extends Equatable implements Failure {
     this.lastName,
     this.userName,
     this.email,
+    this.phone,
     this.password,
   });
 
@@ -23,6 +25,7 @@ class FieldsFailure extends Equatable implements Failure {
       firstName: body['first_name']?.cast<String>() as List<String> ?? null,
       lastName: body['last_name']?.cast<String>() as List<String> ?? null,
       password: body['password']?.cast<String>() as List<String> ?? null,
+      phone: body['phone_number']?.cast<String>() as List<String> ?? null,
       userName: body['username']?.cast<String>() as List<String> ?? null,
     );
   }

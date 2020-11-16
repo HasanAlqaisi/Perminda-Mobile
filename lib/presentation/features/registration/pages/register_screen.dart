@@ -130,7 +130,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 phone = LocalValidators.phoneHandledValidation(value);
                 return LocalValidators.generalValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.lastName?.first,
+              apiError: (state?.failure as FieldsFailure)?.phone?.first,
             ),
             SizedBox(height: 20.0),
             PasswordField(
