@@ -9,6 +9,7 @@ import 'package:perminda/core/validators/local/local_validators.dart';
 import 'package:perminda/presentation/features/login/bloc/login_bloc.dart';
 import 'package:perminda/presentation/features/login/widgets/widgets.dart';
 import 'package:perminda/injection_container.dart' as di;
+import 'package:perminda/presentation/features/nav/pages/home.dart';
 
 class LoginScreen extends StatelessWidget {
   static const route = '/';
@@ -55,7 +56,8 @@ class _LoginFormState extends State<LoginForm> {
             Fluttertoast.showToast(msg: noInternetMessage);
           }
         } else if (state is LoginSuccess) {
-          //TODO: Naviage to the home screen
+          Navigator.pushNamedAndRemoveUntil(
+              context, Home.route, (route) => false);
         }
       },
       builder: (context, state) {

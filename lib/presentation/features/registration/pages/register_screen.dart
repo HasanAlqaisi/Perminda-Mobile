@@ -7,6 +7,7 @@ import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/global_widgets/global_widgets.dart';
 import 'package:perminda/core/validators/local/local_validators.dart';
 import 'package:perminda/injection_container.dart' as di;
+import 'package:perminda/presentation/features/nav/pages/home.dart';
 import 'package:perminda/presentation/features/registration/bloc/register_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -41,7 +42,8 @@ class _RegisterFormState extends State<RegisterForm> {
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) {
         if (state is RegisterSuccess) {
-          //TODO: Navigate to home screen
+          Navigator.pushNamedAndRemoveUntil(
+              context, Home.route, (route) => false);
         }
         if (state is RegisterError) {
           if (state.failure is UnknownFailure) {
