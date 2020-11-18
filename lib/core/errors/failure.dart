@@ -64,3 +64,8 @@ class NonFieldsFailure extends Equatable implements Failure {
     );
   }
 }
+
+class ItemNotFoundFailure extends Equatable implements Failure {
+  @override
+  List<Object> get props => [];
+}

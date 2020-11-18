@@ -15,3 +15,9 @@ class NonFieldsException implements Exception {
 
   NonFieldsException({this.message});
 }
+
+class ItemNotFoundException implements Exception {
+  String message;
+
+  ItemNotFoundException({this.message});
+}
