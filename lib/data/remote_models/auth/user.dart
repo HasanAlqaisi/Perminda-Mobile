@@ -5,14 +5,29 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User extends Equatable {
+  @JsonKey(name: 'pk')
+  final String id;
   @JsonKey(name: 'first_name')
   final String firstName;
   @JsonKey(name: 'last_name')
   final String lastName;
   final String username;
   final String email;
+  @JsonKey(name: 'phone_number')
+  final String phoneNumber;
+  final String image;
+  final String address;
 
-  User({this.firstName, this.lastName, this.username, this.email});
+  User({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.username,
+    this.email,
+    this.phoneNumber,
+    this.image,
+    this.address,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
