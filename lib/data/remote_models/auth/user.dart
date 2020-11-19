@@ -7,9 +7,9 @@ part 'user.g.dart';
 class User extends Equatable {
   @JsonKey(name: 'pk')
   final String id;
-  @JsonKey(name: 'first_name')
+  @JsonKey(name: 'first_name', nullable: true)
   final String firstName;
-  @JsonKey(name: 'last_name')
+  @JsonKey(name: 'last_name', nullable: true)
   final String lastName;
   final String username;
   final String email;
