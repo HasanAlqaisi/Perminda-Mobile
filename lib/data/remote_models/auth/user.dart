@@ -15,7 +15,9 @@ class User extends Equatable {
   final String email;
   @JsonKey(name: 'phone_number')
   final String phoneNumber;
+  @JsonKey(nullable: true)
   final String image;
+  @JsonKey(nullable: true)
   final String address;
 
   User({
