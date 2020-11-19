@@ -17,8 +17,6 @@ class LocalValidators {
     if (!number.startsWith('+') && number.startsWith('0'))
       return '+' + number.substring(1);
     if (!number.startsWith('+')) return '+' + number;
-    if (number.startsWith('+') && number[1] == '0')
-      return '+' + number.substring(2);
     return number;
   }
 }
