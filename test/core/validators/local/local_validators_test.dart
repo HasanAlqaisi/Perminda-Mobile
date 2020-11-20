@@ -46,13 +46,10 @@ void main() {
         expect(result, '+7709393184');
       });
 
-      test('should return phone starts with [+] and zero deleted if user input like [07..]', () {
+      test(
+          'should return phone starts with [+] and zero deleted if user input like [07..]',
+          () {
         final result = LocalValidators.phoneHandledValidation('07709393184');
-        expect(result, '+7709393184');
-      });
-
-      test('should return phone without zero if user input like [+07..]', () {
-        final result = LocalValidators.phoneHandledValidation('+07709393184');
         expect(result, '+7709393184');
       });
     });

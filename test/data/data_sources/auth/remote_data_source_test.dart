@@ -21,9 +21,9 @@ void main() {
     remoteDataSource = AuthRemoteDataSourceImpl(client: client);
   });
 
-  group('registerUser', () {
-    final user = User.fromJson(json.decode(fixture('user.json')));
+  final user = User.fromJson(json.decode(fixture('user.json')));
 
+  group('registerUser', () {
     test('should return [User] if response is 201', () async {
       when(client.post(
         '$baseUrl/api/accounts/registration/',
@@ -155,21 +155,153 @@ void main() {
 
       expect(result, expectedResult);
     });
+
+    test('should throw [UnknownException] if response is not 200', () async {
+      when(client.post(
+        '$baseUrl/api/accounts/password/reset/',
+        body: {
+          'email': '',
+        },
+      )).thenAnswer((_) async => http.Response(fixture('detail.json'), 400));
+
+      final result = remoteDataSource.forgotPassword;
+
+      expect(
+        () => result(''),
+        throwsA(isA<UnknownException>()),
+      );
+    });
   });
 
-  test('should throw [UnknownException] if response is not 200', () async {
-    when(client.post(
-      '$baseUrl/api/accounts/password/reset/',
-      body: {
-        'email': '',
-      },
-    )).thenAnswer((_) async => http.Response(fixture('detail.json'), 400));
+  group('getUser', () {
+    test('should return [user] if response code is 200', () async {
+      when(client.get('$baseUrl/api/accounts/user/',
+              headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response(fixture('user.json'), 200));
 
-    final result = remoteDataSource.forgotPassword;
+      final result = await remoteDataSource.getUser();
 
-    expect(
-      () => result(''),
-      throwsA(isA<UnknownException>()),
-    );
+      expect(result, user);
+    });
+
+    test('should throw [UnauthorizedTokenException] if response is not 401',
+        () async {
+      when(client.get('$baseUrl/api/accounts/user/',
+              headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response(fixture('detail.json'), 401));
+
+      final result = remoteDataSource.getUser;
+
+      expect(
+        () => result(),
+        throwsA(isA<UnauthorizedTokenException>()),
+      );
+    });
+
+    test('should throw [UnknownException] if response is not 200', () async {
+      when(client.get('$baseUrl/api/accounts/user/',
+              headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response(fixture('detail.json'), 400));
+
+      final result = remoteDataSource.getUser;
+
+      expect(
+        () => result(),
+        throwsA(isA<UnknownException>()),
+      );
+    });
+  });
+
+  group('editUser', () {
+    test('should return [User] if response code is 200', () async {
+      when(client.put('$baseUrl/api/accounts/user/',
+          headers: anyNamed('headers'),
+          body: {
+            'first_name': null,
+            'last_name': null,
+            'username': null,
+            'email': null,
+            'phone_number': null,
+            'password': null,
+            'address': null,
+            'image': null,
+          })).thenAnswer((_) async => http.Response(fixture('user.json'), 200));
+
+      final result = await remoteDataSource.editUser(
+          null, null, null, null, null, null, null, null);
+
+      expect(result, user);
+    });
+
+    test('should throw [FieldsException] if response is 400', () async {
+      when(client.put('$baseUrl/api/accounts/user/',
+              headers: anyNamed('headers'),
+              body: {
+            'first_name': null,
+            'last_name': null,
+            'username': null,
+            'email': null,
+            'phone_number': null,
+            'password': null,
+            'address': null,
+            'image': null,
+          }))
+          .thenAnswer((_) async => http.Response(fixture('detail.json'), 400));
+
+      final result = remoteDataSource.editUser;
+
+      expect(
+        () => result(null, null, null, null, null, null, null, null),
+        throwsA(isA<FieldsException>()),
+      );
+    });
+
+    test('should throw [UnauthorizedTokenException] if response is 401',
+        () async {
+      when(client.put('$baseUrl/api/accounts/user/',
+              headers: anyNamed('headers'),
+              body: {
+            'first_name': null,
+            'last_name': null,
+            'username': null,
+            'email': null,
+            'phone_number': null,
+            'password': null,
+            'address': null,
+            'image': null,
+          }))
+          .thenAnswer((_) async => http.Response(fixture('detail.json'), 401));
+
+      final result = remoteDataSource.editUser;
+
+      expect(
+        () => result(null, null, null, null, null, null, null, null),
+        throwsA(isA<UnauthorizedTokenException>()),
+      );
+    });
+
+    test('should throw [UnknownException] if response code is not expected ',
+        () async {
+      when(client.put('$baseUrl/api/accounts/user/',
+              headers: anyNamed('headers'),
+              body: {
+            'first_name': null,
+            'last_name': null,
+            'username': null,
+            'email': null,
+            'phone_number': null,
+            'password': null,
+            'address': null,
+            'image': null,
+          }))
+          .thenAnswer((_) async => http.Response(fixture('detail.json'), 403));
+
+      final result = remoteDataSource.editUser;
+
+      expect(
+        () => result(null, null, null, null, null, null, null, null),
+        throwsA(isA<UnknownException>()),
+      );
+    });
   });
 }

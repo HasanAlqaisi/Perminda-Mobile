@@ -9,7 +9,7 @@ void main() {
   final fieldsBody = json.decode(fixture('registration_fields_error.json'));
   final nonFieldsBody = json.decode(fixture('non_fields.json'));
 
-  final fieldsFailure = FieldsFailure(
+  final fieldsFailure = UserFieldsFailure(
     email: ['This field is required.'],
     userName: ['A user with this username is already exists.'],
   );
@@ -19,7 +19,7 @@ void main() {
   );
 
   test('should convert FieldsException to FieldsFailure in a correct way', () {
-    final result = FieldsFailure.fromFieldsException(fieldsBody);
+    final result = UserFieldsFailure.fromFieldsException(fieldsBody);
     expect(result, fieldsFailure);
   });
 

@@ -35,8 +35,8 @@ void main() {
       when(netWorkInfo.isConnected()).thenAnswer((_) async => true);
     });
 
+    final user = User.fromJson(json.decode(fixture('user.json')));
     group('registerUser', () {
-      final user = User.fromJson(json.decode(fixture('user.json')));
       test('should check if the device is online', () async {
         authRepo.registerUser('', '', '', '', '', '');
 
@@ -59,9 +59,9 @@ void main() {
       });
 
       test(
-          'should return [FieldsFailure] if the remote call throws [FieldsException]',
+          'should return [UserFieldsFailure] if the remote call throws [FieldsException]',
           () async {
-        final fieldsFailure = FieldsFailure(
+        final fieldsFailure = UserFieldsFailure(
           email: ['This field is required.'],
           userName: ['A user with this username is already exists.'],
         );
@@ -165,6 +165,109 @@ void main() {
         expect(result, Left(UnknownFailure()));
       });
     });
+
+    group('getUser', () {
+      test('should check if the device is online', () async {
+        authRepo.getUser();
+
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), true);
+      });
+
+      test(
+          'should return [UnauthorizedTokenFailure] if call throws [UnauthorizedTokenException]',
+          () async {
+        when(remoteDataSource.getUser())
+            .thenThrow(UnauthorizedTokenException());
+
+        final result = await authRepo.getUser();
+
+        expect(result, Left(UnauthorizedTokenFailure()));
+      });
+
+      test('should return [user] if call is success', () async {
+        when(remoteDataSource.getUser()).thenAnswer((_) async => user);
+
+        final result = await authRepo.getUser();
+
+        expect(result, Right(user));
+      });
+
+      test('should return [UnknownFailure] if call throws [UnknownException]',
+          () async {
+        when(remoteDataSource.getUser()).thenThrow(UnknownException());
+
+        final result = await authRepo.getUser();
+
+        expect(result, Left(UnknownFailure()));
+      });
+    });
+
+    group('editUser', () {
+      test('should check if the device is online', () async {
+        authRepo.editUser(null, null, null, null, null, null, null, null);
+
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), true);
+      });
+
+      test('should return [user] if call is success', () async {
+        when(remoteDataSource.editUser(
+                null, null, null, null, null, null, null, null))
+            .thenAnswer((_) async => user);
+
+        final result = await authRepo.editUser(
+            null, null, null, null, null, null, null, null);
+
+        expect(result, Right(user));
+      });
+
+      test(
+          'should return [UserFieldsErrorFailure] if call throws [FieldsException]',
+          () async {
+        final fieldsFailure = UserFieldsFailure(
+          email: ['This field is required.'],
+          userName: ['A user with this username is already exists.'],
+        );
+
+        final fieldsException =
+            FieldsException(body: fixture('registration_fields_error.json'));
+
+        when(remoteDataSource.editUser(
+                null, null, null, null, null, null, null, null))
+            .thenThrow(fieldsException);
+
+        final result = await authRepo.editUser(
+            null, null, null, null, null, null, null, null);
+
+        expect(result, Left(fieldsFailure));
+      });
+
+      test(
+          'should return [UnauthorizedTokenFailure] if call throws [UnauthorizedTokenException]',
+          () async {
+        when(remoteDataSource.editUser(
+                null, null, null, null, null, null, null, null))
+            .thenThrow(UnauthorizedTokenException());
+
+        final result = await authRepo.editUser(
+            null, null, null, null, null, null, null, null);
+
+        expect(result, Left(UnauthorizedTokenFailure()));
+      });
+
+      test('should return [UnknownFailure] if call throws [UnknownException]',
+          () async {
+        when(remoteDataSource.editUser(
+                null, null, null, null, null, null, null, null))
+            .thenThrow(UnknownException());
+
+        final result = await authRepo.editUser(
+            null, null, null, null, null, null, null, null);
+
+        expect(result, Left(UnknownFailure()));
+      });
+    });
   });
 
   group('device is offline', () {
@@ -206,6 +309,37 @@ void main() {
       test('should return [noInternetFailure] if user has no connection',
           () async {
         final result = await authRepo.forgotPassword('');
+
+        expect(result, Left(NoInternetFailure()));
+      });
+    });
+
+    group('getUser', () {
+      test('should return false if user has no connection', () async {
+        authRepo.getUser();
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), false);
+      });
+
+      test('should return [noInternetFailure] if user has no connection',
+          () async {
+        final result = await authRepo.getUser();
+
+        expect(result, Left(NoInternetFailure()));
+      });
+    });
+
+    group('editUser', () {
+      test('should return false if user has no connection', () async {
+        authRepo.editUser(null, null, null, null, null, null, null, null);
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), false);
+      });
+
+      test('should return [noInternetFailure] if user has no connection',
+          () async {
+        final result = await authRepo.editUser(
+            null, null, null, null, null, null, null, null);
 
         expect(result, Left(NoInternetFailure()));
       });
