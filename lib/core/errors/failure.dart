@@ -2,36 +2,42 @@ import 'package:equatable/equatable.dart';
 
 abstract class Failure {}
 
-class FieldsFailure extends Equatable implements Failure {
+class UserFieldsFailure extends Equatable implements Failure {
   final List<String> firstName;
   final List<String> lastName;
   final List<String> userName;
   final List<String> email;
   final List<String> phone;
   final List<String> password;
+  final List<String> address;
+  final List<String> image;
 
-  FieldsFailure({
-    this.firstName,
-    this.lastName,
-    this.userName,
-    this.email,
-    this.phone,
-    this.password,
-  });
+  UserFieldsFailure(
+      {this.firstName,
+      this.lastName,
+      this.userName,
+      this.email,
+      this.phone,
+      this.password,
+      this.address,
+      this.image});
 
-  factory FieldsFailure.fromFieldsException(Map<String, dynamic> body) {
-    return FieldsFailure(
+  factory UserFieldsFailure.fromFieldsException(Map<String, dynamic> body) {
+    return UserFieldsFailure(
       email: body['email']?.cast<String>() as List<String>,
       firstName: body['first_name']?.cast<String>() as List<String> ?? null,
       lastName: body['last_name']?.cast<String>() as List<String> ?? null,
       password: body['password']?.cast<String>() as List<String> ?? null,
       phone: body['phone_number']?.cast<String>() as List<String> ?? null,
       userName: body['username']?.cast<String>() as List<String> ?? null,
+      address: body['address']?.cast<String>() as List<String> ?? null,
+      image: body['image']?.cast<String>() as List<String> ?? null,
     );
   }
 
   @override
-  List<Object> get props => [firstName, lastName, userName, email, password];
+  List<Object> get props =>
+      [firstName, lastName, userName, email, password, address, image];
 
   @override
   bool get stringify => true;
@@ -66,6 +72,11 @@ class NonFieldsFailure extends Equatable implements Failure {
 }
 
 class ItemNotFoundFailure extends Equatable implements Failure {
+  @override
+  List<Object> get props => [];
+}
+
+class UnauthorizedTokenFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [];
 }
