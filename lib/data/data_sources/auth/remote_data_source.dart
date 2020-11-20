@@ -18,6 +18,19 @@ abstract class AuthRemoteDataSource {
   Future<String> loginUser(String username, String password);
 
   Future<String> forgotPassword(String email);
+
+  Future<User> getUser();
+
+  Future<User> editUser(
+    String firstName,
+    String lastName,
+    String username,
+    String email,
+    String phone,
+    String password,
+    String image,
+    String address,
+  );
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -83,6 +96,58 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     } else {
       print('ERROR ${response.statusCode} =>>' + response.body);
       throw UnknownException(message: response.body);
+    }
+  }
+
+  @override
+  Future<User> editUser(
+      String firstName,
+      String lastName,
+      String username,
+      String email,
+      String phone,
+      String password,
+      String image,
+      String address) async {
+    final response = await client.put(
+      '$baseUrl/api/accounts/user/',
+      headers: {'Authorization': '$token'},
+      body: {
+        'first_name': firstName,
+        'last_name': lastName,
+        'username': username,
+        'email': email,
+        'phone_number': phone,
+        'password': password,
+        'address': address,
+        'image': image,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(json.decode(response.body));
+    } else if (response.statusCode == 400) {
+      throw FieldsException(body: response.body);
+    } else if (response.statusCode == 401) {
+      throw UnauthorizedTokenException();
+    } else {
+      throw UnknownException();
+    }
+  }
+
+  @override
+  Future<User> getUser() async {
+    final response = await client.get(
+      '$baseUrl/api/accounts/user/',
+      headers: {'Authorization': '$token'},
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(json.decode(response.body));
+    } else if (response.statusCode == 401) {
+      throw UnauthorizedTokenException();
+    } else {
+      throw UnknownException();
     }
   }
 }

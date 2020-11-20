@@ -55,7 +55,7 @@ class _RegisterFormState extends State<RegisterForm> {
       },
       builder: (context, state) {
         if (state is RegisterError) {
-          if (state.failure is FieldsFailure) {
+          if (state.failure is UserFieldsFailure) {
             return _buildForm(state: state, inProgress: false);
           } else {
             return _buildForm(state: null, inProgress: false);
@@ -88,7 +88,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 firstName = value;
                 return LocalValidators.generalValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.firstName?.first,
+              apiError: (state?.failure as UserFieldsFailure)?.firstName?.first,
             ),
             SizedBox(height: 20),
             RectangleTextField(
@@ -99,7 +99,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 lastName = value;
                 return LocalValidators.generalValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.lastName?.first,
+              apiError: (state?.failure as UserFieldsFailure)?.lastName?.first,
             ),
             SizedBox(height: 20.0),
             RectangleTextField(
@@ -110,7 +110,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 username = value;
                 return LocalValidators.generalValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.userName?.first,
+              apiError: (state?.failure as UserFieldsFailure)?.userName?.first,
             ),
             SizedBox(height: 20.0),
             RectangleTextField(
@@ -121,7 +121,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 email = value;
                 return LocalValidators.emailValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.email?.first,
+              apiError: (state?.failure as UserFieldsFailure)?.email?.first,
             ),
             SizedBox(height: 20.0),
             RectangleTextField(
@@ -132,12 +132,12 @@ class _RegisterFormState extends State<RegisterForm> {
                 phone = LocalValidators.phoneHandledValidation(value);
                 return LocalValidators.generalValidation(value);
               },
-              apiError: (state?.failure as FieldsFailure)?.phone?.first,
+              apiError: (state?.failure as UserFieldsFailure)?.phone?.first,
             ),
             SizedBox(height: 20.0),
             PasswordField(
               hintText: 'Password',
-              apiError: (state?.failure as FieldsFailure)?.password?.first,
+              apiError: (state?.failure as UserFieldsFailure)?.password?.first,
               validateRules: (value) {
                 password = value;
                 return LocalValidators.generalValidation(value);

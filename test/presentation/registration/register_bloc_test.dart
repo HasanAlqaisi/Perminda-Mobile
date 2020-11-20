@@ -55,11 +55,11 @@ void main() {
         () {
       when(registrationUseCase(user.firstName, user.lastName, user.username,
               user.email, '', null))
-          .thenAnswer((_) async => Left(FieldsFailure()));
+          .thenAnswer((_) async => Left(UserFieldsFailure()));
 
       final expectedStates = [
         RegisterInProgress(),
-        RegisterError(FieldsFailure())
+        RegisterError(UserFieldsFailure())
       ];
 
       expectLater(

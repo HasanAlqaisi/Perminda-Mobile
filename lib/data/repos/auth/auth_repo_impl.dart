@@ -24,7 +24,8 @@ class AuthRepoImpl extends AuthRepo {
             firstName, lastName, username, email, phone, password);
         return Right(result);
       } on FieldsException catch (error) {
-        return Left(FieldsFailure.fromFieldsException(json.decode(error.body)));
+        return Left(
+            UserFieldsFailure.fromFieldsException(json.decode(error.body)));
       } on UnknownException {
         return Left(UnknownFailure());
       }
@@ -58,6 +59,51 @@ class AuthRepoImpl extends AuthRepo {
       try {
         final result = await remoteDataSource.forgotPassword(email);
         return Right(result);
+      } on UnknownException {
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(NoInternetFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> editUser(
+      String firstName,
+      String lastName,
+      String username,
+      String email,
+      String phone,
+      String password,
+      String image,
+      String address) async {
+    if (await netWorkInfo.isConnected()) {
+      try {
+        final result = await remoteDataSource.editUser(firstName, lastName,
+            username, email, phone, password, image, address);
+        return Right(result);
+      } on UnauthorizedTokenException {
+        return Left(UnauthorizedTokenFailure());
+      } on FieldsException catch (fieldsError) {
+        return Left(
+          UserFieldsFailure.fromFieldsException(json.decode(fieldsError.body)),
+        );
+      } on UnknownException {
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(NoInternetFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> getUser() async {
+    if (await netWorkInfo.isConnected()) {
+      try {
+        final result = await remoteDataSource.getUser();
+        return Right(result);
+      } on UnauthorizedTokenException {
+        return Left(UnauthorizedTokenFailure());
       } on UnknownException {
         return Left(UnknownFailure());
       }
