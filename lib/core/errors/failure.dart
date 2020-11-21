@@ -80,3 +80,47 @@ class UnauthorizedTokenFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [];
 }
+
+class NotAllowedPermissionFailure extends Equatable implements Failure {
+  @override
+  List<Object> get props => [];
+}
+
+class ReviewFieldsFailure extends Equatable implements Failure {
+  final List<String> rate;
+  final List<String> message;
+  final List<String> productId;
+
+  ReviewFieldsFailure({this.rate, this.message, this.productId});
+
+  factory ReviewFieldsFailure.fromFieldsException(Map<String, dynamic> body) {
+    return ReviewFieldsFailure(
+      rate: body['rate']?.cast<String>() as List<String> ?? null,
+      message: body['message']?.cast<String>() as List<String> ?? null,
+      productId: body['product']?.cast<String>() as List<String> ?? null,
+    );
+  }
+
+  @override
+  List<Object> get props => [rate, message, productId];
+}
+
+class ProductImageFieldsFailure extends Equatable implements Failure {
+  final List<String> image;
+  final List<String> type;
+  final List<String> product;
+
+  ProductImageFieldsFailure({this.image, this.type, this.product});
+
+  factory ProductImageFieldsFailure.fromFieldsException(
+      Map<String, dynamic> body) {
+    return ProductImageFieldsFailure(
+      image: body['image']?.cast<String>() as List<String> ?? null,
+      type: body['type']?.cast<String>() as List<String> ?? null,
+      product: body['product']?.cast<String>() as List<String> ?? null,
+    );
+  }
+
+  @override
+  List<Object> get props => [image, type, product];
+}

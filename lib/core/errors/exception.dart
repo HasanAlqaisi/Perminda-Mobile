@@ -27,3 +27,9 @@ class UnauthorizedTokenException implements Exception {
 
   UnauthorizedTokenException({this.message});
 }
+
+class NotAllowedPermissionException implements Exception {
+  final String message;
+
+  NotAllowedPermissionException({this.message});
+}
