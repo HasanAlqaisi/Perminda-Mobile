@@ -2,7 +2,6 @@ import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/products/products_remote_source.dart';
-import 'package:perminda/data/remote_models/products/products.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
 import 'package:perminda/data/remote_models/products/results.dart';

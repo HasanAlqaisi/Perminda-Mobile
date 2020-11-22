@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
-import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
