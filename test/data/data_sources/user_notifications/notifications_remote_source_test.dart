@@ -6,7 +6,8 @@ import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:perminda/data/data_sources/user_notifications/notifications_remote_source.dart';
-import 'package:perminda/data/remote_models/user_notifications/user_notification.dart';
+import 'package:perminda/data/remote_models/user_notifications/results.dart';
+import 'package:perminda/data/remote_models/user_notifications/user_notifications.dart';
 
 import '../../../fixtures/fixture_reader.dart';
 
@@ -15,6 +16,8 @@ class MockHttpClient extends Mock implements http.Client {}
 void main() {
   MockHttpClient client;
   NotificationsRemoteSourceImpl remoteSource;
+  const int limit = 10;
+  int offset = 0;
 
   setUp(() {
     client = MockHttpClient();
@@ -32,14 +35,12 @@ void main() {
   }
 
   group('getNotificatons', () {
-    final userNotifcations =
-        (json.decode(fixture('user_notifications.json')) as List)
-            .map((notif) => UserNotification.fromJson(notif))
-            .toList();
+    final userNotifcations = UserNotifications.fromJson(
+        json.decode(fixture('user_notifications.json')));
 
     void do200Response() {
       when(client.get(
-        '$baseUrl/api/user-notification/',
+        '$baseUrl/api/user-notification?limit=$limit&offset=$offset',
         headers: anyNamed('headers'),
       )).thenAnswer(
           (_) async => http.Response(fixture('user_notifications.json'), 200));
@@ -48,29 +49,32 @@ void main() {
     test('should return list of [UserNotification] if response code is 200',
         () async {
       do200Response();
-      final result = await remoteSource.getNotificatons();
+      final result = await remoteSource.getNotificatons(offset);
 
       expect(result, userNotifcations);
     });
 
     test('should throw [UnauthorizedTokenException] if resonse code is 401',
         () {
-      do401Response('$baseUrl/api/user-notification/', true);
+      do401Response(
+          '$baseUrl/api/user-notification?limit=$limit&offset=$offset', true);
       final result = remoteSource.getNotificatons;
-      expect(() => result(), throwsA(isA<UnauthorizedTokenException>()));
+      expect(() => result(offset), throwsA(isA<UnauthorizedTokenException>()));
     });
 
     test(
         'should throw [UnknownException] if resonse code is neither 200 nor 401',
         () {
-      do400Response('$baseUrl/api/user-notification/', true);
+      do400Response(
+          '$baseUrl/api/user-notification?limit=$limit&offset=$offset', true);
       final result = remoteSource.getNotificatons;
-      expect(() => result(), throwsA(isA<UnknownException>()));
+      expect(() => result(offset), throwsA(isA<UnknownException>()));
     });
   });
 
-  final userNotification =
-      UserNotification.fromJson(json.decode(fixture('user_notification.json')));
+  final userNotification = UserNotificationsReusult.fromJson(
+      json.decode(fixture('user_notification.json')));
+
   group('editNotification', () {
     void do200Response(String url, bool hasHeader) {
       when(client.put(url, headers: hasHeader ? anyNamed('headers') : null))

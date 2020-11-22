@@ -6,7 +6,8 @@ import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:perminda/data/data_sources/reviews/reviews_remote_source.dart';
-import 'package:perminda/data/remote_models/reviews/review.dart';
+import 'package:perminda/data/remote_models/reviews/results.dart';
+import 'package:perminda/data/remote_models/reviews/reviews.dart';
 
 import '../../../fixtures/fixture_reader.dart';
 
@@ -15,6 +16,8 @@ class MockHttpClient extends Mock implements http.Client {}
 void main() {
   MockHttpClient client;
   ReviewsRemoteSourceImpl remoteSource;
+  const int limit = 10;
+  int offset = 0;
 
   setUp(() {
     client = MockHttpClient();
@@ -22,34 +25,35 @@ void main() {
   });
 
   group('getReviews', () {
-    final reviews = (json.decode(fixture('reviews.json')) as List)
-        .map((review) => Review.fromJson(review))
-        .toList();
+    final reviews = Reviews.fromJson(json.decode(fixture('reviews.json')));
 
     void do200Response() {
-      when(client.get('$baseUrl/api/review/', headers: anyNamed('headers')))
+      when(client.get(
+              '$baseUrl/api/review?limit=$limit&offset=$offset&product=null'))
           .thenAnswer((_) async => http.Response(fixture('reviews.json'), 200));
     }
 
     test('should return list of [reviews] if response code is 200', () async {
       do200Response();
 
-      final result = await remoteSource.getReviews('');
+      final result = await remoteSource.getReviews(null, offset);
 
       expect(result, reviews);
     });
 
     test('should throw [UnknownException] if response code is not expected',
         () {
-      when(client.get('$baseUrl/api/review/', headers: anyNamed('headers')))
+      when(client.get(
+              '$baseUrl/api/review?limit=$limit&offset=$offset&product=null'))
           .thenAnswer((_) async => http.Response(fixture('detail.json'), 500));
+
       final result = remoteSource.getReviews;
-      expect(() => result(null), throwsA(isA<UnknownException>()));
+      expect(() => result(null, offset), throwsA(isA<UnknownException>()));
     });
   });
 
   group('editReview', () {
-    final review = Review.fromJson(json.decode(fixture('review.json')));
+    final review = ReviewsResult.fromJson(json.decode(fixture('review.json')));
 
     void do200Response() {
       when(client.put('$baseUrl/api/review/${review.id}/',
@@ -125,7 +129,7 @@ void main() {
   });
 
   group('deleteReviews', () {
-    final review = Review.fromJson(json.decode(fixture('review.json')));
+    final review = ReviewsResult.fromJson(json.decode(fixture('review.json')));
 
     void do204Response() {
       when(client.delete('$baseUrl/api/review/${review.id}/',
@@ -170,7 +174,7 @@ void main() {
   });
 
   group('addReview', () {
-    final review = Review.fromJson(json.decode(fixture('review.json')));
+    final review = ReviewsResult.fromJson(json.decode(fixture('review.json')));
 
     void do201Response() {
       when(client.post('$baseUrl/api/review/',

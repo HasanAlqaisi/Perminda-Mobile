@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:perminda/data/remote_models/categories/results.dart';
 import 'package:perminda/data/remote_models/reviews/results.dart';
 
 part 'reviews.g.dart';

@@ -1,21 +1,24 @@
 import 'dart:convert';
 
+import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/reviews/reviews_remote_source.dart';
-import 'package:perminda/data/remote_models/reviews/review.dart';
+import 'package:perminda/data/remote_models/reviews/results.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
+import 'package:perminda/data/remote_models/reviews/reviews.dart';
 import 'package:perminda/domain/repos/reviews_repo.dart';
 
 class ReviewsRepoImpl extends ReviewsRepo {
   final NetWorkInfo netWorkInfo;
   final ReviewsRemoteSource remoteSource;
+  int offset = 0;
 
   ReviewsRepoImpl({this.netWorkInfo, this.remoteSource});
 
   @override
-  Future<Either<Failure, Review>> addReview(
+  Future<Either<Failure, ReviewsResult>> addReview(
     int rate,
     String message,
     String productId,
@@ -60,7 +63,7 @@ class ReviewsRepoImpl extends ReviewsRepo {
   }
 
   @override
-  Future<Either<Failure, Review>> editReview(
+  Future<Either<Failure, ReviewsResult>> editReview(
     String reviewId,
     int rate,
     String message,
@@ -88,10 +91,15 @@ class ReviewsRepoImpl extends ReviewsRepo {
   }
 
   @override
-  Future<Either<Failure, List<Review>>> getReviews(String productId) async {
+  Future<Either<Failure, Reviews>> getReviews(String productId) async {
     if (await netWorkInfo.isConnected()) {
       try {
-        final result = await remoteSource.getReviews(productId);
+        final result = await remoteSource.getReviews(productId, this.offset);
+
+        final offset = API.offsetExtractor(result.nextPage);
+
+        cacheOffset(offset);
+
         return Right(result);
       } on UnknownException catch (error) {
         print(error.message);
@@ -100,5 +108,9 @@ class ReviewsRepoImpl extends ReviewsRepo {
     } else {
       return Left(NoInternetFailure());
     }
+  }
+
+  void cacheOffset(int offset) {
+    this.offset = offset;
   }
 }

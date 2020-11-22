@@ -7,7 +7,8 @@ import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/reviews/reviews_remote_source.dart';
-import 'package:perminda/data/remote_models/reviews/review.dart';
+import 'package:perminda/data/remote_models/reviews/results.dart';
+import 'package:perminda/data/remote_models/reviews/reviews.dart';
 import 'package:perminda/data/repos/reviews/reviews_repo_impl.dart';
 
 import '../../../fixtures/fixture_reader.dart';
@@ -33,11 +34,9 @@ void main() {
       when(netWorkInfo.isConnected()).thenAnswer((_) async => true);
     });
 
-    final review = Review.fromJson(json.decode(fixture('review.json')));
+    final review = ReviewsResult.fromJson(json.decode(fixture('review.json')));
 
-    final reviews = (json.decode(fixture('reviews.json')) as List)
-        .map((review) => Review.fromJson(review))
-        .toList();
+    final reviews = Reviews.fromJson(json.decode(fixture('reviews.json')));
 
     group('addReview', () {
       test('should user has an internet connection', () async {
@@ -168,16 +167,28 @@ void main() {
 
     group('getReviews', () {
       test('should user has an internet connection', () async {
-        await repo.getReviews('');
+        when(remoteSource.getReviews(null, repo.offset))
+            .thenAnswer((_) async => reviews);
+
+        await repo.getReviews(null);
 
         verify(netWorkInfo.isConnected());
-
         expect(await netWorkInfo.isConnected(), true);
+      });
+
+      test('should cache the offset', () async {
+        when(remoteSource.getReviews(null, repo.offset))
+            .thenAnswer((_) async => reviews);
+
+        await repo.getReviews(null);
+
+        expect(repo.offset, 400);
       });
 
       test('should return list of [review] if remote call is success',
           () async {
-        when(remoteSource.getReviews('')).thenAnswer((_) async => reviews);
+        when(remoteSource.getReviews('', repo.offset))
+            .thenAnswer((_) async => reviews);
 
         final result = await repo.getReviews('');
 
@@ -187,7 +198,8 @@ void main() {
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {
-        when(remoteSource.getReviews('')).thenThrow(UnknownException());
+        when(remoteSource.getReviews('', repo.offset))
+            .thenThrow(UnknownException());
 
         final result = await repo.getReviews('');
 
