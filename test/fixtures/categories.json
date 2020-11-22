@@ -1,7 +1,12 @@
-[
-    {
-        "pk": "6ed29f7b-88b5-4dad-a2dd-c7d5d6df5e4d",
-        "parent": null,
-        "name": "Electronics"
-    }
-]
+{
+    "count": 123,
+    "next": "http://api.example.org/accounts/?offset=400&limit=100",
+    "previous": "http://api.example.org/accounts/?offset=200&limit=100",
+    "results": [
+        {
+            "pk": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "parent": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "name": "string"
+        }
+    ]
+}

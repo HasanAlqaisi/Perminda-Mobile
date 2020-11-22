@@ -1,12 +1,12 @@
-[
-  {
-      "pk": "a7533fbf-5ab6-41a9-b110-42ac54d71def",
-      "name": "First",
-      "logo": "http://ec2-18-188-126-31.us-east-2.compute.amazonaws.com/mediafiles/brand-logos/00.jpeg"
-  },
-  {
-      "pk": "9e662cac-57ae-4971-a65e-fd21c5a203e2",
-      "name": "Second",
-      "logo": "http://ec2-18-188-126-31.us-east-2.compute.amazonaws.com/mediafiles/brand-logos/01.jpeg"
-  }
-]
+{
+  "count": 123,
+  "next": "http://api.example.org/accounts/?offset=400&limit=100",
+  "previous": "http://api.example.org/accounts/?offset=200&limit=100",
+  "results": [
+    {
+      "pk": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "name": "string",
+      "logo": "string"
+    }
+  ]
+}
