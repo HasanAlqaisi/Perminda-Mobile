@@ -1,0 +1,26 @@
+{
+    "count": 123,
+    "next": "http://api.example.org/accounts/?offset=400&limit=100",
+    "previous": "http://api.example.org/accounts/?offset=200&limit=100",
+    "results": [
+      {
+        "pk": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "shop": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "category": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "brand": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "string",
+        "price": 0,
+        "sale": 0,
+        "overview": "string",
+        "delivery_time": 0,
+        "rate": 0,
+        "buyers": 0,
+        "nf_reviews": 0,
+        "active": true,
+        "quantity": 0,
+        "date_added": "2020-11-22T11:31:48.285Z",
+        "date_first_activated": "2020-11-22T11:31:48.285Z",
+        "last_update": "2020-11-22T11:31:48.285Z"
+      }
+    ]
+  }
