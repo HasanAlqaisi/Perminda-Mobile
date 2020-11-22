@@ -7,7 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/data/data_sources/shops/shops_remote_source.dart';
-import 'package:perminda/data/remote_models/shops/shop.dart';
+import 'package:perminda/data/remote_models/shops/results.dart';
+import 'package:perminda/data/remote_models/shops/shops.dart';
 
 import '../../../fixtures/fixture_reader.dart';
 
@@ -16,21 +17,23 @@ class MockHttpClient extends Mock implements http.Client {}
 void main() {
   MockHttpClient client;
   ShopsRemoteSourceImpl shopsRemoteSource;
+  const int limit = 10;
+  int offset = 0;
+
   setUp(() {
     client = MockHttpClient();
     shopsRemoteSource = ShopsRemoteSourceImpl(client: client);
   });
 
   group('getShops', () {
-    final shops = (json.decode(fixture('shops.json')) as List)
-        .map((shop) => Shop.fromJson(shop))
-        .toList();
+    final shops = Shops.fromJson(json.decode(fixture('shops.json')));
+
     test('should return list of [Shop] when response code is 200', () async {
       when(client.get(
-        '$baseUrl/api/shop/',
+        '$baseUrl/api/shop?limit=$limit&offset=$offset',
       )).thenAnswer((_) async => http.Response(fixture('shops.json'), 200));
 
-      final result = await shopsRemoteSource.getShops();
+      final result = await shopsRemoteSource.getShops(offset);
 
       expect(result, shops);
     });
@@ -38,17 +41,17 @@ void main() {
     test('should throw [UnknownException] when response code is not 200',
         () async {
       when(client.get(
-        '$baseUrl/api/shop/',
+        '$baseUrl/api/shop?limit=$limit&offset=$offset',
       )).thenThrow(UnknownException(message: ''));
 
       final result = shopsRemoteSource.getShops;
 
-      expect(result(), throwsA(isA<UnknownException>()));
+      expect(result(offset), throwsA(isA<UnknownException>()));
     });
   });
 
   group('getShopById', () {
-    final shop = Shop.fromJson(json.decode(fixture('shop.json')));
+    final shop = ShopsResult.fromJson(json.decode(fixture('shop.json')));
     test('should return shop when resposne code is 200', () async {
       when(client.get('$baseUrl/api/shop/${shop.id}'))
           .thenAnswer((_) async => http.Response(fixture('shop.json'), 200));

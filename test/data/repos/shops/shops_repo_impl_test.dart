@@ -7,7 +7,8 @@ import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/shops/shops_remote_source.dart';
-import 'package:perminda/data/remote_models/shops/shop.dart';
+import 'package:perminda/data/remote_models/shops/results.dart';
+import 'package:perminda/data/remote_models/shops/shops.dart';
 import 'package:perminda/data/repos/shops/shops_repo_impl.dart';
 
 import '../../../fixtures/fixture_reader.dart';
@@ -35,20 +36,30 @@ void main() {
       when(netWorkInfo.isConnected()).thenAnswer((_) async => true);
     });
     group('getShops', () {
-      final shops = (json.decode(fixture('shops.json')) as List)
-          .map((shop) => Shop.fromJson(shop))
-          .toList();
+      final shops = Shops.fromJson(json.decode(fixture('shops.json')));
 
       test('should check if the device is online', () async {
+        when(remoteDataSource.getShops(shopsRepo.offset))
+            .thenAnswer((_) async => shops);
+            
         shopsRepo.getShops();
 
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
 
+      test('should cache the offset', () async {
+        when(remoteDataSource.getShops(shopsRepo.offset))
+            .thenAnswer((_) async => shops);
+
+        await shopsRepo.getShops();
+
+        expect(shopsRepo.offset, 400);
+      });
+
       test('should return list of [Shop] when remote call is success',
           () async {
-        when(remoteDataSource.getShops()).thenAnswer((_) async => shops);
+        when(remoteDataSource.getShops(shopsRepo.offset)).thenAnswer((_) async => shops);
 
         final result = await shopsRepo.getShops();
 
@@ -58,7 +69,7 @@ void main() {
       test(
           'should return [UnknownFailure] when remote call throws [UnknownException]',
           () async {
-        when(remoteDataSource.getShops()).thenThrow(UnknownException());
+        when(remoteDataSource.getShops(shopsRepo.offset)).thenThrow(UnknownException());
 
         final result = await shopsRepo.getShops();
 
@@ -67,7 +78,7 @@ void main() {
     });
 
     group('getShopById', () {
-      final shop = Shop.fromJson(json.decode(fixture('shop.json')));
+      final shop = ShopsResult.fromJson(json.decode(fixture('shop.json')));
 
       test('should check if the device is online', () async {
         shopsRepo.getShopById(null);

@@ -1,22 +1,30 @@
+import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/shops/shops_remote_source.dart';
-import 'package:perminda/data/remote_models/shops/shop.dart';
+import 'package:perminda/data/remote_models/shops/results.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
+import 'package:perminda/data/remote_models/shops/shops.dart';
 import 'package:perminda/domain/repos/shops_repo.dart';
 
 class ShopsRepoImpl extends ShopsRepo {
   final NetWorkInfo netWorkInfo;
   final ShopsRemoteSource remoteSource;
+  int offset = 0;
 
   ShopsRepoImpl({this.netWorkInfo, this.remoteSource});
 
   @override
-  Future<Either<Failure, List<Shop>>> getShops() async {
+  Future<Either<Failure, Shops>> getShops() async {
     if (await netWorkInfo.isConnected()) {
       try {
-        final result = await remoteSource.getShops();
+        final result = await remoteSource.getShops(this.offset);
+
+        final offset = API.offsetExtractor(result.nextPage);
+
+        cacheOffset(offset);
+
         return Right(result);
       } on UnknownException {
         return Left(UnknownFailure());
@@ -26,8 +34,12 @@ class ShopsRepoImpl extends ShopsRepo {
     }
   }
 
+  void cacheOffset(int offset) {
+    this.offset = offset;
+  }
+
   @override
-  Future<Either<Failure, Shop>> getShopById(String id) async {
+  Future<Either<Failure, ShopsResult>> getShopById(String id) async {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getShopById(id);

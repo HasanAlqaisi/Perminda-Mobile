@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
-import 'package:perminda/data/remote_models/shops/shop.dart';
+import 'package:perminda/data/remote_models/shops/results.dart';
 import 'package:http/http.dart' as http;
+import 'package:perminda/data/remote_models/shops/shops.dart';
 
 abstract class ShopsRemoteSource {
-  Future<List<Shop>> getShops();
+  Future<Shops> getShops(int offset);
 
-  Future<Shop> getShopById(String id);
+  Future<ShopsResult> getShopById(String id);
 }
 
 class ShopsRemoteSourceImpl extends ShopsRemoteSource {
@@ -17,24 +18,23 @@ class ShopsRemoteSourceImpl extends ShopsRemoteSource {
   ShopsRemoteSourceImpl({this.client});
 
   @override
-  Future<List<Shop>> getShops() async {
-    final response = await client.get('$baseUrl/api/shop/');
+  Future<Shops> getShops(int offset) async {
+    final response =
+        await client.get('$baseUrl/api/shop?limit=10&offset=$offset');
 
     if (response.statusCode == 200) {
-      return (json.decode(response.body) as List)
-          .map((shop) => Shop.fromJson(shop))
-          .toList();
+      return Shops.fromJson(json.decode(response.body));
     } else {
       throw UnknownException(message: json.decode(response.body));
     }
   }
 
   @override
-  Future<Shop> getShopById(String id) async {
+  Future<ShopsResult> getShopById(String id) async {
     final response = await client.get('$baseUrl/api/shop/$id');
 
     if (response.statusCode == 200) {
-      return Shop.fromJson(json.decode(response.body));
+      return ShopsResult.fromJson(json.decode(response.body));
     } else if (response.statusCode == 404) {
       throw ItemNotFoundException();
     } else {
