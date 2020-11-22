@@ -1,14 +1,17 @@
+import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/user_notifications/notifications_remote_source.dart';
-import 'package:perminda/data/remote_models/user_notifications/user_notification.dart';
+import 'package:perminda/data/remote_models/user_notifications/results.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
+import 'package:perminda/data/remote_models/user_notifications/user_notifications.dart';
 import 'package:perminda/domain/repos/user_notifications_repo.dart';
 
 class UserNotificationsRepoImpl extends UserNotificationsRepo {
   final NetWorkInfo netWorkInfo;
   final NotificationsRemoteSource remoteSource;
+  int offset = 0;
 
   UserNotificationsRepoImpl({this.netWorkInfo, this.remoteSource});
 
@@ -32,7 +35,8 @@ class UserNotificationsRepoImpl extends UserNotificationsRepo {
   }
 
   @override
-  Future<Either<Failure, UserNotification>> editNotification(String id) async {
+  Future<Either<Failure, UserNotificationsReusult>> editNotification(
+      String id) async {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.editNotification(id);
@@ -51,10 +55,15 @@ class UserNotificationsRepoImpl extends UserNotificationsRepo {
   }
 
   @override
-  Future<Either<Failure, List<UserNotification>>> getNotifications() async {
+  Future<Either<Failure, UserNotifications>> getNotifications() async {
     if (await netWorkInfo.isConnected()) {
       try {
-        final result = await remoteSource.getNotificatons();
+        final result = await remoteSource.getNotificatons(this.offset);
+
+        final offset = API.offsetExtractor(result.nextPage);
+
+        cacheOffset(offset);
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -65,5 +74,9 @@ class UserNotificationsRepoImpl extends UserNotificationsRepo {
     } else {
       return Left(NoInternetFailure());
     }
+  }
+
+  void cacheOffset(int offset) {
+    this.offset = offset;
   }
 }

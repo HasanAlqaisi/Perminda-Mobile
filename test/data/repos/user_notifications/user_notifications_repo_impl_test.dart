@@ -7,7 +7,8 @@ import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/user_notifications/notifications_remote_source.dart';
-import 'package:perminda/data/remote_models/user_notifications/user_notification.dart';
+import 'package:perminda/data/remote_models/user_notifications/results.dart';
+import 'package:perminda/data/remote_models/user_notifications/user_notifications.dart';
 import 'package:perminda/data/repos/user_notifications/user_notifications_repo_impl.dart';
 
 import '../../../fixtures/fixture_reader.dart';
@@ -34,20 +35,31 @@ void main() {
     });
 
     group('getNotifications', () {
-      final userNotifications =
-          (json.decode(fixture('user_notifications.json')) as List)
-              .map((notif) => UserNotification.fromJson(notif))
-              .toList();
+      final userNotifications = UserNotifications.fromJson(
+          json.decode(fixture('user_notifications.json')));
 
       test('should user has an internet connection', () async {
+        when(remoteSource.getNotificatons(repo.offset))
+            .thenAnswer((_) async => userNotifications);
+
         await repo.getNotifications();
+
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
 
+      test('should cache the offset', () async {
+        when(remoteSource.getNotificatons(repo.offset))
+            .thenAnswer((_) async => userNotifications);
+
+        await repo.getNotifications();
+
+        expect(repo.offset, 400);
+      });
+
       test('should return list of [UserNotification] if remote call is success',
           () async {
-        when(remoteSource.getNotificatons())
+        when(remoteSource.getNotificatons(repo.offset))
             .thenAnswer((_) async => userNotifications);
 
         final result = await repo.getNotifications();
@@ -58,7 +70,7 @@ void main() {
       test(
           'should return [UnauthorizedTokenFailure] if remote call throws [UnauthorizedTokenException]',
           () async {
-        when(remoteSource.getNotificatons())
+        when(remoteSource.getNotificatons(repo.offset))
             .thenThrow(UnauthorizedTokenException());
 
         final result = await repo.getNotifications();
@@ -69,18 +81,22 @@ void main() {
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {
-        when(remoteSource.getNotificatons()).thenThrow(UnknownException());
+        when(remoteSource.getNotificatons(repo.offset)).thenThrow(UnknownException());
         final result = await repo.getNotifications();
         expect(result, Left(UnknownFailure()));
       });
     });
 
     group('editNotification', () {
-      final userNotification = UserNotification.fromJson(
+      final userNotification = UserNotificationsReusult.fromJson(
           json.decode(fixture('user_notification.json')));
 
       test('should user has an internet connection', () async {
-        await repo.getNotifications();
+        when(remoteSource.editNotification(userNotification.id))
+            .thenAnswer((_) async => userNotification);
+
+        await repo.editNotification('');
+        
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
@@ -129,7 +145,7 @@ void main() {
 
     group('deleteNotification', () {
       test('should user has an internet connection', () async {
-        await repo.getNotifications();
+        await repo.deleteNotification('');
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });

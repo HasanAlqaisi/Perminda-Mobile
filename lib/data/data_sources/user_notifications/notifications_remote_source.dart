@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
-import 'package:perminda/data/remote_models/user_notifications/user_notification.dart';
+import 'package:perminda/data/remote_models/user_notifications/results.dart';
 import 'package:http/http.dart' as http;
+import 'package:perminda/data/remote_models/user_notifications/user_notifications.dart';
 
 abstract class NotificationsRemoteSource {
-  Future<List<UserNotification>> getNotificatons();
+  Future<UserNotifications> getNotificatons(int offset);
 
-  Future<UserNotification> editNotification(String id);
+  Future<UserNotificationsReusult> editNotification(String id);
 
   Future<bool> deleteNotification(String id);
 }
@@ -35,12 +36,12 @@ class NotificationsRemoteSourceImpl extends NotificationsRemoteSource {
   }
 
   @override
-  Future<UserNotification> editNotification(String id) async {
+  Future<UserNotificationsReusult> editNotification(String id) async {
     final response = await client.put('$baseUrl/api/user-notification/$id/',
         headers: {'Authorization': token});
 
     if (response.statusCode == 200) {
-      return UserNotification.fromJson(json.decode(response.body));
+      return UserNotificationsReusult.fromJson(json.decode(response.body));
     } else if (response.statusCode == 401) {
       throw UnauthorizedTokenException();
     } else if (response.statusCode == 404) {
@@ -51,16 +52,15 @@ class NotificationsRemoteSourceImpl extends NotificationsRemoteSource {
   }
 
   @override
-  Future<List<UserNotification>> getNotificatons() async {
-    final response =
-        await client.get('$baseUrl/api/user-notification/', headers: {
-      'Authorization': token,
-    });
+  Future<UserNotifications> getNotificatons(int offset) async {
+    final response = await client.get(
+        '$baseUrl/api/user-notification?limit=10&offset=$offset',
+        headers: {
+          'Authorization': token,
+        });
 
     if (response.statusCode == 200) {
-      return (json.decode(response.body) as List)
-          .map((notification) => UserNotification.fromJson(notification))
-          .toList();
+      return UserNotifications.fromJson(json.decode(response.body));
     } else if (response.statusCode == 401) {
       throw UnauthorizedTokenException();
     } else {
