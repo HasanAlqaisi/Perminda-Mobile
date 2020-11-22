@@ -6,7 +6,8 @@ import 'package:mockito/mockito.dart';
 import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/data/data_sources/categories/remote_soruce.dart';
-import 'package:perminda/data/remote_models/categories/category.dart';
+import 'package:perminda/data/remote_models/categories/categories.dart';
+import 'package:perminda/data/remote_models/categories/results.dart';
 
 import '../../../fixtures/fixture_reader.dart';
 
@@ -15,6 +16,8 @@ class MockHttpClient extends Mock implements http.Client {}
 void main() {
   MockHttpClient client;
   CategoriesRemoteSourceImpl remoteSourceImpl;
+  const int limit = 10;
+  int offset = 0;
 
   setUp(() {
     client = MockHttpClient();
@@ -22,23 +25,22 @@ void main() {
   });
 
   group('getCategories', () {
-    final categories = (json.decode(fixture('categories.json')) as List)
-        .map((category) => Category.fromJson(category))
-        .toList();
+    final categories =
+        Categories.fromJson(json.decode(fixture('categories.json')));
 
     void do200Response() {
-      when(client.get('$baseUrl/api/category/')).thenAnswer(
+      when(client.get('$baseUrl/api/category?limit=$limit&offset=$offset')).thenAnswer(
           (_) async => http.Response(fixture('categories.json'), 200));
     }
 
     void do404Response() {
-      when(client.get('$baseUrl/api/category/'))
+      when(client.get('$baseUrl/api/category?limit=$limit&offset=$offset'))
           .thenAnswer((_) async => http.Response(fixture('detail.json'), 404));
     }
 
     test('should return list of [Category] if response code is 200', () async {
       do200Response();
-      final result = await remoteSourceImpl.getCategories();
+      final result = await remoteSourceImpl.getCategories(offset);
 
       expect(result, categories);
     });
@@ -48,12 +50,12 @@ void main() {
 
       final result = remoteSourceImpl.getCategories;
 
-      expect(() => result(), throwsA(isA<UnknownException>()));
+      expect(() => result(offset), throwsA(isA<UnknownException>()));
     });
   });
 
   group('getCategoryById', () {
-    final category = Category.fromJson(json.decode(fixture('category.json')));
+    final category = CategoriesResult.fromJson(json.decode(fixture('category.json')));
     final id = '6ed29f7b-88b5-4dad-a2dd-c7d5d6df5e4d';
 
     void do200Response() {

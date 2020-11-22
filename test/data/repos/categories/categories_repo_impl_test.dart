@@ -7,7 +7,8 @@ import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/categories/remote_soruce.dart';
-import 'package:perminda/data/remote_models/categories/category.dart';
+import 'package:perminda/data/remote_models/categories/categories.dart';
+import 'package:perminda/data/remote_models/categories/results.dart';
 import 'package:perminda/data/repos/categories/categories_repo_impl.dart';
 
 import '../../../fixtures/fixture_reader.dart';
@@ -35,17 +36,31 @@ void main() {
     });
 
     group('getCategories', () {
-      final categories = (json.decode(fixture('categories.json')) as List)
-          .map((category) => Category.fromJson(category))
-          .toList();
+      final categories =
+          Categories.fromJson(json.decode(fixture('categories.json')));
+
       test('should user has an internet connection', () async {
+        when(remoteSource.getCategories(categoriesRepo.offset))
+            .thenAnswer((_) async => categories);
+
         await categoriesRepo.getCategories();
+        
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
 
+      test('should cache the offset', () async {
+        when(remoteSource.getCategories(categoriesRepo.offset))
+            .thenAnswer((_) async => categories);
+
+        await categoriesRepo.getCategories();
+
+        expect(categoriesRepo.offset, 400);
+      });
+
       test('shuold return list of [Category] if remote call success', () async {
-        when(remoteSource.getCategories()).thenAnswer((_) async => categories);
+        when(remoteSource.getCategories(categoriesRepo.offset))
+            .thenAnswer((_) async => categories);
         final result = await categoriesRepo.getCategories();
         expect(result, Right(categories));
       });
@@ -53,7 +68,8 @@ void main() {
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {
-        when(remoteSource.getCategories()).thenThrow(UnknownException());
+        when(remoteSource.getCategories(categoriesRepo.offset))
+            .thenThrow(UnknownException());
         final result = await categoriesRepo.getCategories();
         expect(result, Left(UnknownFailure()));
       });
@@ -61,7 +77,7 @@ void main() {
 
     group('getCategoryById', () {
       final category =
-          Category.fromJson(json.decode(fixture('category.json')));
+          CategoriesResult.fromJson(json.decode(fixture('category.json')));
 
       test('should user has an internet connection', () async {
         await categoriesRepo.getCategoryById(null);
