@@ -1,8 +1,13 @@
-[
-    {
-        "pk": "92d91e3d-60ad-4a6b-ba4b-dd92b7201cd9",
-        "user": "fbff08a7-ac13-4a45-91df-b756b9e896e4",
-        "name": "postmanShopTwo",
-        "date_created": "2020-11-18T20:48:43.436155Z"
-    }
-]
+{
+    "count": 123,
+    "next": "http://api.example.org/accounts/?offset=400&limit=100",
+    "previous": "http://api.example.org/accounts/?offset=200&limit=100",
+    "results": [
+      {
+        "pk": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "user": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "string",
+        "date_created": "2020-11-22T16:33:54.301Z"
+      }
+    ]
+  }

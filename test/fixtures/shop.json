@@ -1,13 +1,6 @@
 {
-    "count": 123,
-    "next": "http://api.example.org/accounts/?offset=400&limit=100",
-    "previous": "http://api.example.org/accounts/?offset=200&limit=100",
-    "results": [
-      {
-        "pk": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "user": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "name": "string",
-        "date_created": "2020-11-22T14:47:55.075Z"
-      }
-    ]
-  }
+  "pk": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "user": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "string",
+  "date_created": "2020-11-22T16:34:15.107Z"
+}
