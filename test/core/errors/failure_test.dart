@@ -49,6 +49,34 @@ void main() {
     expect(result, producImageFailure);
   });
 
+  test(
+      'should convert FieldsException to CartItemsFieldsFailure in a correct way',
+      () {
+    final cartItemsFieldsBody =
+        json.decode(fixture('cart_items_fields_error.json'));
+
+    final cartItemsFailure = CartItemsFieldsFailure(product: ['not correct']);
+
+    final result =
+        CartItemsFieldsFailure.fromFieldsException(cartItemsFieldsBody);
+
+    expect(result, cartItemsFailure);
+  });
+
+  test(
+      'should convert FieldsException to CartItemsFieldsFailure in a correct way',
+      () {
+    final favouritesFieldsBody =
+        json.decode(fixture('favourite_fields_error.json'));
+
+    final favouritesFailure = FavouritesFieldsFailure(product: ['not correct']);
+
+    final result =
+        FavouritesFieldsFailure.fromFieldsException(favouritesFieldsBody);
+
+    expect(result, favouritesFailure);
+  });
+
   test('should convert NonFieldsException to NonFieldsFailure in a correct way',
       () {
     final result = NonFieldsFailure.fromNonFieldsException(nonFieldsBody);
