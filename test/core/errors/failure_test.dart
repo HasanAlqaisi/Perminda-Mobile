@@ -77,6 +77,17 @@ void main() {
     expect(result, favouritesFailure);
   });
 
+  test('should convert FieldsException to OrdersFieldsFailure in a correct way',
+      () {
+    final ordersFieldsBody = json.decode(fixture('orders_fields_error.json'));
+
+    final ordersFailure = OrdersFieldsFailure(product: ['not correct']);
+
+    final result = OrdersFieldsFailure.fromFieldsException(ordersFieldsBody);
+
+    expect(result, ordersFailure);
+  });
+
   test('should convert NonFieldsException to NonFieldsFailure in a correct way',
       () {
     final result = NonFieldsFailure.fromNonFieldsException(nonFieldsBody);
