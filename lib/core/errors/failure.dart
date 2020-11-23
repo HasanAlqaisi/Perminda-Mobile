@@ -124,3 +124,41 @@ class ProductImageFieldsFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [image, type, product];
 }
+
+class FavouritesFieldsFailure extends Equatable implements Failure {
+  final List<String> pk;
+  final List<String> user;
+  final List<String> product;
+
+  FavouritesFieldsFailure({this.product, this.pk, this.user});
+
+  factory FavouritesFieldsFailure.fromFieldsException(
+      Map<String, dynamic> body) {
+    return FavouritesFieldsFailure(
+      pk: body['pk']?.cast<String>() as List<String> ?? null,
+      user: body['user']?.cast<String>() as List<String> ?? null,
+      product: body['product']?.cast<String>() as List<String> ?? null,
+    );
+  }
+
+  @override
+  List<Object> get props => [pk, user, product];
+}
+
+class CartItemsFieldsFailure extends Equatable implements Failure {
+  final List<String> product;
+  final List<String> quantity;
+
+  CartItemsFieldsFailure({this.product, this.quantity});
+
+  factory CartItemsFieldsFailure.fromFieldsException(
+      Map<String, dynamic> body) {
+    return CartItemsFieldsFailure(
+      product: body['product']?.cast<String>() as List<String> ?? null,
+      quantity: body['quantity']?.cast<String>() as List<String> ?? null,
+    );
+  }
+
+  @override
+  List<Object> get props => [product, quantity];
+}
