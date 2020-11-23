@@ -162,3 +162,22 @@ class CartItemsFieldsFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [product, quantity];
 }
+
+class OrdersFieldsFailure extends Equatable implements Failure {
+  final List<String> address;
+  final List<String> product;
+  final List<String> quantity;
+
+  OrdersFieldsFailure({this.address, this.product, this.quantity});
+
+  factory OrdersFieldsFailure.fromFieldsException(Map<String, dynamic> body) {
+    return OrdersFieldsFailure(
+      address: body['address']?.cast<String>() as List<String> ?? null,
+      product: body['product']?.cast<String>() as List<String> ?? null,
+      quantity: body['quantity']?.cast<String>() as List<String> ?? null,
+    );
+  }
+
+  @override
+  List<Object> get props => [product, quantity];
+}
