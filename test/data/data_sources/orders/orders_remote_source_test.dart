@@ -17,7 +17,6 @@ class MockHttpClient extends Mock implements http.Client {}
 void main() {
   MockHttpClient client;
   OrdersRemoteSourceImpl remoteSource;
-  const int limit = 10;
   int offset = 0;
 
   final orders = Orders.fromJson(json.decode(fixture('orders.json')));
