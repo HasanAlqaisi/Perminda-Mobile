@@ -23,7 +23,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final result = await loginUserUseCase(event.username, event.password);
 
       yield result.fold(
-          (failure) => LoginError(failure: failure), (token) => LoginSuccess());
+          (failure) => LoginError(failure: failure), (_) => LoginSuccess());
     }
   }
 }

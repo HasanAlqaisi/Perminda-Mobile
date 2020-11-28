@@ -8,7 +8,7 @@ class RegisterUserUseCase {
 
   RegisterUserUseCase({this.authRepo});
 
-  Future<Either<Failure, User>> call(
+  Future<Either<Failure, bool>> call(
     String firstName,
     String lastName,
     String username,

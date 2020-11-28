@@ -3,7 +3,7 @@ import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/data/remote_models/auth/user.dart';
 
 abstract class AuthRepo {
-  Future<Either<Failure, User>> registerUser(
+  Future<Either<Failure, bool>> registerUser(
     String firstName,
     String lastName,
     String username,
@@ -12,7 +12,7 @@ abstract class AuthRepo {
     String password,
   );
 
-  Future<Either<Failure, String>> loginUser(String username, String password);
+  Future<Either<Failure, bool>> loginUser(String username, String password);
 
   Future<Either<Failure, String>> forgotPassword(String email);
 

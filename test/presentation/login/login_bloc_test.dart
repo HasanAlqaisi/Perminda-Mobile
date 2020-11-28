@@ -22,7 +22,7 @@ void main() {
 
   group('loginUseCase', () {
     test('should emit [LoginInProgress, LoginSuccess] if call is success]', () {
-      when(loginUserUseCase('', '')).thenAnswer((_) async => Right('token'));
+      when(loginUserUseCase('', '')).thenAnswer((_) async => Right(true));
 
       final expectedStates = [LoginInProgress(), LoginSuccess()];
 

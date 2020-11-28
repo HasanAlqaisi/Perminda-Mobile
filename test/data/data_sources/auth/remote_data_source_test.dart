@@ -28,10 +28,10 @@ void main() {
       when(client.post(
         '$baseUrl/api/accounts/registration/',
         body: {
-          'first_name': 'Hasan',
-          'last_name': 'AlQaisi',
-          'username': 'hasan4',
-          'email': 'hasan.alqaisi2000@gmail.com',
+          'first_name': 'string',
+          'last_name': 'string',
+          'username': 'string',
+          'email': 'user@example.com',
           'phone_number': '',
           'password': '3489',
         },
@@ -47,10 +47,10 @@ void main() {
       when(client.post(
         '$baseUrl/api/accounts/registration/',
         body: {
-          'first_name': 'Hasan',
-          'last_name': 'AlQaisi',
-          'username': 'hasan4',
-          'email': 'hasan.alqaisi2000@gmail.com',
+          'first_name': 'string',
+          'last_name': 'string',
+          'username': 'string',
+          'email': 'user@example.com',
           'phone_number': '',
           'password': '3489',
         },
@@ -71,10 +71,10 @@ void main() {
       when(client.post(
         '$baseUrl/api/accounts/registration/',
         body: {
-          'first_name': 'Hasan',
-          'last_name': 'AlQaisi',
-          'username': 'hasan4',
-          'email': 'hasan.alqaisi2000@gmail.com',
+          'first_name': 'string',
+          'last_name': 'string',
+          'username': 'string',
+          'email': 'user@example.com',
           'phone_number': '',
           'password': '3489',
         },

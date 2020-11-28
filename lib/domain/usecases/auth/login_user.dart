@@ -7,7 +7,7 @@ class LoginUserUseCase {
 
   LoginUserUseCase({this.authRepo});
 
-  Future<Either<Failure, String>> call(String username, String password) async {
+  Future<Either<Failure, bool>> call(String username, String password) async {
     return await authRepo.loginUser(username, password);
   }
 }

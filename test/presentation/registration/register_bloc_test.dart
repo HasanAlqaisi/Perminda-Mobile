@@ -32,11 +32,11 @@ void main() {
         () {
       when(registrationUseCase(user.firstName, user.lastName, user.username,
               user.email, '', null))
-          .thenAnswer((_) async => Right(user));
+          .thenAnswer((_) async => Right(true));
 
       final expectedStates = [
         RegisterInProgress(),
-        RegisterSuccess(user: user)
+        RegisterSuccess()
       ];
 
       expectLater(

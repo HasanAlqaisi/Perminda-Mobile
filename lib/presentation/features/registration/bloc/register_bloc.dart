@@ -35,7 +35,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       event.phone,
       event.password,
     );
-    yield result.fold((failure) => RegisterError(failure),
-        (user) => RegisterSuccess(user: user));
+    yield result.fold(
+        (failure) => RegisterError(failure), (_) => RegisterSuccess());
   }
 }

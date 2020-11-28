@@ -11,11 +11,7 @@ class RegisterInitial extends RegisterState {}
 
 class RegisterInProgress extends RegisterState {}
 
-class RegisterSuccess extends RegisterState {
-  final User user;
-
-  RegisterSuccess({this.user});
-}
+class RegisterSuccess extends RegisterState {}
 
 class RegisterError extends RegisterState {
   final Failure failure;

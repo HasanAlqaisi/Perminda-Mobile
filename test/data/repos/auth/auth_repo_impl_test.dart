@@ -3,10 +3,15 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:moor_flutter/moor_flutter.dart';
+import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/auth/local_source.dart';
 import 'package:perminda/data/data_sources/auth/remote_data_source.dart';
+import 'package:perminda/data/db/app_database/app_database.dart';
+import 'package:perminda/data/db/models/user/user_table.dart';
 import 'package:perminda/data/remote_models/auth/user.dart';
 import 'package:perminda/data/repos/auth/auth_repo_impl.dart';
 
@@ -16,17 +21,22 @@ class MockNetWorkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteDataSource extends Mock implements AuthRemoteDataSource {}
 
+class MockUserLocalSource extends Mock implements UserLocalSource {}
+
 void main() {
   MockNetWorkInfo netWorkInfo;
   MockRemoteDataSource remoteDataSource;
+  MockUserLocalSource userLocalSource;
   AuthRepoImpl authRepo;
 
   setUp(() {
     netWorkInfo = MockNetWorkInfo();
     remoteDataSource = MockRemoteDataSource();
+    userLocalSource = MockUserLocalSource();
     authRepo = AuthRepoImpl(
       netWorkInfo: netWorkInfo,
       remoteDataSource: remoteDataSource,
+      userLocalSource: userLocalSource,
     );
   });
 
@@ -37,25 +47,55 @@ void main() {
 
     final user = User.fromJson(json.decode(fixture('user.json')));
     group('registerUser', () {
+      setUp(() {
+        when(remoteDataSource.registerUser(user.firstName, user.lastName,
+                user.username, user.email, '', '3489'))
+            .thenAnswer((_) async => user);
+
+        when(remoteDataSource.loginUser(user.username, '3489'))
+            .thenAnswer((_) async => token);
+        when(userLocalSource
+                .cacheUserId('3fa85f64-5717-4562-b3fc-2c963f66afa6'))
+            .thenAnswer((_) async => null);
+        when(userLocalSource.cacheUserToken(null))
+            .thenAnswer((_) async => null);
+      });
+
       test('should check if the device is online', () async {
-        authRepo.registerUser('', '', '', '', '', '');
+        authRepo.registerUser(user.firstName, user.lastName, user.username,
+            user.email, '', '3489');
 
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
 
-      test('should return [User] if the remote call success', () async {
-        when(remoteDataSource.registerUser(user.firstName, user.lastName,
-                user.username, user.email, '', '3489'))
-            .thenAnswer((_) async => user);
-
+      test('should return [true] if remote call is success', () async {
         final result = await authRepo.registerUser(user.firstName,
             user.lastName, user.username, user.email, '', '3489');
 
         verify(remoteDataSource.registerUser(user.firstName, user.lastName,
             user.username, user.email, '', '3489'));
 
-        expect(result, Right(user));
+        verify(remoteDataSource.loginUser(user.username, '3489'));
+
+        expect(result, Right(true));
+      });
+
+      test('should save [token] and [user id] in shared preferences', () async {
+        await authRepo.registerUser(user.firstName, user.lastName,
+            user.username, user.email, '', '3489');
+
+        verify(userLocalSource
+            .cacheUserId('3fa85f64-5717-4562-b3fc-2c963f66afa6'));
+        verify(userLocalSource.cacheUserToken(null));
+      });
+
+      test('should save [user] if the registration done successfully',
+          () async {
+        await authRepo.registerUser(user.firstName, user.lastName,
+            user.username, user.email, '', '3489');
+
+        verify(userLocalSource.insertUser(UserTable.fromUser(user)));
       });
 
       test(
@@ -94,9 +134,53 @@ void main() {
 
         expect(result, Left(UnknownFailure()));
       });
+
+      test(
+          'should return [UnauthorizedTokenFailure] if the remote call throws [UnauthorizedTokenException]',
+          () async {
+        when(remoteDataSource.registerUser(user.firstName, user.lastName,
+                user.username, user.email, '', '3489'))
+            .thenThrow(UnauthorizedTokenException());
+
+        final result = await authRepo.registerUser(user.firstName,
+            user.lastName, user.username, user.email, '', '3489');
+
+        verify(remoteDataSource.registerUser(user.firstName, user.lastName,
+            user.username, user.email, '', '3489'));
+
+        expect(result, Left(UnauthorizedTokenFailure()));
+      });
+
+      test(
+          'should return [CacheFailure] if the database throws [InvalidDataException]',
+          () async {
+        when(remoteDataSource.registerUser(user.firstName, user.lastName,
+                user.username, user.email, '', '3489'))
+            .thenThrow(InvalidDataException(null));
+
+        final result = await authRepo.registerUser(user.firstName,
+            user.lastName, user.username, user.email, '', '3489');
+
+        verify(remoteDataSource.registerUser(user.firstName, user.lastName,
+            user.username, user.email, '', '3489'));
+
+        expect(result, Left(CacheFailure()));
+      });
     });
 
     group('loginUser', () {
+      setUp(() {
+        when(remoteDataSource.loginUser('', '')).thenAnswer((_) async => token);
+        when(userLocalSource
+                .cacheUserId('3fa85f64-5717-4562-b3fc-2c963f66afa6'))
+            .thenAnswer((_) async => null);
+        when(userLocalSource.cacheUserToken(null))
+            .thenAnswer((_) async => null);
+        when(userLocalSource.insertUser(UserTable.fromUser(user)))
+            .thenAnswer((_) async => null);
+        when(remoteDataSource.getUser()).thenAnswer((_) async => user);
+      });
+
       test('should check if the device is online', () async {
         authRepo.loginUser('', '');
 
@@ -104,13 +188,31 @@ void main() {
         expect(await netWorkInfo.isConnected(), true);
       });
 
-      test('should return user token if the remote call success', () async {
-        final token = 'token';
+      test('should save [token] if the login done successfully', () async {
+        await authRepo.loginUser('', '');
+
+        verify(userLocalSource.cacheUserToken(token));
+      });
+
+      test('should save [user] if the login done successfully', () async {
+        await authRepo.loginUser('', '');
+
+        verify(userLocalSource.insertUser(UserTable.fromUser(user)));
+      });
+
+      test('should save [userId] if the user info has gotten', () async {
+        await authRepo.loginUser('', '');
+
+        verify(remoteDataSource.getUser());
+        verify(userLocalSource.cacheUserId(user.id));
+      });
+
+      test('should return [true] if the remote call success', () async {
         when(remoteDataSource.loginUser('', '')).thenAnswer((_) async => token);
 
         final result = await authRepo.loginUser('', '');
 
-        expect(result, Right(token));
+        expect(result, Right(true));
       });
 
       test(
@@ -138,6 +240,32 @@ void main() {
         verify(remoteDataSource.loginUser('', ''));
 
         expect(result, Left(UnknownFailure()));
+      });
+
+      test(
+          'should return [UnauthorizedTokenFailure] if the remote call throws [UnauthorizedTokenException]',
+          () async {
+        when(remoteDataSource.loginUser('', ''))
+            .thenThrow(UnauthorizedTokenException());
+
+        final result = await authRepo.loginUser('', '');
+
+        verify(remoteDataSource.loginUser('', ''));
+
+        expect(result, Left(UnauthorizedTokenFailure()));
+      });
+
+      test(
+          'should return [CacheFailure] if the database throws [InvalidDataException]',
+          () async {
+        when(remoteDataSource.loginUser('', ''))
+            .thenThrow(InvalidDataException(null));
+
+        final result = await authRepo.loginUser('', '');
+
+        verify(remoteDataSource.loginUser('', ''));
+
+        expect(result, Left(CacheFailure()));
       });
     });
 
