@@ -181,3 +181,8 @@ class OrdersFieldsFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [product, quantity];
 }
+
+class CacheFailure extends Equatable implements Failure {
+  @override
+  List<Object> get props => [];
+}
