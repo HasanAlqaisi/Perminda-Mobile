@@ -5,8 +5,11 @@ import 'package:perminda/presentation/features/nav/pages/home.dart';
 import 'package:perminda/presentation/features/registration/pages/register_screen.dart';
 import 'injection_container.dart' as di;
 
-void main() {
-  di.init();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await di.init();
+
   runApp(Perminda());
 }
 
