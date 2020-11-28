@@ -145,7 +145,6 @@ class DummyModels {
     dateFirstActive: Value(DateTime.parse('2020-10-10')),
     lastUpdate: Value(DateTime.parse('2020-10-10')),
   );
-  static List<String> productsIds = ['1', '2', '3'];
   static final order1 = OrderTableCompanion(
     id: Value('1'),
     user: Value('1'),
@@ -181,6 +180,27 @@ class DummyModels {
     datePrepared: Value(DateTime.parse('2020-10-10')),
     lastShipped: Value(DateTime.parse('2020-10-10')),
     lastRecieved: Value(DateTime.parse('2020-10-10')),
+  );
+  static final package1 = PackageTableCompanion(
+    id: Value('1'),
+    title: Value('A package'),
+    image: Value('oisjdio.com'),
+    active: Value(true),
+    dateCreated: Value(DateTime.parse('2020-10-10')),
+  );
+  static final package2 = PackageTableCompanion(
+    id: Value('2'),
+    title: Value('A package'),
+    image: Value('oisjdio.com'),
+    active: Value(true),
+    dateCreated: Value(DateTime.parse('2020-10-10')),
+  );
+  static final package3 = PackageTableCompanion(
+    id: Value('3'),
+    title: Value('A package'),
+    image: Value('oisjdio.com'),
+    active: Value(true),
+    dateCreated: Value(DateTime.parse('2020-10-10')),
   );
   static final product1Images = [
     ProductImageTableCompanion(
