@@ -1,10 +1,22 @@
 {
-    "pk": "fbff08a7-ac13-4a45-91df-b756b9e896e4",
-    "first_name": "Hasan",
-    "last_name": "AlQaisi",
-    "username": "hasan4",
-    "email": "hasan.alqaisi2000@gmail.com",
-    "phone_number": "",
-    "image": null,
-    "address": null
+    "pk": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "first_name": "string",
+    "last_name": "string",
+    "username": "string",
+    "email": "user@example.com",
+    "phone_number": "string",
+    "address": "string",
+    "image": "string",
+    "cart": [
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    ],
+    "wishlist": [
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": true,
+    "is_seller": true,
+    "date_joined": "2020-11-26T21:45:23.003Z",
+    "last_login": "2020-11-26T21:45:23.003Z"
 }

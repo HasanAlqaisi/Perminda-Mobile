@@ -19,6 +19,22 @@ class User extends Equatable {
   final String image;
   @JsonKey(nullable: true)
   final String address;
+  @JsonKey(name: 'cart')
+  final List<String> cartProducts;
+  @JsonKey(name: 'wishlist')
+  final List<String> wishlistProducts;
+  @JsonKey(name: 'is_active')
+  final bool isActive;
+  @JsonKey(name: 'is_staff')
+  final bool isStaff;
+  @JsonKey(name: 'is_superuser')
+  final bool isSuperUser;
+  @JsonKey(name: 'is_seller')
+  final bool isSeller;
+  @JsonKey(name: 'date_joined')
+  final String dateJoind;
+  @JsonKey(name: 'last_login', nullable: true)
+  final String lastLogin;
 
   User({
     this.id,
@@ -29,6 +45,14 @@ class User extends Equatable {
     this.phoneNumber,
     this.image,
     this.address,
+    this.cartProducts,
+    this.wishlistProducts,
+    this.isActive,
+    this.isStaff,
+    this.isSuperUser,
+    this.isSeller,
+    this.dateJoind,
+    this.lastLogin,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
