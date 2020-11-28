@@ -10,6 +10,10 @@ import 'package:perminda/data/db/models/order/order_dao.dart';
 import 'package:perminda/data/db/models/order/order_table.dart';
 import 'package:perminda/data/db/models/order_item/order_Item_table.dart';
 import 'package:perminda/data/db/models/order_item/order_item_dao.dart';
+import 'package:perminda/data/db/models/package/package_dao.dart';
+import 'package:perminda/data/db/models/package/package_table.dart';
+import 'package:perminda/data/db/models/package_item/package_item_dao.dart';
+import 'package:perminda/data/db/models/package_item/package_item_table.dart';
 import 'package:perminda/data/db/models/product/product_dao.dart';
 import 'package:perminda/data/db/models/product/product_table.dart';
 import 'package:perminda/data/db/models/product_image/product_image_dao.dart';
@@ -40,6 +44,8 @@ part 'app_database.g.dart';
     ShopTable,
     UserTable,
     UserNotificationTable,
+    PackageTable,
+    PackageItemTable,
   ],
   daos: [
     BrandDao,
@@ -54,6 +60,8 @@ part 'app_database.g.dart';
     ProductImageDao,
     OrderDao,
     OrderItemDao,
+    PackageDao,
+    PackageItemDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
