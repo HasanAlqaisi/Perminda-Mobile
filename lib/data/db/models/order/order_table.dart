@@ -19,23 +19,3 @@ class OrderTable extends Table {
   @override
   Set<Column> get primaryKey => {id};
 }
-
-// class ProductsIdConverter extends TypeConverter<List<String>, String> {
-//   const ProductsIdConverter();
-//   @override
-//   List<String> mapToDart(String fromDb) {
-//     if (fromDb == null) {
-//       return null;
-//     }
-//     final productsId = json.decode(fromDb) as Map<String, dynamic>;
-//     return (productsId as List<String>);
-//   }
-
-//   @override
-//   String mapToSql(List<String> value) {
-//     if (value == null) {
-//       return null;
-//     }
-//     return json.encode(value);
-//   }
-// }
