@@ -6,10 +6,8 @@ import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
-import 'package:perminda/data/data_sources/orders/orders_remote_source.dart';
-import 'package:perminda/data/remote_models/orders/orders.dart';
-import 'package:perminda/data/remote_models/orders/results.dart';
-import 'package:perminda/data/repos/orders/orders_repo_impl.dart';
+import 'package:perminda/data/data_sources/packages/packages_local_source.dart';
+import 'package:perminda/data/db/models/package/package_table.dart';
 import 'package:perminda/data/repos/packages/packages_repo_impl.dart';
 import 'package:perminda/data/data_sources/packages/packages_remote_source.dart';
 import 'package:perminda/data/remote_models/packages/packages.dart';
@@ -20,9 +18,12 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements PackagesRemoteSource {}
 
+class MockLocalSource extends Mock implements PackagesLocalSource {}
+
 void main() {
   MockNetworkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   PackagesRepoImpl repo;
 
   final packages = Packages.fromJson(json.decode(fixture('packages.json')));
@@ -30,8 +31,12 @@ void main() {
   setUp(() {
     netWorkInfo = MockNetworkInfo();
     remoteSource = MockRemoteSource();
-    repo =
-        PackagesRepoImpl(netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+    localSource = MockLocalSource();
+    repo = PackagesRepoImpl(
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -57,6 +62,20 @@ void main() {
 
         expect(result, Right(packages));
       });
+
+      test('should cache [Packages] in the databasee', () async {
+        when(remoteSource.getPackages(repo.offset))
+            .thenAnswer((_) async => packages);
+
+        when(localSource.insertPackages(
+                PackageTable.fromPackagesResult(packages.results)))
+            .thenAnswer((_) async => null);
+
+        await repo.getPackages();
+
+        verify(localSource.insertPackages(any));
+      });
+
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {

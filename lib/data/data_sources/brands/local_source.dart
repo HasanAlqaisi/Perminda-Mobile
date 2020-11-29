@@ -3,13 +3,15 @@ import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/brand/brand_dao.dart';
 
 abstract class BrandLocalSource {
-  Future<int> insertBrand(BrandTableCompanion brand);
+  Future<void> insertBrands(List<BrandTableCompanion> brands);
 
   Future<List<BrandData>> getBrands();
 
   Stream<List<BrandData>> watchBrands();
 
   Future<BrandData> getBrandById(String brandId);
+
+  Future<int> deleteBrandById(String brandId);
 }
 
 class BrandLocalSourceImpl extends BrandLocalSource {
@@ -28,9 +30,9 @@ class BrandLocalSourceImpl extends BrandLocalSource {
   }
 
   @override
-  Future<int> insertBrand(BrandTableCompanion brand) {
+  Future<void> insertBrands(List<BrandTableCompanion> brands) {
     try {
-      return brandDao.insertBrand(brand);
+      return brandDao.insertBrands(brands);
     } on InvalidDataException {
       rethrow;
     }
@@ -39,5 +41,10 @@ class BrandLocalSourceImpl extends BrandLocalSource {
   @override
   Stream<List<BrandData>> watchBrands() {
     return brandDao.watchBrands();
+  }
+
+  @override
+  Future<int> deleteBrandById(String brandId) {
+    return brandDao.deleteBrandById(brandId);
   }
 }

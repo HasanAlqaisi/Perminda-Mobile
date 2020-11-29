@@ -12,8 +12,15 @@ part 'product_dao.g.dart';
 class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
   ProductDao(AppDatabase db) : super(db);
 
-  Future<int> insertProduct(ProductTableCompanion product) =>
-      into(productTable).insert(product, mode: InsertMode.insertOrReplace);
+  Future<void> insertProducts(List<ProductTableCompanion> products) async {
+    batch((batch) {
+      batch.insertAll(
+        productTable,
+        products,
+        mode: InsertMode.insertOrReplace,
+      );
+    });
+  }
 
   Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByShopId(
       String shopId) {
@@ -81,4 +88,9 @@ class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
                 ))
             .toList());
   }
+
+  Future<int> deleteProducts() => delete(productTable).go();
+
+  Future<int> deleteProductById(String productId) =>
+      (delete(productTable)..where((tbl) => tbl.id.equals(productId))).go();
 }

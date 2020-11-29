@@ -12,8 +12,11 @@ class CartItemDao extends DatabaseAccessor<AppDatabase>
     with _$CartItemDaoMixin {
   CartItemDao(AppDatabase db) : super(db);
 
-  Future<int> insertCartItem(CartItemTableCompanion cartItem) =>
-      into(cartItemTable).insert(cartItem, mode: InsertMode.insertOrReplace);
+  Future<void> insertCartItems(List<CartItemTableCompanion> cartItems) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(cartItemTable, cartItems);
+    });
+  }
 
   Stream<Future<List<Future<CartItemAndProduct>>>> watchCartItems(
       String userId) {
@@ -35,4 +38,9 @@ class CartItemDao extends DatabaseAccessor<AppDatabase>
                   shop: await db.shopDao.getShopById(productRow.shop));
             }).toList());
   }
+
+  Future<int> deleteCartItems() => delete(cartItemTable).go();
+
+  Future<int> deleteCartItemById(String cartItemId) =>
+      (delete(cartItemTable)..where((tbl) => tbl.id.equals(cartItemId))).go();
 }

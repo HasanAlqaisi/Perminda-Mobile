@@ -53,7 +53,7 @@ void main() {
     price: Value(100),
     sale: Value(0),
     overview: Value('this is a mobile'),
-    deliveryTime: Value(DateTime.parse('2020-10-10')),
+    deliveryTime: Value(0),
     rate: Value(4.3),
     buyers: Value(0),
     numReviews: Value(0),
@@ -71,7 +71,7 @@ void main() {
     price: Value(100),
     sale: Value(0),
     overview: Value('this is an ihpone'),
-    deliveryTime: Value(DateTime.parse('2020-10-10')),
+    deliveryTime: Value(0),
     rate: Value(4.3),
     buyers: Value(0),
     numReviews: Value(0),
@@ -82,16 +82,19 @@ void main() {
     lastUpdate: Value(DateTime.parse('2020-10-10')),
   );
   final cartItem = CartItemTableCompanion(
+    id: Value('1'),
     product: Value('1'),
     user: Value('1'),
     quantity: Value(10),
   );
   final cartItem2 = CartItemTableCompanion(
+    id: Value('2'),
     product: Value('2'),
     user: Value('1'),
     quantity: Value(10),
   );
   final cartItem3 = CartItemTableCompanion(
+    id: Value('3'),
     product: Value('1'),
     user: Value('2'),
     quantity: Value(10),
@@ -107,16 +110,14 @@ void main() {
 
   test('should return [userWithCartItemsWithProducts] in a correct way',
       () async {
-    await appDatabase.brandDao.insertBrand(brand);
+    await appDatabase.brandDao.insertBrands([brand]);
     await appDatabase.userDao.insertUser(user);
     await appDatabase.userDao.insertUser(user2);
-    await appDatabase.shopDao.insertShop(shop);
-    await appDatabase.categoryDao.insertCategory(category);
-    await appDatabase.productDao.insertProduct(product);
-    await appDatabase.productDao.insertProduct(product2);
-    await appDatabase.cartItemDao.insertCartItem(cartItem);
-    await appDatabase.cartItemDao.insertCartItem(cartItem2);
-    await appDatabase.cartItemDao.insertCartItem(cartItem3);
+    await appDatabase.shopDao.insertShops([shop]);
+    await appDatabase.categoryDao.insertCategories([category]);
+    await appDatabase.productDao.insertProducts([product, product2]);
+    await appDatabase.cartItemDao
+        .insertCartItems([cartItem, cartItem2, cartItem3]);
 
     final result = appDatabase.cartItemDao.watchCartItems(user.id.value);
 

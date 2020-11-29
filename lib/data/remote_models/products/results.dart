@@ -23,8 +23,11 @@ class ProductsResult extends Equatable {
   final int nfReviews;
   final bool active;
   final int quantity;
+  @JsonKey(name: 'date_added')
   final String dateAdded;
+  @JsonKey(nullable: true, name: 'date_first_activated')
   final String dateFirstActivated;
+  @JsonKey(name: 'last_update')
   final String lastUpdate;
 
   ProductsResult(

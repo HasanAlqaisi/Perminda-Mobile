@@ -12,4 +12,19 @@ class ProductImageTable extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+
+  //   static List<ProductImageTableCompanion> fromProductImagesResult(
+  //     List<ProductImagesResult> packagesResult) {
+  //   return packagesResult
+  //       .map(
+  //         (result) => PackageTableCompanion(
+  //           id: Value(result.id),
+  //           title: Value(result.title),
+  //           image: Value(result.image),
+  //           active: Value(result.active),
+  //           dateCreated: Value(DateTime.tryParse(result.dateCreated)),
+  //         ),
+  //       )
+  //       .toList();
+  // }
 }

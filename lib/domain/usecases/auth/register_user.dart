@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/failure.dart';
-import 'package:perminda/data/remote_models/auth/user.dart';
 import 'package:perminda/domain/repos/auth_repo.dart';
 
 class RegisterUserUseCase {

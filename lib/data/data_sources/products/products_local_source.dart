@@ -4,7 +4,7 @@ import 'package:perminda/data/db/models/product/product_dao.dart';
 import 'package:perminda/data/db/relations/product/product_and_category_brand.dart';
 
 abstract class ProductsLocalSource {
-  Future<int> insertProduct(ProductTableCompanion product);
+  Future<void> insertProducts(List<ProductTableCompanion> products);
 
   Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByShopId(
       String shopId);
@@ -14,6 +14,8 @@ abstract class ProductsLocalSource {
 
   Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByBrandId(
       String brandId);
+
+  Future<int> deleteProductById(String productId);
 }
 
 class ProductsLocalSourceImpl extends ProductsLocalSource {
@@ -22,9 +24,9 @@ class ProductsLocalSourceImpl extends ProductsLocalSource {
   ProductsLocalSourceImpl({this.productDao});
 
   @override
-  Future<int> insertProduct(ProductTableCompanion product) {
+  Future<void> insertProducts(List<ProductTableCompanion> products) {
     try {
-      return productDao.insertProduct(product);
+      return productDao.insertProducts(products);
     } on InvalidDataException {
       rethrow;
     }
@@ -46,5 +48,10 @@ class ProductsLocalSourceImpl extends ProductsLocalSource {
   Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByShopId(
       String shopId) {
     return productDao.watchProductsByShopId(shopId);
+  }
+
+  @override
+  Future<int> deleteProductById(String productId) {
+    return productDao.deleteProductById(productId);
   }
 }

@@ -3,10 +3,11 @@ import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/shop/shop_dao.dart';
 
 abstract class ShopsLocalSource {
-  Future<int> insertShop(ShopTableCompanion shop);
+  Future<void> insertShops(List<ShopTableCompanion> shop);
   Future<ShopData> getShopById(String shopId);
   Stream<ShopData> watchShopById(String shopId);
   Stream<List<ShopData>> watchShops();
+  Future<int> deleteShopById(String shopId);
 }
 
 class ShopsLocalSourceImpl extends ShopsLocalSource {
@@ -20,9 +21,9 @@ class ShopsLocalSourceImpl extends ShopsLocalSource {
   }
 
   @override
-  Future<int> insertShop(ShopTableCompanion shop) {
+  Future<void> insertShops(List<ShopTableCompanion> shops) {
     try {
-      return shopDao.insertShop(shop);
+      return shopDao.insertShops(shops);
     } on InvalidDataException {
       rethrow;
     }
@@ -36,5 +37,10 @@ class ShopsLocalSourceImpl extends ShopsLocalSource {
   @override
   Stream<List<ShopData>> watchShops() {
     return shopDao.watchShops();
+  }
+
+  @override
+  Future<int> deleteShopById(String shopId) {
+    return shopDao.deleteShopById(shopId);
   }
 }

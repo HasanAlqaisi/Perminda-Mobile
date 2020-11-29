@@ -5,6 +5,7 @@ import 'package:perminda/data/db/models/order_item/order_Item_table.dart';
 import 'package:perminda/data/db/models/product/product_table.dart';
 import 'package:perminda/data/db/relations/order_item/order_with_products.dart';
 import 'package:perminda/data/db/relations/order_item/product_info.dart';
+import 'package:perminda/data/remote_models/orders/results.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'order_item_dao.g.dart';
@@ -14,8 +15,19 @@ class OrderItemDao extends DatabaseAccessor<AppDatabase>
     with _$OrderItemDaoMixin {
   OrderItemDao(AppDatabase db) : super(db);
 
-  Future<int> insertOrderItem(OrderItemTableCompanion order) =>
-      into(orderItemTable).insert(order, mode: InsertMode.insertOrReplace);
+  Future<void> insertOrderItems(List<OrdersResult> orders) async {
+    await batch((batch) async {
+      orders.forEach(
+        (order) => order.products.forEach(
+          (product) => batch.insert(
+            orderItemTable,
+            OrderItemTable.fromOrdersResult(order, product),
+            mode: InsertMode.insertOrReplace,
+          ),
+        ),
+      );
+    });
+  }
 
   Stream<Future<List<OrderWithProducts>>> watchOrders(String userId) {
     final orderStream =
@@ -63,4 +75,9 @@ class OrderItemDao extends DatabaseAccessor<AppDatabase>
       });
     });
   }
+
+  Future<int> deleteOrderItems() => delete(orderItemTable).go();
+
+  Future<int> deleteOrderItemById(String orderItemId) =>
+      (delete(orderItemTable)..where((tbl) => tbl.id.equals(orderItemId))).go();
 }

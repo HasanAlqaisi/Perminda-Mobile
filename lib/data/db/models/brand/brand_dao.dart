@@ -8,8 +8,11 @@ part 'brand_dao.g.dart';
 class BrandDao extends DatabaseAccessor<AppDatabase> with _$BrandDaoMixin {
   BrandDao(AppDatabase db) : super(db);
 
-  Future<int> insertBrand(BrandTableCompanion brand) =>
-      into(brandTable).insert(brand, mode: InsertMode.insertOrReplace);
+  Future<void> insertBrands(List<BrandTableCompanion> brands) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(brandTable, brands);
+    });
+  }
 
   Future<List<BrandData>> getBrands() => select(brandTable).get();
 
@@ -18,4 +21,9 @@ class BrandDao extends DatabaseAccessor<AppDatabase> with _$BrandDaoMixin {
   Future<BrandData> getBrandById(String brandId) =>
       (select(brandTable)..where((tbl) => brandTable.id.equals(brandId)))
           .getSingle();
+
+  Future<int> deleteBrands() => delete(brandTable).go();
+
+  Future<int> deleteBrandById(String brandId) =>
+      (delete(brandTable)..where((tbl) => tbl.id.equals(brandId))).go();
 }

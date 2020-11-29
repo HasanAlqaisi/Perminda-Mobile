@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/product_image/local_source.dart';
 import 'package:perminda/data/data_sources/product_image/remote_source.dart';
 import 'package:perminda/data/remote_models/product_image/product_image.dart';
 import 'package:perminda/core/errors/failure.dart';
@@ -13,8 +14,9 @@ import 'package:perminda/domain/repos/product_image_repo.dart';
 class ProductImageRepoImpl extends ProductImageRepo {
   final NetWorkInfo netWorkInfo;
   final ProductImageRemoteSource remoteSource;
+  final ProductImageLocalSource localSource;
 
-  ProductImageRepoImpl({this.netWorkInfo, this.remoteSource});
+  ProductImageRepoImpl({this.netWorkInfo, this.remoteSource, this.localSource});
 
   @override
   Future<Either<Failure, ProductImage>> addProductImage(
@@ -23,6 +25,9 @@ class ProductImageRepoImpl extends ProductImageRepo {
       try {
         final result =
             await remoteSource.addProductImage(image, type, productId);
+
+        // await localSource.insertProductImages([productImages])
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -48,6 +53,9 @@ class ProductImageRepoImpl extends ProductImageRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.deleteProductImage(id);
+
+        await localSource.deleteProductImageById(id);
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());

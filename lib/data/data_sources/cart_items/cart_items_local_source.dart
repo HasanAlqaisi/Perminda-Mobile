@@ -4,10 +4,12 @@ import 'package:perminda/data/db/models/cart_item/cart_item_dao.dart';
 import 'package:perminda/data/db/relations/cart_item/user_with_cartItems_and_products.dart';
 
 abstract class CartItemsLocalSource {
-  Future<int> insertCartItem(CartItemTableCompanion cartItem);
+  Future<void> insertCartItems(List<CartItemTableCompanion> cartItems);
 
   Stream<Future<List<Future<CartItemAndProduct>>>> watchCartItems(
       String userId);
+
+  Future<int> deleteCartItemById(String cartItemId);
 }
 
 class CartItemsLocalSourceImpl extends CartItemsLocalSource {
@@ -16,9 +18,9 @@ class CartItemsLocalSourceImpl extends CartItemsLocalSource {
   CartItemsLocalSourceImpl({this.cartItemDao});
 
   @override
-  Future<int> insertCartItem(CartItemTableCompanion cartItem) {
+  Future<void> insertCartItems(List<CartItemTableCompanion> cartItems) {
     try {
-      return cartItemDao.insertCartItem(cartItem);
+      return cartItemDao.insertCartItems(cartItems);
     } on InvalidDataException {
       rethrow;
     }
@@ -28,5 +30,10 @@ class CartItemsLocalSourceImpl extends CartItemsLocalSource {
   Stream<Future<List<Future<CartItemAndProduct>>>> watchCartItems(
       String userId) {
     return cartItemDao.watchCartItems(userId);
+  }
+
+  @override
+  Future<int> deleteCartItemById(String cartItemId) {
+    return cartItemDao.deleteCartItemById(cartItemId);
   }
 }

@@ -8,7 +8,6 @@ import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/auth/local_source.dart';
 import 'package:perminda/data/data_sources/auth/remote_data_source.dart';
-import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/user/user_table.dart';
 import 'package:perminda/data/remote_models/auth/user.dart';
 import 'package:perminda/domain/repos/auth_repo.dart';
@@ -113,6 +112,9 @@ class AuthRepoImpl extends AuthRepo {
       try {
         final result = await remoteDataSource.editUser(firstName, lastName,
             username, email, phone, password, image, address);
+
+        await userLocalSource.insertUser(UserTable.fromUser(result));
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -133,6 +135,9 @@ class AuthRepoImpl extends AuthRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteDataSource.getUser();
+
+        await userLocalSource.insertUser(UserTable.fromUser(result));
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());

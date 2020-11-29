@@ -3,8 +3,10 @@ import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/product_image/product_image_dao.dart';
 
 abstract class ProductImageLocalSource {
-  Future<int> insertProductImage(ProductImageTableCompanion productImage);
+  Future<void> insertProductImages(
+      List<ProductImageTableCompanion> productImages);
   Future<List<ProductImageData>> getProductImages(String productId);
+  Future<int> deleteProductImageById(String productImageId);
 }
 
 class ProductImageLocalSourceImpl extends ProductImageLocalSource {
@@ -18,11 +20,17 @@ class ProductImageLocalSourceImpl extends ProductImageLocalSource {
   }
 
   @override
-  Future<int> insertProductImage(ProductImageTableCompanion productImage) {
+  Future<void> insertProductImages(
+      List<ProductImageTableCompanion> productImages) {
     try {
-      return productImageDao.insertProductImage(productImage);
+      return productImageDao.insertProductImages(productImages);
     } on InvalidDataException {
       rethrow;
     }
+  }
+
+  @override
+  Future<int> deleteProductImageById(String productImageId) {
+    return productImageDao.deleteProductImageById(productImageId);
   }
 }

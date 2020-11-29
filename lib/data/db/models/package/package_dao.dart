@@ -8,6 +8,14 @@ part 'package_dao.g.dart';
 class PackageDao extends DatabaseAccessor<AppDatabase> with _$PackageDaoMixin {
   PackageDao(AppDatabase db) : super(db);
 
-  Future<int> insertPackage(PackageTableCompanion package) =>
-      into(packageTable).insert(package, mode: InsertMode.insertOrReplace);
+  Future<void> insertPackages(List<PackageTableCompanion> packages) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(packageTable, packages);
+    });
+  }
+
+  Future<int> deletePackages() => delete(packageTable).go();
+
+  Future<int> deletePackageById(String packageId) =>
+      (delete(packageTable)..where((tbl) => tbl.id.equals(packageId))).go();
 }

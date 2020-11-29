@@ -11,9 +11,12 @@ class FavouriteItemDao extends DatabaseAccessor<AppDatabase>
     with _$FavouriteItemDaoMixin {
   FavouriteItemDao(AppDatabase db) : super(db);
 
-  Future<int> insertFavouriteItem(FavouriteItemTableCompanion favourite) =>
-      into(favouriteItemTable)
-          .insert(favourite, mode: InsertMode.insertOrReplace);
+  Future<void> insertFavouriteItems(
+      List<FavouriteItemTableCompanion> favourites) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(favouriteItemTable, favourites);
+    });
+  }
 
   Stream<Future<List<Future<FavouriteItemAndProduct>>>> watchFavouriteItems(
       String userId) {
@@ -37,4 +40,9 @@ class FavouriteItemDao extends DatabaseAccessor<AppDatabase>
               );
             }).toList());
   }
+
+  Future<int> deleteFavouriteItems() => delete(favouriteItemTable).go();
+
+    Future<int> deleteFavouriteItemById(String favouriteItemId) =>
+      (delete(favouriteItemTable)..where((tbl) => tbl.id.equals(favouriteItemId))).go();
 }

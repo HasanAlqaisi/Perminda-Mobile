@@ -25,7 +25,7 @@ void main() {
   });
 
   test('should brand can be created', () async {
-    await appDatabase.brandDao.insertBrand(brandComp);
+    await appDatabase.brandDao.insertBrands([brandComp]);
 
     final brandResult = await appDatabase.brandDao.getBrands();
     final brandExpected =

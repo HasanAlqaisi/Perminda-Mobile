@@ -6,7 +6,9 @@ import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/favourites/favourites_local_source.dart';
 import 'package:perminda/data/data_sources/favourites/favourites_remote_source.dart';
+import 'package:perminda/data/db/models/favourite_item/favourite_item_table.dart';
 import 'package:perminda/data/remote_models/favourites/favourites.dart';
 import 'package:perminda/data/remote_models/favourites/results.dart';
 import 'package:perminda/data/repos/favourites/favourites_repo_impl.dart';
@@ -17,9 +19,12 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements FavouritesRemoteSource {}
 
+class MockLocalSource extends Mock implements FavouritesLocalSource {}
+
 void main() {
   MockNetworkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   FavouritesRepoImpl repo;
 
   final favourites =
@@ -31,8 +36,12 @@ void main() {
   setUp(() {
     netWorkInfo = MockNetworkInfo();
     remoteSource = MockRemoteSource();
+    localSource = MockLocalSource();
     repo = FavouritesRepoImpl(
-        netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -41,6 +50,11 @@ void main() {
     });
 
     group('addFavourite', () {
+      setUp(() {
+        when(remoteSource.addFavourite(null))
+            .thenAnswer((_) async => favourite);
+      });
+
       test('should user has an internet connection', () async {
         await repo.addFavourite(null);
         verify(netWorkInfo.isConnected());
@@ -49,12 +63,19 @@ void main() {
 
       test('should return [FavouritesResult] if remote call is success',
           () async {
-        when(remoteSource.addFavourite(null))
-            .thenAnswer((_) async => favourite);
-
         final result = await repo.addFavourite(null);
 
         expect(result, Right(favourite));
+      });
+
+      test('should cache [FavouritesResult] in the databasee', () async {
+        when(localSource.insertFavouriteItems(
+                FavouriteItemTable.fromFavouritesResult([favourite])))
+            .thenAnswer((_) async => null);
+
+        await repo.addFavourite(null);
+
+        verify(localSource.insertFavouriteItems(any));
       });
 
       test(
@@ -106,6 +127,15 @@ void main() {
         final result = await repo.deleteFavourite(null);
 
         expect(result, Right(true));
+      });
+
+      test('should delete [FavouritesResult] in the databasee', () async {
+        when(localSource.deleteFavouriteItemById(null))
+            .thenAnswer((_) async => null);
+
+        await repo.deleteFavourite(null);
+
+        verify(localSource.deleteFavouriteItemById(any));
       });
 
       test(
@@ -166,6 +196,20 @@ void main() {
         final result = await repo.getFavourites(repo.offset);
 
         expect(result, Right(favourites));
+      });
+
+      test('should cache list of [FavouritesResult] in the databasee',
+          () async {
+        when(remoteSource.getFavourites(repo.offset))
+            .thenAnswer((_) async => favourites);
+
+        when(localSource.insertFavouriteItems(
+                FavouriteItemTable.fromFavouritesResult(favourites.results)))
+            .thenAnswer((_) async => null);
+
+        await repo.getFavourites(null);
+
+        verify(localSource.insertFavouriteItems(any));
       });
 
       test(

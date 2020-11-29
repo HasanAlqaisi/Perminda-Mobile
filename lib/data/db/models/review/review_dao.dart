@@ -9,8 +9,11 @@ part 'review_dao.g.dart';
 class ReviewDao extends DatabaseAccessor<AppDatabase> with _$ReviewDaoMixin {
   ReviewDao(AppDatabase db) : super(db);
 
-  Future<int> insertReview(ReviewTableCompanion review) =>
-      into(reviewTable).insert(review, mode: InsertMode.insertOrReplace);
+  Future<void> insertReviews(List<ReviewTableCompanion> reviews) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(reviewTable, reviews);
+    });
+  }
 
   /// We only need list of reviews for a product when a user clicks on one of products
   /// So, we could get the product id from there
@@ -19,4 +22,9 @@ class ReviewDao extends DatabaseAccessor<AppDatabase> with _$ReviewDaoMixin {
           ..where((reviewTable) => reviewTable.product.equals(productId)))
         .watch();
   }
+
+  Future<int> deleteReviews() => delete(reviewTable).go();
+
+  Future<int> deleteReviewById(String reviewId) =>
+      (delete(reviewTable)..where((tbl) => tbl.id.equals(reviewId))).go();
 }

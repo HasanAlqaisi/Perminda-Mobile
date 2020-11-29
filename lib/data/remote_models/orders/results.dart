@@ -12,9 +12,9 @@ class OrdersResult extends Equatable {
   final String address;
   final List<String> products;
   @JsonKey(name: 'products_cost')
-  final int productsCost;
+  final double productsCost;
   @JsonKey(name: 'shipping_fee')
-  final int shippingFee;
+  final double shippingFee;
   final int stage;
   @JsonKey(name: 'date_sent')
   final String dateSent;

@@ -6,7 +6,9 @@ import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/user_notifications/notifications_local_source.dart';
 import 'package:perminda/data/data_sources/user_notifications/notifications_remote_source.dart';
+import 'package:perminda/data/db/models/user_notification/notification_table.dart';
 import 'package:perminda/data/remote_models/user_notifications/results.dart';
 import 'package:perminda/data/remote_models/user_notifications/user_notifications.dart';
 import 'package:perminda/data/repos/user_notifications/user_notifications_repo_impl.dart';
@@ -17,16 +19,23 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements NotificationsRemoteSource {}
 
+class MockLocalSource extends Mock implements NotificationsLocalSource {}
+
 void main() {
   MockNetworkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   UserNotificationsRepoImpl repo;
 
   setUp(() {
     netWorkInfo = MockNetworkInfo();
     remoteSource = MockRemoteSource();
+    localSource = MockLocalSource();
     repo = UserNotificationsRepoImpl(
-        netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -46,6 +55,21 @@ void main() {
 
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
+      });
+
+      test('should cache list of [UserNotifications] in the databasee',
+          () async {
+        when(remoteSource.getNotificatons(repo.offset))
+            .thenAnswer((_) async => userNotifications);
+
+        when(localSource.insertUserNotifications(
+            UserNotificationTable.fromNotificationsResult(
+          userNotifications.results,
+        ))).thenAnswer((_) async => null);
+
+        await repo.getNotifications();
+
+        verify(localSource.insertUserNotifications(any));
       });
 
       test('should cache the offset', () async {
@@ -81,7 +105,8 @@ void main() {
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {
-        when(remoteSource.getNotificatons(repo.offset)).thenThrow(UnknownException());
+        when(remoteSource.getNotificatons(repo.offset))
+            .thenThrow(UnknownException());
         final result = await repo.getNotifications();
         expect(result, Left(UnknownFailure()));
       });
@@ -95,8 +120,8 @@ void main() {
         when(remoteSource.editNotification(userNotification.id))
             .thenAnswer((_) async => userNotification);
 
-        await repo.editNotification('');
-        
+        await repo.editNotification(userNotification.id);
+
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
@@ -109,6 +134,19 @@ void main() {
         final result = await repo.editNotification(userNotification.id);
 
         expect(result, Right(userNotification));
+      });
+
+      test('should cache [UserNotifications] in the databasee', () async {
+        when(remoteSource.editNotification(userNotification.id))
+            .thenAnswer((_) async => userNotification);
+
+        when(localSource.insertUserNotifications(
+            UserNotificationTable.fromNotificationsResult(
+                [userNotification]))).thenAnswer((_) async => null);
+
+        await repo.editNotification(userNotification.id);
+
+        verify(localSource.insertUserNotifications(any));
       });
 
       test(

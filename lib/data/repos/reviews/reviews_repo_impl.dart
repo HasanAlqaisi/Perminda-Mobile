@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/reviews/reviews_local_source.dart';
 import 'package:perminda/data/data_sources/reviews/reviews_remote_source.dart';
+import 'package:perminda/data/db/models/review/review_table.dart';
 import 'package:perminda/data/remote_models/reviews/results.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
@@ -13,9 +15,10 @@ import 'package:perminda/domain/repos/reviews_repo.dart';
 class ReviewsRepoImpl extends ReviewsRepo {
   final NetWorkInfo netWorkInfo;
   final ReviewsRemoteSource remoteSource;
+  final ReviewsLocalSource localSource;
   int offset = 0;
 
-  ReviewsRepoImpl({this.netWorkInfo, this.remoteSource});
+  ReviewsRepoImpl({this.netWorkInfo, this.remoteSource, this.localSource});
 
   @override
   Future<Either<Failure, ReviewsResult>> addReview(
@@ -26,6 +29,10 @@ class ReviewsRepoImpl extends ReviewsRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.addReview(rate, message, productId);
+
+        await localSource
+            .insertReviews(ReviewTable.fromReviewsResult([result]));
+
         return Right(result);
       } on NotAllowedPermissionException {
         return Left(NotAllowedPermissionFailure());
@@ -48,6 +55,9 @@ class ReviewsRepoImpl extends ReviewsRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.deleteReview(reviewId);
+
+        await localSource.deleteReviewById(reviewId);
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -73,6 +83,10 @@ class ReviewsRepoImpl extends ReviewsRepo {
       try {
         final result =
             await remoteSource.editReview(reviewId, rate, message, productId);
+
+        await localSource
+            .insertReviews(ReviewTable.fromReviewsResult([result]));
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -95,6 +109,9 @@ class ReviewsRepoImpl extends ReviewsRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getReviews(productId, this.offset);
+
+        await localSource
+            .insertReviews(ReviewTable.fromReviewsResult(result.results));
 
         final offset = API.offsetExtractor(result.nextPage);
 

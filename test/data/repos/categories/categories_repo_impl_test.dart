@@ -6,7 +6,9 @@ import 'package:mockito/mockito.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/categories/local_source.dart';
 import 'package:perminda/data/data_sources/categories/remote_soruce.dart';
+import 'package:perminda/data/db/models/category/category_table.dart';
 import 'package:perminda/data/remote_models/categories/categories.dart';
 import 'package:perminda/data/remote_models/categories/results.dart';
 import 'package:perminda/data/repos/categories/categories_repo_impl.dart';
@@ -18,16 +20,23 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements CategoriesRemoteSource {}
 
+class MockLocalSource extends Mock implements CategoriesLocalSource {}
+
 void main() {
   MockNetWorkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   CategoriesRepoImpl categoriesRepo;
 
   setUp(() {
     netWorkInfo = MockNetWorkInfo();
     remoteSource = MockRemoteSource();
+    localSource = MockLocalSource();
     categoriesRepo = CategoriesRepoImpl(
-        netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -44,7 +53,7 @@ void main() {
             .thenAnswer((_) async => categories);
 
         await categoriesRepo.getCategories();
-        
+
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
@@ -65,6 +74,19 @@ void main() {
         expect(result, Right(categories));
       });
 
+      test('should cache list of [Category] in the databasee', () async {
+        when(remoteSource.getCategories(categoriesRepo.offset))
+            .thenAnswer((_) async => categories);
+
+        when(localSource.insertCategories(
+                CategoryTable.fromCategoriesResult(categories.results)))
+            .thenAnswer((_) async => null);
+
+        await categoriesRepo.getCategories();
+
+        verify(localSource.insertCategories(any));
+      });
+
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {
@@ -79,6 +101,11 @@ void main() {
       final category =
           CategoriesResult.fromJson(json.decode(fixture('category.json')));
 
+      setUp(() {
+        when(remoteSource.getCategoryById(null))
+            .thenAnswer((_) async => category);
+      });
+
       test('should user has an internet connection', () async {
         await categoriesRepo.getCategoryById(null);
         verify(netWorkInfo.isConnected());
@@ -86,10 +113,18 @@ void main() {
       });
 
       test('shuold return list of [Category] if remote call success', () async {
-        when(remoteSource.getCategoryById(null))
-            .thenAnswer((_) async => category);
         final result = await categoriesRepo.getCategoryById(null);
         expect(result, Right(category));
+      });
+
+      test('should cache [Category] in the databasee', () async {
+        when(localSource.insertCategories(
+                CategoryTable.fromCategoriesResult([category])))
+            .thenAnswer((_) async => null);
+
+        await categoriesRepo.getCategoryById(null);
+
+        verify(localSource.insertCategories(any));
       });
 
       test(

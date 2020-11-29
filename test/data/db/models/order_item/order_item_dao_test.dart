@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:perminda/data/db/app_database/app_database.dart';
+import 'package:perminda/data/remote_models/orders/results.dart';
 
 import '../../dummy_models.dart';
 
@@ -15,38 +16,69 @@ void main() {
     db.close();
   });
 
+  final List<OrdersResult> ordersResult = [
+    OrdersResult(
+      '1',
+      '1',
+      'Baghdad',
+      ['1', '2'],
+      201.1,
+      3,
+      0,
+      '2020-10-10',
+      '2020-10-10',
+      '2020-10-10',
+      '2020-10-10',
+    ),
+    OrdersResult(
+      '2',
+      '1',
+      'Baghdad',
+      ['3'],
+      201.1,
+      3,
+      0,
+      '2020-10-10',
+      '2020-10-10',
+      '2020-10-10',
+      '2020-10-10',
+    ),
+    OrdersResult(
+      '3',
+      '2',
+      'Baghdad',
+      ['2', '3'],
+      201.1,
+      3,
+      0,
+      '2020-10-10',
+      '2020-10-10',
+      '2020-10-10',
+      '2020-10-10',
+    )
+  ];
+
   group('watchOrders', () {
     test('should return list of [OrderWithProducts] in a correct way',
         () async {
-      await db.brandDao.insertBrand(DummyModels.brand1);
+      await db.brandDao.insertBrands([DummyModels.brand1]);
       await db.userDao.insertUser(DummyModels.user1);
       await db.userDao.insertUser(DummyModels.user2);
-      await db.shopDao.insertShop(DummyModels.shop1);
-      await db.shopDao.insertShop(DummyModels.shop2);
-      await db.categoryDao.insertCategory(DummyModels.category1);
-      await db.categoryDao.insertCategory(DummyModels.category2);
-      await db.categoryDao.insertCategory(DummyModels.category3);
-      await db.productDao.insertProduct(DummyModels.product1);
-      await db.productDao.insertProduct(DummyModels.product2);
-      await db.productDao.insertProduct(DummyModels.product3);
-      await db.orderDao.insertOrder(DummyModels.order1);
+      await db.shopDao.insertShops([DummyModels.shop1, DummyModels.shop2]);
+      await db.categoryDao.insertCategories([
+        DummyModels.category1,
+        DummyModels.category2,
+        DummyModels.category3
+      ]);
+      await db.productDao.insertProducts(
+          [DummyModels.product1, DummyModels.product2, DummyModels.product3]);
+      await db.orderDao.insertOrders(
+          [DummyModels.order1, DummyModels.order2, DummyModels.order3]);
+
       //Inserting [product1, product2] for order1
-      await db.orderItemDao.insertOrderItem(OrderItemTableCompanion(
-          order: DummyModels.order1.id, product: DummyModels.product1.id));
-      await db.orderItemDao.insertOrderItem(OrderItemTableCompanion(
-          order: DummyModels.order1.id, product: DummyModels.product2.id));
-
-      await db.orderDao.insertOrder(DummyModels.order2);
       //Inserting [product3] for order2
-      await db.orderItemDao.insertOrderItem(OrderItemTableCompanion(
-          order: DummyModels.order2.id, product: DummyModels.product3.id));
-
-      await db.orderDao.insertOrder(DummyModels.order3);
       //Inserting [product2, product3] for order3
-      await db.orderItemDao.insertOrderItem(OrderItemTableCompanion(
-          order: DummyModels.order3.id, product: DummyModels.product2.id));
-      await db.orderItemDao.insertOrderItem(OrderItemTableCompanion(
-          order: DummyModels.order3.id, product: DummyModels.product3.id));
+      await db.orderItemDao.insertOrderItems(ordersResult);
 
       final result = db.orderItemDao.watchOrders('2');
 

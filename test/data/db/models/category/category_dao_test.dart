@@ -37,10 +37,8 @@ void main() {
   test(
       'should return list of [CategoryAndParent] in a correct way when watching',
       () async {
-    await db.categoryDao.insertCategory(categoryOne);
-    await db.categoryDao.insertCategory(categoryTwo);
-    await db.categoryDao.insertCategory(categoryThree);
-    await db.categoryDao.insertCategory(categoryFour);
+    await db.categoryDao.insertCategories(
+        [categoryOne, categoryTwo, categoryThree, categoryFour]);
 
     final result = db.categoryDao.watchCategories();
 
@@ -51,10 +49,8 @@ void main() {
 
   test('should return [CategoryAndParent] in a correct way when get it',
       () async {
-    await db.categoryDao.insertCategory(categoryOne);
-    await db.categoryDao.insertCategory(categoryTwo);
-    await db.categoryDao.insertCategory(categoryThree);
-    await db.categoryDao.insertCategory(categoryFour);
+    await db.categoryDao.insertCategories(
+        [categoryOne, categoryTwo, categoryThree, categoryFour]);
 
     final result = db.categoryDao.getCategoryById('1');
 
@@ -65,10 +61,8 @@ void main() {
 
   test('should return [CategoryAndParent] in a correct way when watching it',
       () async {
-    await db.categoryDao.insertCategory(categoryOne);
-    await db.categoryDao.insertCategory(categoryTwo);
-    await db.categoryDao.insertCategory(categoryThree);
-    await db.categoryDao.insertCategory(categoryFour);
+    await db.categoryDao.insertCategories(
+        [categoryOne, categoryTwo, categoryThree, categoryFour]);
 
     final result = db.categoryDao.watchCategoryById('1');
 

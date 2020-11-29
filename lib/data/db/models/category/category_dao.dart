@@ -10,8 +10,11 @@ class CategoryDao extends DatabaseAccessor<AppDatabase>
     with _$CategoryDaoMixin {
   CategoryDao(AppDatabase db) : super(db);
 
-  Future<int> insertCategory(CategoryTableCompanion category) =>
-      into(categoryTable).insert(category, mode: InsertMode.insertOrReplace);
+  Future<void> insertCategories(List<CategoryTableCompanion> categories) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(categoryTable, categories);
+    });
+  }
 
   Stream<List<CategoryAndParent>> watchCategories() {
     final category = alias(categoryTable, 'c');
@@ -62,4 +65,9 @@ class CategoryDao extends DatabaseAccessor<AppDatabase>
       parent: result.readTable(parentCategory),
     );
   }
+
+  Future<int> deleteCategories() => delete(categoryTable).go();
+
+  Future<int> deleteCategoryById(String categoryId) =>
+      (delete(categoryTable)..where((tbl) => tbl.id.equals(categoryId))).go();
 }

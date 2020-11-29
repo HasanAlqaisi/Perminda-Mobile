@@ -4,7 +4,7 @@ import 'package:perminda/data/remote_models/cart_items/cart_items.dart';
 import 'package:perminda/data/remote_models/cart_items/results.dart';
 
 abstract class CartItemsRepo {
-  Future<Either<Failure, CartItems>> getCartItems(int offset);
+  Future<Either<Failure, CartItems>> getCartItems();
 
   Future<Either<Failure, CartItemsResult>> addCartItem(
     String productId,

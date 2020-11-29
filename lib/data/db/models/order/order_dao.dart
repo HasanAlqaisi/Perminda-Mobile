@@ -8,6 +8,14 @@ part 'order_dao.g.dart';
 class OrderDao extends DatabaseAccessor<AppDatabase> with _$OrderDaoMixin {
   OrderDao(AppDatabase db) : super(db);
 
-  Future<int> insertOrder(OrderTableCompanion order) =>
-      into(orderTable).insert(order, mode: InsertMode.insertOrReplace);
+  Future<void> insertOrders(List<OrderTableCompanion> orders) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(orderTable, orders);
+    });
+  }
+
+  Future<int> deleteOrders() => delete(orderTable).go();
+
+  Future<int> deleteOrderById(String orderId) =>
+      (delete(orderTable)..where((tbl) => tbl.id.equals(orderId))).go();
 }

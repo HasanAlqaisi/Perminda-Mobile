@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:moor_ffi/moor_ffi.dart';
-import 'package:moor_flutter/moor_flutter.dart';
 import 'package:perminda/data/db/app_database/app_database.dart';
 
 import '../../dummy_models.dart';
@@ -19,18 +18,19 @@ void main() {
   group('watchProductsByShopId', () {
     test('should return [ProductAndCategoryAndBrandAndShop] in a correct way',
         () async {
-      await appDatabase.brandDao.insertBrand(DummyModels.brand1);
-      await appDatabase.brandDao.insertBrand(DummyModels.brand2);
+      await appDatabase.brandDao
+          .insertBrands([DummyModels.brand1, DummyModels.brand2]);
       await appDatabase.userDao.insertUser(DummyModels.user1);
       await appDatabase.userDao.insertUser(DummyModels.user2);
-      await appDatabase.shopDao.insertShop(DummyModels.shop1);
-      await appDatabase.shopDao.insertShop(DummyModels.shop2);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category1);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category2);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category3);
-      await appDatabase.productDao.insertProduct(DummyModels.product1);
-      await appDatabase.productDao.insertProduct(DummyModels.product2);
-      await appDatabase.productDao.insertProduct(DummyModels.product3);
+      await appDatabase.shopDao
+          .insertShops([DummyModels.shop1, DummyModels.shop2]);
+      await appDatabase.categoryDao.insertCategories([
+        DummyModels.category1,
+        DummyModels.category2,
+        DummyModels.category3
+      ]);
+      await appDatabase.productDao.insertProducts(
+          [DummyModels.product1, DummyModels.product2, DummyModels.product3]);
 
       final result = appDatabase.productDao.watchProductsByShopId('1');
 
@@ -46,18 +46,19 @@ void main() {
   group('watchProductsByCategoryId', () {
     test('should return [ProductAndCategoryAndBrandAndShop] in a correct way',
         () async {
-      await appDatabase.brandDao.insertBrand(DummyModels.brand1);
-      await appDatabase.brandDao.insertBrand(DummyModels.brand2);
+      await appDatabase.brandDao
+          .insertBrands([DummyModels.brand1, DummyModels.brand2]);
       await appDatabase.userDao.insertUser(DummyModels.user1);
       await appDatabase.userDao.insertUser(DummyModels.user2);
-      await appDatabase.shopDao.insertShop(DummyModels.shop1);
-      await appDatabase.shopDao.insertShop(DummyModels.shop2);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category1);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category2);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category3);
-      await appDatabase.productDao.insertProduct(DummyModels.product1);
-      await appDatabase.productDao.insertProduct(DummyModels.product2);
-      await appDatabase.productDao.insertProduct(DummyModels.product3);
+      await appDatabase.shopDao
+          .insertShops([DummyModels.shop1, DummyModels.shop2]);
+      await appDatabase.categoryDao.insertCategories([
+        DummyModels.category1,
+        DummyModels.category2,
+        DummyModels.category3
+      ]);
+      await appDatabase.productDao.insertProducts(
+          [DummyModels.product1, DummyModels.product2, DummyModels.product3]);
 
       final result = appDatabase.productDao.watchProductsByCategoryId('2');
 
@@ -73,18 +74,19 @@ void main() {
   group('watchProductsByBrandId', () {
     test('should return [ProductAndCategoryAndBrandAndShop] in a correct way',
         () async {
-      await appDatabase.brandDao.insertBrand(DummyModels.brand1);
-      await appDatabase.brandDao.insertBrand(DummyModels.brand2);
+      await appDatabase.brandDao
+          .insertBrands([DummyModels.brand1, DummyModels.brand2]);
       await appDatabase.userDao.insertUser(DummyModels.user1);
       await appDatabase.userDao.insertUser(DummyModels.user2);
-      await appDatabase.shopDao.insertShop(DummyModels.shop1);
-      await appDatabase.shopDao.insertShop(DummyModels.shop2);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category1);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category2);
-      await appDatabase.categoryDao.insertCategory(DummyModels.category3);
-      await appDatabase.productDao.insertProduct(DummyModels.product1);
-      await appDatabase.productDao.insertProduct(DummyModels.product2);
-      await appDatabase.productDao.insertProduct(DummyModels.product3);
+      await appDatabase.shopDao
+          .insertShops([DummyModels.shop1, DummyModels.shop2]);
+      await appDatabase.categoryDao.insertCategories([
+        DummyModels.category1,
+        DummyModels.category2,
+        DummyModels.category3
+      ]);
+      await appDatabase.productDao.insertProducts(
+          [DummyModels.product1, DummyModels.product2, DummyModels.product3]);
 
       final result = appDatabase.productDao.watchProductsByBrandId('1');
 
@@ -96,5 +98,4 @@ void main() {
       });
     });
   });
-
 }

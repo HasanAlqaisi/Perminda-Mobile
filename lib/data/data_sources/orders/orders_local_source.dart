@@ -3,11 +3,14 @@ import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/order/order_dao.dart';
 import 'package:perminda/data/db/models/order_item/order_item_dao.dart';
 import 'package:perminda/data/db/relations/order_item/order_with_products.dart';
+import 'package:perminda/data/remote_models/orders/results.dart';
 
 abstract class OrdersLocalSource {
-  Future<int> insertOrder(OrderTableCompanion order);
-  Future<int> insertOrderItem(OrderItemTableCompanion order);
+  Future<void> insertOrders(List<OrderTableCompanion> orders);
+  Future<void> insertOrderItems(List<OrdersResult> orders);
   Stream<Future<List<OrderWithProducts>>> watchOrders(String userId);
+  Future<int> deleteOrderId(String orderId);
+  Future<int> deleteOrderItemId(String orderItemId);
 }
 
 class OrdersLocalSourceImpl extends OrdersLocalSource {
@@ -17,18 +20,18 @@ class OrdersLocalSourceImpl extends OrdersLocalSource {
   OrdersLocalSourceImpl({this.orderDao, this.orderItemDao});
 
   @override
-  Future<int> insertOrder(OrderTableCompanion order) {
+  Future<void> insertOrders(List<OrderTableCompanion> orders) {
     try {
-      return orderDao.insertOrder(order);
+      return orderDao.insertOrders(orders);
     } on InvalidDataException {
       rethrow;
     }
   }
 
   @override
-  Future<int> insertOrderItem(OrderItemTableCompanion order) {
+  Future<void> insertOrderItems(List<OrdersResult> orders) {
     try {
-      return orderItemDao.insertOrderItem(order);
+      return orderItemDao.insertOrderItems(orders);
     } on InvalidDataException {
       rethrow;
     }
@@ -37,5 +40,15 @@ class OrdersLocalSourceImpl extends OrdersLocalSource {
   @override
   Stream<Future<List<OrderWithProducts>>> watchOrders(String userId) {
     return orderItemDao.watchOrders(userId);
+  }
+
+  @override
+  Future<int> deleteOrderId(String orderId) {
+    return orderDao.deleteOrderById(orderId);
+  }
+
+  @override
+  Future<int> deleteOrderItemId(String orderItemId) {
+    return orderItemDao.deleteOrderItemById(orderItemId);
   }
 }

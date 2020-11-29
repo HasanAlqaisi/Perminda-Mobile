@@ -6,7 +6,9 @@ import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/orders/orders_local_source.dart';
 import 'package:perminda/data/data_sources/orders/orders_remote_source.dart';
+import 'package:perminda/data/db/models/order/order_table.dart';
 import 'package:perminda/data/remote_models/orders/orders.dart';
 import 'package:perminda/data/remote_models/orders/results.dart';
 import 'package:perminda/data/repos/orders/orders_repo_impl.dart';
@@ -17,9 +19,12 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements OrdersRemoteSource {}
 
+class MockLocalSource extends Mock implements OrdersLocalSource {}
+
 void main() {
   MockNetworkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   OrdersRepoImpl repo;
 
   final orders = Orders.fromJson(json.decode(fixture('orders.json')));
@@ -29,7 +34,12 @@ void main() {
   setUp(() {
     netWorkInfo = MockNetworkInfo();
     remoteSource = MockRemoteSource();
-    repo = OrdersRepoImpl(netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+    localSource = MockLocalSource();
+    repo = OrdersRepoImpl(
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -38,6 +48,10 @@ void main() {
     });
 
     group('addOrder', () {
+      setUp(() {
+        when(remoteSource.addOrder(null, null)).thenAnswer((_) async => order);
+      });
+
       test('should user has an internet connection', () async {
         await repo.addOrder(null, null);
         verify(netWorkInfo.isConnected());
@@ -45,11 +59,18 @@ void main() {
       });
 
       test('should return [OrdersReult] if remote call is success', () async {
-        when(remoteSource.addOrder(null, null)).thenAnswer((_) async => order);
-
         final result = await repo.addOrder(null, null);
 
         expect(result, Right(order));
+      });
+
+      test('should cache [OrdersReult] in the databasee', () async {
+        when(localSource.insertOrders(OrderTable.fromOrdersResult([order])))
+            .thenAnswer((_) async => null);
+
+        await repo.addOrder(null, null);
+
+        verify(localSource.insertOrders(any));
       });
 
       test(
@@ -84,6 +105,10 @@ void main() {
     });
 
     group('editOrder', () {
+      setUp(() {
+        when(remoteSource.editOrder(null, null)).thenAnswer((_) async => order);
+      });
+
       test('should user has an internet connection', () async {
         await repo.editOrder(null, null);
         verify(netWorkInfo.isConnected());
@@ -91,11 +116,18 @@ void main() {
       });
 
       test('should return [OrdersReult] if remote call is success', () async {
-        when(remoteSource.editOrder(null, null)).thenAnswer((_) async => order);
-
         final result = await repo.editOrder(null, null);
 
         expect(result, Right(order));
+      });
+
+      test('should cache [OrdersReult] in the databasee', () async {
+        when(localSource.insertOrders(OrderTable.fromOrdersResult([order])))
+            .thenAnswer((_) async => null);
+
+        await repo.editOrder(null, null);
+
+        verify(localSource.insertOrders(any));
       });
 
       test(
@@ -155,6 +187,19 @@ void main() {
         final result = await repo.getOrders();
 
         expect(result, Right(orders));
+      });
+
+      test('should cache list of [OrdersReult] in the databasee', () async {
+        when(remoteSource.getOrders(repo.offset))
+            .thenAnswer((_) async => orders);
+
+        when(localSource
+                .insertOrders(OrderTable.fromOrdersResult(orders.results)))
+            .thenAnswer((_) async => null);
+
+        await repo.getOrders();
+
+        verify(localSource.insertOrders(any));
       });
 
       test(

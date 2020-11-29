@@ -18,15 +18,18 @@ void main() {
     test('should return list of [ReviewData] in a correct way', () async {
       await db.userDao.insertUser(DummyModels.user1);
       await db.userDao.insertUser(DummyModels.user2);
-      await db.shopDao.insertShop(DummyModels.shop1);
-      await db.shopDao.insertShop(DummyModels.shop2);
-      await db.categoryDao.insertCategory(DummyModels.category1);
-      await db.categoryDao.insertCategory(DummyModels.category2);
-      await db.productDao.insertProduct(DummyModels.product1);
-      await db.productDao.insertProduct(DummyModels.product2);
-      await db.reviewDao.insertReview(DummyModels.review1Product1User1);
-      await db.reviewDao.insertReview(DummyModels.review2Product1User2);
-      await db.reviewDao.insertReview(DummyModels.review3Product2User1);
+      await db.shopDao.insertShops([DummyModels.shop1, DummyModels.shop2]);
+      await db.categoryDao.insertCategories([
+        DummyModels.category1,
+        DummyModels.category2,
+      ]);
+      await db.productDao
+          .insertProducts([DummyModels.product1, DummyModels.product2]);
+      await db.reviewDao.insertReviews([
+        DummyModels.review1Product1User1,
+        DummyModels.review2Product1User2,
+        DummyModels.review3Product2User1
+      ]);
 
       final result = db.reviewDao.watchReviews(DummyModels.product2.id.value);
 

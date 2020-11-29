@@ -8,8 +8,11 @@ part 'shop_dao.g.dart';
 class ShopDao extends DatabaseAccessor<AppDatabase> with _$ShopDaoMixin {
   ShopDao(AppDatabase db) : super(db);
 
-  Future<int> insertShop(ShopTableCompanion shop) =>
-      into(shopTable).insert(shop, mode: InsertMode.insertOrReplace);
+  Future<void> insertShops(List<ShopTableCompanion> shops) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(shopTable, shops);
+    });
+  }
 
   Future<ShopData> getShopById(String shopId) =>
       (select(shopTable)..where((shopTable) => shopTable.id.equals(shopId)))
@@ -25,4 +28,9 @@ class ShopDao extends DatabaseAccessor<AppDatabase> with _$ShopDaoMixin {
   /// We only need one shop by its id, or all shops
   /// because this is user side app, not the seller
   Stream<List<ShopData>> watchShops() => select(shopTable).watch();
+
+  Future<int> deleteShops() => delete(shopTable).go();
+
+  Future<int> deleteShopById(String shopId) =>
+      (delete(shopTable)..where((tbl) => tbl.id.equals(shopId))).go();
 }

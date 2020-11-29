@@ -6,6 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/reviews/reviews_local_source.dart';
 import 'package:perminda/data/data_sources/reviews/reviews_remote_source.dart';
 import 'package:perminda/data/remote_models/reviews/results.dart';
 import 'package:perminda/data/remote_models/reviews/reviews.dart';
@@ -17,16 +18,23 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements ReviewsRemoteSource {}
 
+class MockLocalSource extends Mock implements ReviewsLocalSource {}
+
 void main() {
   MockNetworkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   ReviewsRepoImpl repo;
 
   setUp(() {
     netWorkInfo = MockNetworkInfo();
     remoteSource = MockRemoteSource();
-    repo =
-        ReviewsRepoImpl(netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+    localSource = MockLocalSource();
+    repo = ReviewsRepoImpl(
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -39,6 +47,12 @@ void main() {
     final reviews = Reviews.fromJson(json.decode(fixture('reviews.json')));
 
     group('addReview', () {
+      setUp(() {
+        when(remoteSource.addReview(
+                review.rate, review.message, review.productId))
+            .thenAnswer((_) async => review);
+      });
+
       test('should user has an internet connection', () async {
         await repo.addReview(review.rate, review.message, review.productId);
 
@@ -48,10 +62,6 @@ void main() {
       });
 
       test('should return [review] if remote call is success', () async {
-        when(remoteSource.addReview(
-                review.rate, review.message, review.productId))
-            .thenAnswer((_) async => review);
-
         final result =
             await repo.addReview(review.rate, review.message, review.productId);
 
@@ -223,6 +233,16 @@ void main() {
         final result = await repo.deleteReview(review.id);
 
         expect(result, Right(true));
+      });
+
+      test('should delete [review] from database', () async {
+        when(remoteSource.deleteReview(review.id))
+            .thenAnswer((_) async => true);
+        when(localSource.deleteReviewById(review.id))
+            .thenAnswer((_) async => null);
+
+        await repo.deleteReview(review.id);
+        verify(localSource.deleteReviewById(any));
       });
 
       test(

@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/cart_items/cart_items_local_source.dart';
 import 'package:perminda/data/data_sources/cart_items/cart_items_remote_source.dart';
+import 'package:perminda/data/db/models/cart_item/cart_item_table.dart';
 import 'package:perminda/data/remote_models/cart_items/results.dart';
 import 'package:perminda/data/remote_models/cart_items/cart_items.dart';
 import 'package:perminda/core/errors/failure.dart';
@@ -13,9 +15,10 @@ import 'package:perminda/domain/repos/cart_items_repo.dart';
 class CartItemsRepoImpl extends CartItemsRepo {
   final NetWorkInfo netWorkInfo;
   final CartItemsRemoteSource remoteSource;
+  final CartItemsLocalSource localSource;
   int offset = 0;
 
-  CartItemsRepoImpl({this.netWorkInfo, this.remoteSource});
+  CartItemsRepoImpl({this.netWorkInfo, this.remoteSource, this.localSource});
 
   @override
   Future<Either<Failure, CartItemsResult>> addCartItem(
@@ -23,6 +26,10 @@ class CartItemsRepoImpl extends CartItemsRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.addCartItem(productId, quantity);
+
+        await localSource
+            .insertCartItems(CartItemTable.fromCartItemsResult([result]));
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -43,6 +50,9 @@ class CartItemsRepoImpl extends CartItemsRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.deleteCartItem(id);
+
+        await localSource.deleteCartItemById(id);
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -62,6 +72,10 @@ class CartItemsRepoImpl extends CartItemsRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.editCartItem(id, productId, quantity);
+
+        await localSource
+            .insertCartItems(CartItemTable.fromCartItemsResult([result]));
+
         return Right(result);
       } on UnauthorizedTokenException {
         return Left(UnauthorizedTokenFailure());
@@ -80,10 +94,13 @@ class CartItemsRepoImpl extends CartItemsRepo {
   }
 
   @override
-  Future<Either<Failure, CartItems>> getCartItems(int offset) async {
+  Future<Either<Failure, CartItems>> getCartItems() async {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getCartItems(this.offset);
+
+        await localSource
+            .insertCartItems(CartItemTable.fromCartItemsResult(result.results));
 
         final offset = API.offsetExtractor(result.nextPage);
 

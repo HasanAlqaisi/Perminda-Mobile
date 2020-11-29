@@ -53,7 +53,7 @@ void main() {
     price: Value(100),
     sale: Value(0),
     overview: Value('this is a mobile'),
-    deliveryTime: Value(DateTime.parse('2020-10-10')),
+    deliveryTime: Value(0),
     rate: Value(4.3),
     buyers: Value(0),
     numReviews: Value(0),
@@ -71,7 +71,7 @@ void main() {
     price: Value(100),
     sale: Value(0),
     overview: Value('this is an ihpone'),
-    deliveryTime: Value(DateTime.parse('2020-10-10')),
+    deliveryTime: Value(0),
     rate: Value(4.3),
     buyers: Value(0),
     numReviews: Value(0),
@@ -82,14 +82,17 @@ void main() {
     lastUpdate: Value(DateTime.parse('2020-10-10')),
   );
   final favouriteItem = FavouriteItemTableCompanion(
+    id: Value('1'),
     product: Value('1'),
     user: Value('1'),
   );
   final favouriteItem2 = FavouriteItemTableCompanion(
+    id: Value('2'),
     product: Value('2'),
     user: Value('1'),
   );
   final favouriteItem3 = FavouriteItemTableCompanion(
+    id: Value('3'),
     product: Value('1'),
     user: Value('2'),
   );
@@ -103,16 +106,14 @@ void main() {
   });
 
   test('should return [FavouriteItemsAndProducts] in a correct way', () async {
-    await appDatabase.brandDao.insertBrand(brand);
+    await appDatabase.brandDao.insertBrands([brand]);
     await appDatabase.userDao.insertUser(user);
     await appDatabase.userDao.insertUser(user2);
-    await appDatabase.shopDao.insertShop(shop);
-    await appDatabase.categoryDao.insertCategory(category);
-    await appDatabase.productDao.insertProduct(product);
-    await appDatabase.productDao.insertProduct(product2);
-    await appDatabase.favouriteItemDao.insertFavouriteItem(favouriteItem);
-    await appDatabase.favouriteItemDao.insertFavouriteItem(favouriteItem2);
-    await appDatabase.favouriteItemDao.insertFavouriteItem(favouriteItem3);
+    await appDatabase.shopDao.insertShops([shop]);
+    await appDatabase.categoryDao.insertCategories([category]);
+    await appDatabase.productDao.insertProducts([product, product2]);
+    await appDatabase.favouriteItemDao
+        .insertFavouriteItems([favouriteItem, favouriteItem2, favouriteItem3]);
 
     final result =
         appDatabase.favouriteItemDao.watchFavouriteItems(user2.id.value);

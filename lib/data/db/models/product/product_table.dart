@@ -1,4 +1,6 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:perminda/data/db/app_database/app_database.dart';
+import 'package:perminda/data/remote_models/products/results.dart';
 
 @DataClassName('ProductData')
 class ProductTable extends Table {
@@ -12,7 +14,7 @@ class ProductTable extends Table {
   RealColumn get price => real()();
   IntColumn get sale => integer()();
   TextColumn get overview => text()();
-  DateTimeColumn get deliveryTime => dateTime()();
+  IntColumn get deliveryTime => integer()();
   RealColumn get rate => real()();
   IntColumn get buyers => integer()();
   IntColumn get numReviews => integer()();
@@ -27,4 +29,33 @@ class ProductTable extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+
+  static List<ProductTableCompanion> fromProductsesult(
+      List<ProductsResult> productsResult) {
+    return productsResult
+        .map(
+          (result) => ProductTableCompanion(
+            id: Value(result.id),
+            shop: Value(result.shopId),
+            category: Value(result.categoryId),
+            brand: Value(result.brandId),
+            name: Value(result.name),
+            price: Value(result.price),
+            sale: Value(result.sale),
+            overview: Value(result.overview),
+            deliveryTime: Value(result.deliveryTime),
+            rate: Value(result.rate),
+            buyers: Value(result.buyers),
+            numReviews: Value(result.nfReviews),
+            active: Value(result.active),
+            quantity: Value(result.quantity),
+            dateFirstActive: Value(result.dateFirstActivated != null
+                ? DateTime.tryParse(result.dateFirstActivated)
+                : null),
+            dateAdded: Value(DateTime.tryParse(result.dateAdded)),
+            lastUpdate: Value(DateTime.tryParse(result.lastUpdate)),
+          ),
+        )
+        .toList();
+  }
 }

@@ -3,10 +3,12 @@ import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/user_notification/user_notification_dao.dart';
 
 abstract class NotificationsLocalSource {
-  Future<int> insertUserNotification(
-      UserNotificationTableCompanion userNotification);
+  Future<void> insertUserNotifications(
+      List<UserNotificationTableCompanion> userNotifications);
 
   Stream<List<NotificationData>> watchUserNotifications(String userId);
+
+  Future<int> deleteUserNotificationById(String notificationId);
 }
 
 class NotificationsLocalSourceImpl extends NotificationsLocalSource {
@@ -15,10 +17,10 @@ class NotificationsLocalSourceImpl extends NotificationsLocalSource {
   NotificationsLocalSourceImpl({this.userNotificationDao});
 
   @override
-  Future<int> insertUserNotification(
-      UserNotificationTableCompanion userNotification) {
+  Future<void> insertUserNotifications(
+      List<UserNotificationTableCompanion> userNotifications) {
     try {
-      return userNotificationDao.insertUserNotification(userNotification);
+      return userNotificationDao.insertUserNotifications(userNotifications);
     } on InvalidDataException {
       rethrow;
     }
@@ -27,5 +29,10 @@ class NotificationsLocalSourceImpl extends NotificationsLocalSource {
   @override
   Stream<List<NotificationData>> watchUserNotifications(String userId) {
     return userNotificationDao.watchUserNotifications(userId);
+  }
+
+  @override
+  Future<int> deleteUserNotificationById(String notificationId) {
+    return userNotificationDao.deleteUserNotificationById(notificationId);
   }
 }

@@ -19,20 +19,23 @@ void main() {
     test('should return list of [ProductImageData] in a correct way', () async {
       await db.userDao.insertUser(DummyModels.user1);
       await db.userDao.insertUser(DummyModels.user2);
-      await db.shopDao.insertShop(DummyModels.shop1);
-      await db.shopDao.insertShop(DummyModels.shop2);
-      await db.categoryDao.insertCategory(DummyModels.category1);
-      await db.categoryDao.insertCategory(DummyModels.category2);
-      await db.productDao.insertProduct(DummyModels.product1);
-      await db.productDao.insertProduct(DummyModels.product2);
+      await db.shopDao.insertShops([DummyModels.shop1, DummyModels.shop2]);
+      await db.categoryDao.insertCategories([
+        DummyModels.category1,
+        DummyModels.category2,
+      ]);
+      await db.productDao.insertProducts([
+        DummyModels.product1,
+        DummyModels.product2,
+      ]);
       await db.productImageDao
-          .insertProductImage(DummyModels.product1Images[0]);
+          .insertProductImages([DummyModels.product1Images[0]]);
       await db.productImageDao
-          .insertProductImage(DummyModels.product1Images[1]);
+          .insertProductImages([DummyModels.product1Images[1]]);
       await db.productImageDao
-          .insertProductImage(DummyModels.product2Images[0]);
+          .insertProductImages([DummyModels.product2Images[0]]);
       await db.productImageDao
-          .insertProductImage(DummyModels.product2Images[1]);
+          .insertProductImages([DummyModels.product2Images[1]]);
 
       final result = await db.productImageDao
           .getProductImages(DummyModels.product2.id.value);

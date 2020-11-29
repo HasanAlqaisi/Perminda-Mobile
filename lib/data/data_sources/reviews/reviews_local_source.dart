@@ -3,9 +3,11 @@ import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/review/review_dao.dart';
 
 abstract class ReviewsLocalSource {
-  Future<int> insertReview(ReviewTableCompanion review);
+  Future<void> insertReviews(List<ReviewTableCompanion> reviews);
 
   Stream<List<ReviewData>> watchReviews(String productId);
+
+  Future<int> deleteReviewById(String reviewId);
 }
 
 class ReviewsLocalSourceImpl extends ReviewsLocalSource {
@@ -14,9 +16,9 @@ class ReviewsLocalSourceImpl extends ReviewsLocalSource {
   ReviewsLocalSourceImpl({this.reviewDao});
 
   @override
-  Future<int> insertReview(ReviewTableCompanion review) {
+  Future<void> insertReviews(List<ReviewTableCompanion> reviews) {
     try {
-      return reviewDao.insertReview(review);
+      return reviewDao.insertReviews(reviews);
     } on InvalidDataException {
       rethrow;
     }
@@ -25,5 +27,10 @@ class ReviewsLocalSourceImpl extends ReviewsLocalSource {
   @override
   Stream<List<ReviewData>> watchReviews(String productId) {
     return reviewDao.watchReviews(productId);
+  }
+
+  @override
+  Future<int> deleteReviewById(String reviewId) {
+    return reviewDao.deleteReviewById(reviewId);
   }
 }

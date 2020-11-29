@@ -10,10 +10,12 @@ class UserNotificationDao extends DatabaseAccessor<AppDatabase>
     with _$UserNotificationDaoMixin {
   UserNotificationDao(AppDatabase db) : super(db);
 
-  Future<int> insertUserNotification(
-          UserNotificationTableCompanion userNotification) =>
-      into(userNotificationTable)
-          .insert(userNotification, mode: InsertMode.insertOrReplace);
+  Future<void> insertUserNotifications(
+      List<UserNotificationTableCompanion> notifications) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(userNotificationTable, notifications);
+    });
+  }
 
   /// There's a relation between user and his notifcations [one-to-many]
   /// in this query we don't need the user info
@@ -24,4 +26,13 @@ class UserNotificationDao extends DatabaseAccessor<AppDatabase>
               userNotificationTable.user.equals(userId)))
         .watch();
   }
+
+  Future<int> deleteUserNotifications(String userId) =>
+      (delete(userNotificationTable)..where((tbl) => tbl.user.equals(userId)))
+          .go();
+
+  Future<int> deleteUserNotificationById(String notificationId) =>
+      (delete(userNotificationTable)
+            ..where((tbl) => tbl.id.equals(notificationId)))
+          .go();
 }

@@ -20,13 +20,13 @@ void main() {
       db.userDao.insertUser(DummyModels.user1);
       db.userDao.insertUser(DummyModels.user2);
       db.userNotificationDao
-          .insertUserNotification(DummyModels.user1Notification1);
+          .insertUserNotifications([DummyModels.user1Notification1]);
       db.userNotificationDao
-          .insertUserNotification(DummyModels.user1Notification2);
+          .insertUserNotifications([DummyModels.user1Notification2]);
       db.userNotificationDao
-          .insertUserNotification(DummyModels.user2Notification1);
+          .insertUserNotifications([DummyModels.user2Notification1]);
       db.userNotificationDao
-          .insertUserNotification(DummyModels.user2Notification2);
+          .insertUserNotifications([DummyModels.user2Notification2]);
 
       final result = db.userNotificationDao
           .watchUserNotifications(DummyModels.user2.id.value);

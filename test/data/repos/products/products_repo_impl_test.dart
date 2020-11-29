@@ -6,7 +6,9 @@ import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/products/products_local_source.dart';
 import 'package:perminda/data/data_sources/products/products_remote_source.dart';
+import 'package:perminda/data/db/models/product/product_table.dart';
 import 'package:perminda/data/remote_models/products/products.dart';
 import 'package:perminda/data/repos/products/products_repo_impl.dart';
 
@@ -16,16 +18,23 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements ProductsRemoteSource {}
 
+class MockLocalSource extends Mock implements ProductsLocalSource {}
+
 void main() {
   MockNetworkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   ProductsRepoImpl repo;
 
   setUp(() {
     netWorkInfo = MockNetworkInfo();
     remoteSource = MockRemoteSource();
-    repo =
-        ProductsRepoImpl(netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+    localSource = MockLocalSource();
+    repo = ProductsRepoImpl(
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -64,6 +73,19 @@ void main() {
         final result = await repo.getProducts(null, null, null);
 
         expect(result, Right(productsResult.results));
+      });
+
+      test('should cache list of [Products] in the databasee', () async {
+        when(remoteSource.getProducts(repo.offset, null, null, null))
+            .thenAnswer((_) async => productsResult);
+
+        when(localSource.insertProducts(
+                ProductTable.fromProductsesult(productsResult.results)))
+            .thenAnswer((_) async => null);
+
+        await repo.getProducts(null, null, null);
+
+        verify(localSource.insertProducts(any));
       });
 
       test(

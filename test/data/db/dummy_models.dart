@@ -98,7 +98,7 @@ class DummyModels {
     price: Value(100),
     sale: Value(0),
     overview: Value('this is a mobile'),
-    deliveryTime: Value(DateTime.parse('2020-10-10')),
+    deliveryTime: Value(0),
     rate: Value(4.3),
     buyers: Value(0),
     numReviews: Value(0),
@@ -116,7 +116,7 @@ class DummyModels {
     price: Value(100),
     sale: Value(0),
     overview: Value('this is an ihpone'),
-    deliveryTime: Value(DateTime.parse('2020-10-10')),
+    deliveryTime: Value(0),
     rate: Value(4.3),
     buyers: Value(0),
     numReviews: Value(0),
@@ -135,7 +135,7 @@ class DummyModels {
     price: Value(100),
     sale: Value(0),
     overview: Value('this is an ihpone'),
-    deliveryTime: Value(DateTime.parse('2020-10-10')),
+    deliveryTime: Value(0),
     rate: Value(4.3),
     buyers: Value(0),
     numReviews: Value(0),
@@ -154,8 +154,8 @@ class DummyModels {
     stage: Value(0),
     dateSent: Value(DateTime.parse('2020-10-10')),
     datePrepared: Value(DateTime.parse('2020-10-10')),
-    lastShipped: Value(DateTime.parse('2020-10-10')),
-    lastRecieved: Value(DateTime.parse('2020-10-10')),
+    dateShipped: Value(DateTime.parse('2020-10-10')),
+    dateRecieved: Value(DateTime.parse('2020-10-10')),
   );
   static final order2 = OrderTableCompanion(
     id: Value('2'),
@@ -166,8 +166,8 @@ class DummyModels {
     stage: Value(0),
     dateSent: Value(DateTime.parse('2020-10-10')),
     datePrepared: Value(DateTime.parse('2020-10-10')),
-    lastShipped: Value(DateTime.parse('2020-10-10')),
-    lastRecieved: Value(DateTime.parse('2020-10-10')),
+    dateShipped: Value(DateTime.parse('2020-10-10')),
+    dateRecieved: Value(DateTime.parse('2020-10-10')),
   );
   static final order3 = OrderTableCompanion(
     id: Value('3'),
@@ -178,8 +178,8 @@ class DummyModels {
     stage: Value(0),
     dateSent: Value(DateTime.parse('2020-10-10')),
     datePrepared: Value(DateTime.parse('2020-10-10')),
-    lastShipped: Value(DateTime.parse('2020-10-10')),
-    lastRecieved: Value(DateTime.parse('2020-10-10')),
+    dateShipped: Value(DateTime.parse('2020-10-10')),
+    dateRecieved: Value(DateTime.parse('2020-10-10')),
   );
   static final package1 = PackageTableCompanion(
     id: Value('1'),

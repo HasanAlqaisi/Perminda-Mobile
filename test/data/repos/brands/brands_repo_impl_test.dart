@@ -6,7 +6,9 @@ import 'package:mockito/mockito.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/brands/local_source.dart';
 import 'package:perminda/data/data_sources/brands/remote_source.dart';
+import 'package:perminda/data/db/models/brand/brand_table.dart';
 import 'package:perminda/data/remote_models/brands/brands.dart';
 import 'package:perminda/data/remote_models/brands/results.dart';
 import 'package:perminda/data/repos/brands/brands_repo_impl.dart';
@@ -18,16 +20,23 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements BrandsRemoteSource {}
 
+class MockLocalSource extends Mock implements BrandLocalSource {}
+
 void main() {
   MockNetWorkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   BrandsRepoImpl brandsRepo;
 
   setUp(() {
     netWorkInfo = MockNetWorkInfo();
     remoteSource = MockRemoteSource();
-    brandsRepo =
-        BrandsRepoImpl(netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+    localSource = MockLocalSource();
+    brandsRepo = BrandsRepoImpl(
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -64,6 +73,19 @@ void main() {
         expect(result, Right(brands));
       });
 
+      test('should cache list of [brands] in the databasee', () async {
+        when(remoteSource.getBrands(brandsRepo.offset))
+            .thenAnswer((_) async => brands);
+
+        when(localSource
+                .insertBrands(BrandTable.fromBrandsResult(brands.results)))
+            .thenAnswer((_) async => null);
+
+        await brandsRepo.getBrands();
+
+        verify(localSource.insertBrands(any));
+      });
+
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {
@@ -78,15 +100,27 @@ void main() {
       final brand = BrandsResult.fromJson(json.decode(fixture('brand.json')));
 
       test('should user has an internet connection', () async {
+        when(remoteSource.getBrandById(null)).thenAnswer((_) async => brand);
         await brandsRepo.getBrandById(null);
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
 
-      test('shuold return list of [brands] if remote call success', () async {
+      test('shuold return [brands] if remote call success', () async {
         when(remoteSource.getBrandById(null)).thenAnswer((_) async => brand);
         final result = await brandsRepo.getBrandById(null);
         expect(result, Right(brand));
+      });
+
+      test('should cache list of [brands] in the databasee', () async {
+        when(remoteSource.getBrandById(null)).thenAnswer((_) async => brand);
+
+        when(localSource.insertBrands(BrandTable.fromBrandsResult([brand])))
+            .thenAnswer((_) async => null);
+
+        await brandsRepo.getBrandById(null);
+
+        verify(localSource.insertBrands(any));
       });
 
       test(

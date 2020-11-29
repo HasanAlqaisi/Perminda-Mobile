@@ -4,10 +4,13 @@ import 'package:perminda/data/db/models/favourite_item/favourite_item_dao.dart';
 import 'package:perminda/data/db/relations/favourite_item/favourite_item_and_product.dart';
 
 abstract class FavouritesLocalSource {
-  Future<int> insertFavouriteItem(FavouriteItemTableCompanion favourite);
+  Future<void> insertFavouriteItems(
+      List<FavouriteItemTableCompanion> favourites);
 
   Stream<Future<List<Future<FavouriteItemAndProduct>>>> watchFavouriteItems(
       String userId);
+
+  Future<int> deleteFavouriteItemById(String favouriteItemId);
 }
 
 class FavouritesLocalSourceImpl extends FavouritesLocalSource {
@@ -16,9 +19,10 @@ class FavouritesLocalSourceImpl extends FavouritesLocalSource {
   FavouritesLocalSourceImpl({this.favouriteItemDao});
 
   @override
-  Future<int> insertFavouriteItem(FavouriteItemTableCompanion favourite) {
+  Future<void> insertFavouriteItems(
+      List<FavouriteItemTableCompanion> favourites) {
     try {
-      return favouriteItemDao.insertFavouriteItem(favourite);
+      return favouriteItemDao.insertFavouriteItems(favourites);
     } on InvalidDataException {
       rethrow;
     }
@@ -28,5 +32,10 @@ class FavouritesLocalSourceImpl extends FavouritesLocalSource {
   Stream<Future<List<Future<FavouriteItemAndProduct>>>> watchFavouriteItems(
       String userId) {
     return favouriteItemDao.watchFavouriteItems(userId);
+  }
+
+  @override
+  Future<int> deleteFavouriteItemById(String favouriteItemId) {
+    return favouriteItemDao.deleteFavouriteItemById(favouriteItemId);
   }
 }

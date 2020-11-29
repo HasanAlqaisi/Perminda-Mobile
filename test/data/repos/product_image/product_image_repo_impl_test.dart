@@ -6,6 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
+import 'package:perminda/data/data_sources/product_image/local_source.dart';
 import 'package:perminda/data/data_sources/product_image/remote_source.dart';
 import 'package:perminda/data/remote_models/product_image/product_image.dart';
 import 'package:perminda/data/repos/product_image/product_image_repo_impl.dart';
@@ -16,16 +17,23 @@ class MockNetworkInfo extends Mock implements NetWorkInfo {}
 
 class MockRemoteSource extends Mock implements ProductImageRemoteSource {}
 
+class MockLocalSource extends Mock implements ProductImageLocalSource {}
+
 void main() {
   MockNetworkInfo netWorkInfo;
   MockRemoteSource remoteSource;
+  MockLocalSource localSource;
   ProductImageRepoImpl repo;
 
   setUp(() {
     netWorkInfo = MockNetworkInfo();
     remoteSource = MockRemoteSource();
+    localSource = MockLocalSource();
     repo = ProductImageRepoImpl(
-        netWorkInfo: netWorkInfo, remoteSource: remoteSource);
+      netWorkInfo: netWorkInfo,
+      remoteSource: remoteSource,
+      localSource: localSource,
+    );
   });
 
   group('device is online', () {
@@ -51,6 +59,20 @@ void main() {
 
         expect(result, Right(productImage));
       });
+
+      //TODO: Complete the test after finish product image API
+      // test('should cache [productImage] in the databasee', () async {
+      //   when(remoteSource.addProductImage(null, null, null))
+      //       .thenAnswer((_) async => productImage);
+
+      //   when(localSource.insertProductImages(
+      //           ProductImageTable.from(productsResult.results)))
+      //       .thenAnswer((_) async => null);
+
+      //   await repo.addProductImage(null, null, null);
+
+      //   verify(localSource.insertProductImages(any));
+      // });
 
       test(
           'shuold return [UnauthorizedTokenFailure] if remote call throws [UnauthorizedTokenException]',
@@ -109,6 +131,20 @@ void main() {
 
         expect(result, Right(productImage));
       });
+
+      //TODO: Complete the test after finish product image API
+      // test('should cache [productImage] in the databasee', () async {
+      //   when(remoteSource.addProductImage(null, null, null))
+      //       .thenAnswer((_) async => productImage);
+
+      //   when(localSource.insertProductImages(
+      //           ProductImageTable.from(productsResult.results)))
+      //       .thenAnswer((_) async => null);
+
+      //   await repo.addProductImage(null, null, null);
+
+      //   verify(localSource.insertProductImages(any));
+      // });
 
       test(
           'shuold return [UnauthorizedTokenFailure] if remote call throws [UnauthorizedTokenException]',
@@ -177,6 +213,20 @@ void main() {
         expect(result, Right(productImage));
       });
 
+      //TODO: Complete the test after finish product image API
+      // test('should cache [productImage] in the databasee', () async {
+      //   when(remoteSource.addProductImage(null, null, null))
+      //       .thenAnswer((_) async => productImage);
+
+      //   when(localSource.insertProductImages(
+      //           ProductImageTable.from(productsResult.results)))
+      //       .thenAnswer((_) async => null);
+
+      //   await repo.addProductImage(null, null, null);
+
+      //   verify(localSource.insertProductImages(any));
+      // });
+
       test(
           'shuold return [ItemNotFoundFailure] if remote call throws [ItemNotFoundException]',
           () async {
@@ -213,6 +263,17 @@ void main() {
         final result = await repo.deleteProductImage(null);
 
         expect(result, Right(true));
+      });
+
+      test('should delete [productImage] from database', () async {
+        when(remoteSource.deleteProductImage(null))
+            .thenAnswer((_) async => true);
+
+        when(localSource.deleteProductImageById(null))
+            .thenAnswer((_) async => null);
+
+        await repo.deleteProductImage(null);
+        verify(localSource.deleteProductImageById(any));
       });
 
       test(

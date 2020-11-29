@@ -1,4 +1,6 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:perminda/data/db/app_database/app_database.dart';
+import 'package:perminda/data/remote_models/user_notifications/results.dart';
 
 @DataClassName('NotificationData')
 class UserNotificationTable extends Table {
@@ -13,4 +15,19 @@ class UserNotificationTable extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+
+  static List<UserNotificationTableCompanion> fromNotificationsResult(
+      List<UserNotificationsReusult> notificatoinsResult) {
+    return notificatoinsResult
+        .map(
+          (result) => UserNotificationTableCompanion(
+            id: Value(result.id),
+            user: Value(result.userId),
+            message: Value(result.message),
+            read: Value(result.hasRead),
+            dateSent: Value(DateTime.tryParse(result.dateSent)),
+          ),
+        )
+        .toList();
+  }
 }

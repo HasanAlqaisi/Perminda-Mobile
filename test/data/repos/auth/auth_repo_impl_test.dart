@@ -10,7 +10,6 @@ import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/auth/local_source.dart';
 import 'package:perminda/data/data_sources/auth/remote_data_source.dart';
-import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/user/user_table.dart';
 import 'package:perminda/data/remote_models/auth/user.dart';
 import 'package:perminda/data/repos/auth/auth_repo_impl.dart';
@@ -295,6 +294,10 @@ void main() {
     });
 
     group('getUser', () {
+      setUp(() {
+        when(remoteDataSource.getUser()).thenAnswer((_) async => user);
+      });
+
       test('should check if the device is online', () async {
         authRepo.getUser();
 
@@ -314,8 +317,6 @@ void main() {
       });
 
       test('should return [user] if call is success', () async {
-        when(remoteDataSource.getUser()).thenAnswer((_) async => user);
-
         final result = await authRepo.getUser();
 
         expect(result, Right(user));
@@ -332,6 +333,12 @@ void main() {
     });
 
     group('editUser', () {
+      setUp(() {
+        when(remoteDataSource.editUser(
+                null, null, null, null, null, null, null, null))
+            .thenAnswer((_) async => user);
+      });
+
       test('should check if the device is online', () async {
         authRepo.editUser(null, null, null, null, null, null, null, null);
 
@@ -340,10 +347,6 @@ void main() {
       });
 
       test('should return [user] if call is success', () async {
-        when(remoteDataSource.editUser(
-                null, null, null, null, null, null, null, null))
-            .thenAnswer((_) async => user);
-
         final result = await authRepo.editUser(
             null, null, null, null, null, null, null, null);
 

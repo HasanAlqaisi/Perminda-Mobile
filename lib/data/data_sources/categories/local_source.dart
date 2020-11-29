@@ -4,13 +4,15 @@ import 'package:perminda/data/db/models/category/category_dao.dart';
 import 'package:perminda/data/db/relations/category/category_and_parent.dart';
 
 abstract class CategoriesLocalSource {
-  Future<int> insertCategory(CategoryTableCompanion category);
+  Future<void> insertCategories(List<CategoryTableCompanion> categories);
 
   Stream<List<CategoryAndParent>> watchCategories();
 
   Stream<CategoryAndParent> watchCategoryById(String categoryId);
 
   Future<CategoryAndParent> getCategoryById(String categoryId);
+
+  Future<int> deleteCategoryById(String categoryId);
 }
 
 class CategoriesLocalSourceImpl extends CategoriesLocalSource {
@@ -24,9 +26,9 @@ class CategoriesLocalSourceImpl extends CategoriesLocalSource {
   }
 
   @override
-  Future<int> insertCategory(CategoryTableCompanion category) {
+  Future<void> insertCategories(List<CategoryTableCompanion> categories) {
     try {
-      return categoryDao.insertCategory(category);
+      return categoryDao.insertCategories(categories);
     } on InvalidDataException {
       rethrow;
     }
@@ -40,5 +42,10 @@ class CategoriesLocalSourceImpl extends CategoriesLocalSource {
   @override
   Stream<CategoryAndParent> watchCategoryById(String categoryId) {
     return categoryDao.watchCategoryById(categoryId);
+  }
+
+  @override
+  Future<int> deleteCategoryById(String categoryId) {
+    return categoryDao.deleteCategoryById(categoryId);
   }
 }
