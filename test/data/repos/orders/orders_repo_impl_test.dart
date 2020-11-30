@@ -189,6 +189,15 @@ void main() {
         expect(result, Right(orders));
       });
 
+      test('should cache the offset', () async {
+        when(remoteSource.getOrders(repo.offset))
+            .thenAnswer((_) async => orders);
+
+        await repo.getOrders();
+
+        expect(repo.offset, 400);
+      });
+
       test('should cache list of [OrdersReult] in the databasee', () async {
         when(remoteSource.getOrders(repo.offset))
             .thenAnswer((_) async => orders);

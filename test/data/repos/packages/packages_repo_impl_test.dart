@@ -63,6 +63,15 @@ void main() {
         expect(result, Right(packages));
       });
 
+      test('should cache the offset', () async {
+        when(remoteSource.getPackages(repo.offset))
+            .thenAnswer((_) async => packages);
+
+        await repo.getPackages();
+
+        expect(repo.offset, 400);
+      });
+
       test('should cache [Packages] in the databasee', () async {
         when(remoteSource.getPackages(repo.offset))
             .thenAnswer((_) async => packages);

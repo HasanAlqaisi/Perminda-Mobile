@@ -6,7 +6,8 @@ import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:perminda/data/data_sources/product_image/remote_source.dart';
-import 'package:perminda/data/remote_models/product_image/product_image.dart';
+import 'package:perminda/data/remote_models/product_images/product_images.dart';
+import 'package:perminda/data/remote_models/product_images/results.dart';
 
 import '../../../fixtures/fixture_reader.dart';
 
@@ -21,8 +22,11 @@ void main() {
     remoteSource = ProductImageRemoteSourceImpl(client: client);
   });
 
+  final productImages =
+      ProductImages.fromJson(json.decode(fixture('product_images.json')));
+
   final productImage =
-      ProductImage.fromJson(json.decode(fixture('product_image.json')));
+      ImagesResult.fromJson(json.decode(fixture('product_image.json')));
 
   group('addProductImage', () {
     void do201Response() {
@@ -261,6 +265,36 @@ void main() {
       final result = remoteSource.getProductImage;
 
       expect(() => result(productImage.id), throwsA(isA<UnknownException>()));
+    });
+  });
+
+  group('getImagesOfProduct', () {
+    void do200Response() {
+      when(client.get(
+        '$baseUrl/api/product-image?limit=10&offset=null',
+        headers: anyNamed('headers'),
+      )).thenAnswer(
+          (_) async => http.Response(fixture('product_images.json'), 200));
+    }
+
+    test('should return [productImages] if response code is 200', () async {
+      do200Response();
+
+      final result = await remoteSource.getImagesOfProducts(null, null);
+
+      expect(result, productImages);
+    });
+
+    test('should throw [UnknownException] if response code is not expected',
+        () {
+      when(client.get(
+        '$baseUrl/api/product-image?limit=10&offset=null',
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => http.Response(fixture('detail.json'), 500));
+
+      final result = remoteSource.getImagesOfProducts;
+
+      expect(() => result(null, null), throwsA(isA<UnknownException>()));
     });
   });
 }

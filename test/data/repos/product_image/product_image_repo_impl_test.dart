@@ -8,7 +8,9 @@ import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/product_image/local_source.dart';
 import 'package:perminda/data/data_sources/product_image/remote_source.dart';
-import 'package:perminda/data/remote_models/product_image/product_image.dart';
+import 'package:perminda/data/db/models/product_image/product_image_table.dart';
+import 'package:perminda/data/remote_models/product_images/product_images.dart';
+import 'package:perminda/data/remote_models/product_images/results.dart';
 import 'package:perminda/data/repos/product_image/product_image_repo_impl.dart';
 
 import '../../../fixtures/fixture_reader.dart';
@@ -41,11 +43,16 @@ void main() {
       when(netWorkInfo.isConnected()).thenAnswer((_) async => true);
     });
 
+    final productImages =
+        ProductImages.fromJson(json.decode(fixture('product_images.json')));
+
     final productImage =
-        ProductImage.fromJson(json.decode(fixture('product_image.json')));
+        ImagesResult.fromJson(json.decode(fixture('product_image.json')));
 
     group('addProductImage', () {
       test('should user has an internet connection', () async {
+        when(remoteSource.addProductImage(null, null, null))
+            .thenAnswer((_) async => productImage);
         await repo.addProductImage(null, null, null);
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
@@ -60,19 +67,18 @@ void main() {
         expect(result, Right(productImage));
       });
 
-      //TODO: Complete the test after finish product image API
-      // test('should cache [productImage] in the databasee', () async {
-      //   when(remoteSource.addProductImage(null, null, null))
-      //       .thenAnswer((_) async => productImage);
+      test('should cache [productImage] in the databasee', () async {
+        when(remoteSource.addProductImage(null, null, null))
+            .thenAnswer((_) async => productImage);
 
-      //   when(localSource.insertProductImages(
-      //           ProductImageTable.from(productsResult.results)))
-      //       .thenAnswer((_) async => null);
+        when(localSource.insertProductImages(
+                ProductImageTable.fromImagesResult([productImage])))
+            .thenAnswer((_) async => null);
 
-      //   await repo.addProductImage(null, null, null);
+        await repo.addProductImage(null, null, null);
 
-      //   verify(localSource.insertProductImages(any));
-      // });
+        verify(localSource.insertProductImages(any));
+      });
 
       test(
           'shuold return [UnauthorizedTokenFailure] if remote call throws [UnauthorizedTokenException]',
@@ -118,6 +124,9 @@ void main() {
 
     group('editProductImage', () {
       test('should user has an internet connection', () async {
+        when(remoteSource.editProductImage(null, null, null, null))
+            .thenAnswer((_) async => productImage);
+
         await repo.editProductImage(null, null, null, null);
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
@@ -132,19 +141,18 @@ void main() {
         expect(result, Right(productImage));
       });
 
-      //TODO: Complete the test after finish product image API
-      // test('should cache [productImage] in the databasee', () async {
-      //   when(remoteSource.addProductImage(null, null, null))
-      //       .thenAnswer((_) async => productImage);
+      test('should cache [productImage] in the databasee', () async {
+        when(remoteSource.editProductImage(null, null, null, null))
+            .thenAnswer((_) async => productImage);
 
-      //   when(localSource.insertProductImages(
-      //           ProductImageTable.from(productsResult.results)))
-      //       .thenAnswer((_) async => null);
+        when(localSource.insertProductImages(
+                ProductImageTable.fromImagesResult([productImage])))
+            .thenAnswer((_) async => null);
 
-      //   await repo.addProductImage(null, null, null);
+        await repo.editProductImage(null, null, null, null);
 
-      //   verify(localSource.insertProductImages(any));
-      // });
+        verify(localSource.insertProductImages(any));
+      });
 
       test(
           'shuold return [UnauthorizedTokenFailure] if remote call throws [UnauthorizedTokenException]',
@@ -199,6 +207,9 @@ void main() {
 
     group('getProductImage', () {
       test('should user has an internet connection', () async {
+        when(remoteSource.getProductImage(null))
+            .thenAnswer((_) async => productImage);
+
         await repo.getProductImage(null);
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
@@ -213,19 +224,18 @@ void main() {
         expect(result, Right(productImage));
       });
 
-      //TODO: Complete the test after finish product image API
-      // test('should cache [productImage] in the databasee', () async {
-      //   when(remoteSource.addProductImage(null, null, null))
-      //       .thenAnswer((_) async => productImage);
+      test('should cache [productImage] in the databasee', () async {
+        when(remoteSource.getProductImage(null))
+            .thenAnswer((_) async => productImage);
 
-      //   when(localSource.insertProductImages(
-      //           ProductImageTable.from(productsResult.results)))
-      //       .thenAnswer((_) async => null);
+        when(localSource.insertProductImages(
+                ProductImageTable.fromImagesResult([productImage])))
+            .thenAnswer((_) async => null);
 
-      //   await repo.addProductImage(null, null, null);
+        await repo.getProductImage(null);
 
-      //   verify(localSource.insertProductImages(any));
-      // });
+        verify(localSource.insertProductImages(any));
+      });
 
       test(
           'shuold return [ItemNotFoundFailure] if remote call throws [ItemNotFoundException]',
@@ -325,6 +335,59 @@ void main() {
         expect(result, Left(ItemNotFoundFailure()));
       });
     });
+
+    group('getImagesOfProduct', () {
+      test('should user has an internet connection', () async {
+        when(remoteSource.getImagesOfProducts(null, repo.offset))
+            .thenAnswer((_) async => productImages);
+
+        await repo.getImagesOfProducts(null);
+        verify(netWorkInfo.isConnected());
+        expect(await netWorkInfo.isConnected(), true);
+      });
+
+      test('should return [ProductImages] if remote call is success', () async {
+        when(remoteSource.getImagesOfProducts(null, repo.offset))
+            .thenAnswer((_) async => productImages);
+
+        final result = await repo.getImagesOfProducts(null);
+
+        expect(result, Right(productImages));
+      });
+
+      test('should cache the offset', () async {
+        when(remoteSource.getImagesOfProducts(null, repo.offset))
+            .thenAnswer((_) async => productImages);
+
+        await repo.getImagesOfProducts(null);
+
+        expect(repo.offset, 400);
+      });
+
+      test('should cache list of [productImage] in the databasee', () async {
+        when(remoteSource.getImagesOfProducts(null, repo.offset))
+            .thenAnswer((_) async => productImages);
+
+        when(localSource.insertProductImages(
+                ProductImageTable.fromImagesResult(productImages.results)))
+            .thenAnswer((_) async => null);
+
+        await repo.getImagesOfProducts(null);
+
+        verify(localSource.insertProductImages(any));
+      });
+
+      test(
+          'shuold return [UnknownFailure] if remote call throws [UnknownException]',
+          () async {
+        when(remoteSource.getImagesOfProducts(null, repo.offset))
+            .thenThrow(UnknownException());
+
+        final result = await repo.getImagesOfProducts(null);
+
+        expect(result, Left(UnknownFailure()));
+      });
+    });
   });
 
   group('device is offline', () {
@@ -380,7 +443,6 @@ void main() {
           expect(result, Left(NoInternetFailure()));
         });
       });
-
       group('getProductImage', () {
         test('should return false if user has no internet connection',
             () async {
@@ -393,6 +455,23 @@ void main() {
             'should return [NoInternetFailure] if user has no internet connection',
             () async {
           final result = await repo.getProductImage(null);
+
+          expect(result, Left(NoInternetFailure()));
+        });
+      });
+
+      group('getImagesOfProduct', () {
+        test('should return false if user has no internet connection',
+            () async {
+          await repo.getImagesOfProducts(null);
+          verify(netWorkInfo.isConnected());
+          expect(await netWorkInfo.isConnected(), false);
+        });
+
+        test(
+            'should return [NoInternetFailure] if user has no internet connection',
+            () async {
+          final result = await repo.getImagesOfProducts(null);
 
           expect(result, Left(NoInternetFailure()));
         });

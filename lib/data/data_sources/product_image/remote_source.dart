@@ -3,19 +3,22 @@ import 'dart:io';
 
 import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
-import 'package:perminda/data/remote_models/product_image/product_image.dart';
+import 'package:perminda/data/remote_models/product_images/product_images.dart';
 import 'package:http/http.dart' as http;
+import 'package:perminda/data/remote_models/product_images/results.dart';
 
 abstract class ProductImageRemoteSource {
-  Future<ProductImage> getProductImage(String id);
+  Future<ImagesResult> getProductImage(String id);
 
-  Future<ProductImage> addProductImage(
+  Future<ProductImages> getImagesOfProducts(String productId, int offset);
+
+  Future<ImagesResult> addProductImage(
     File image,
     int type,
     String productId,
   );
 
-  Future<ProductImage> editProductImage(
+  Future<ImagesResult> editProductImage(
     String id,
     File image,
     int type,
@@ -31,7 +34,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
   ProductImageRemoteSourceImpl({this.client});
 
   @override
-  Future<ProductImage> addProductImage(
+  Future<ImagesResult> addProductImage(
       File image, int type, String productId) async {
     final response = await client.post(
       '$baseUrl/api/product-image/',
@@ -44,7 +47,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
     );
 
     if (response.statusCode == 201) {
-      return ProductImage.fromJson(json.decode(response.body));
+      return ImagesResult.fromJson(json.decode(response.body));
     } else if (response.statusCode == 400) {
       throw FieldsException(body: response.body);
     } else if (response.statusCode == 401) {
@@ -77,7 +80,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
   }
 
   @override
-  Future<ProductImage> editProductImage(
+  Future<ImagesResult> editProductImage(
       String id, File image, int type, String productId) async {
     final response = await client.put(
       '$baseUrl/api/product-image/$id/',
@@ -90,7 +93,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
     );
 
     if (response.statusCode == 200) {
-      return ProductImage.fromJson(json.decode(response.body));
+      return ImagesResult.fromJson(json.decode(response.body));
     } else if (response.statusCode == 400) {
       throw FieldsException(body: response.body);
     } else if (response.statusCode == 401) {
@@ -105,15 +108,32 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
   }
 
   @override
-  Future<ProductImage> getProductImage(String id) async {
+  Future<ImagesResult> getProductImage(String id) async {
     final response = await client.get(
       '$baseUrl/api/product-image/$id/',
     );
 
     if (response.statusCode == 200) {
-      return ProductImage.fromJson(json.decode(response.body));
+      return ImagesResult.fromJson(json.decode(response.body));
     } else if (response.statusCode == 404) {
       throw ItemNotFoundException();
+    } else {
+      throw UnknownException();
+    }
+  }
+
+  @override
+  Future<ProductImages> getImagesOfProducts(
+      String productId, int offset) async {
+    final response = await client.get(
+      '$baseUrl/api/product-image?limit=10&offset=$offset',
+      headers: {
+        'product': productId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return ProductImages.fromJson(json.decode(response.body));
     } else {
       throw UnknownException();
     }
