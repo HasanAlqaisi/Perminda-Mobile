@@ -7,6 +7,8 @@ abstract class ProductImageLocalSource {
       List<ProductImageTableCompanion> productImages);
   Future<List<ProductImageData>> getProductImages(String productId);
   Future<int> deleteProductImageById(String productImageId);
+
+  Future<int> deleteImagesOfProduct(String productId);
 }
 
 class ProductImageLocalSourceImpl extends ProductImageLocalSource {
@@ -33,4 +35,8 @@ class ProductImageLocalSourceImpl extends ProductImageLocalSource {
   Future<int> deleteProductImageById(String productImageId) {
     return productImageDao.deleteProductImageById(productImageId);
   }
+
+  @override
+  Future<int> deleteImagesOfProduct(String productId) =>
+      productImageDao.deleteProductImages(productId);
 }

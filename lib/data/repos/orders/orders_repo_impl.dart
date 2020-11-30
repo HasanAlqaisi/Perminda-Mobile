@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:perminda/core/api_helpers/api.dart';
+import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/orders/orders_local_source.dart';
@@ -76,6 +77,11 @@ class OrdersRepoImpl extends OrdersRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getOrders(this.offset);
+
+        if (this.offset == 0) {
+          await localSource.deleteOrders(userId);
+          await localSource.deleteOrderItems(result.results);
+        }
 
         await localSource
             .insertOrders(OrderTable.fromOrdersResult(result.results));

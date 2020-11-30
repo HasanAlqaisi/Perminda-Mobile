@@ -27,7 +27,9 @@ class ProductImageDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
-  Future<int> deleteProductImages() => delete(productImageTable).go();
+  Future<int> deleteProductImages(String productId) =>
+      (delete(productImageTable)..where((tbl) => tbl.product.equals(productId)))
+          .go();
 
   Future<int> deleteProductImageById(String productImageId) =>
       (delete(productImageTable)..where((tbl) => tbl.id.equals(productImageId)))

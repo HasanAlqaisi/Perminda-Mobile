@@ -16,7 +16,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
-  Stream<List<CategoryAndParent>> watchCategories() {
+  Stream<List<CategoryAndParent>> watchCategoriesWithParent() {
     final category = alias(categoryTable, 'c');
     final parentCategory = alias(categoryTable, 'p');
 
@@ -70,4 +70,9 @@ class CategoryDao extends DatabaseAccessor<AppDatabase>
 
   Future<int> deleteCategoryById(String categoryId) =>
       (delete(categoryTable)..where((tbl) => tbl.id.equals(categoryId))).go();
+
+  /// Maybe you'd like to limit the results when it comes to home page?
+  Stream<List<CategoryData>> watchCategories() {
+    return select(categoryTable).watch();
+  }
 }

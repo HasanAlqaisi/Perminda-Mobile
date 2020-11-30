@@ -9,13 +9,17 @@ abstract class ProductsLocalSource {
   Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByShopId(
       String shopId);
 
-  Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByCategoryId(
-      String categoryId);
+  // Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByCategoryId(
+  //     String categoryId);
+
+  Stream<List<ProductData>> watchProductsByCategoryId(String categoryId);
 
   Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByBrandId(
       String brandId);
 
   Future<int> deleteProductById(String productId);
+
+  Future<int> deleteProducts();
 }
 
 class ProductsLocalSourceImpl extends ProductsLocalSource {
@@ -39,8 +43,7 @@ class ProductsLocalSourceImpl extends ProductsLocalSource {
   }
 
   @override
-  Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByCategoryId(
-      String categoryId) {
+  Stream<List<ProductData>> watchProductsByCategoryId(String categoryId) {
     return productDao.watchProductsByCategoryId(categoryId);
   }
 
@@ -54,4 +57,7 @@ class ProductsLocalSourceImpl extends ProductsLocalSource {
   Future<int> deleteProductById(String productId) {
     return productDao.deleteProductById(productId);
   }
+
+  @override
+  Future<int> deleteProducts() => productDao.deleteProducts();
 }

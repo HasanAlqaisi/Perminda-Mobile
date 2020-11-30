@@ -39,7 +39,8 @@ class CartItemDao extends DatabaseAccessor<AppDatabase>
             }).toList());
   }
 
-  Future<int> deleteCartItems() => delete(cartItemTable).go();
+  Future<int> deleteCartItems(String userId) =>
+      (delete(cartItemTable)..where((tbl) => tbl.user.equals(userId))).go();
 
   Future<int> deleteCartItemById(String cartItemId) =>
       (delete(cartItemTable)..where((tbl) => tbl.id.equals(cartItemId))).go();

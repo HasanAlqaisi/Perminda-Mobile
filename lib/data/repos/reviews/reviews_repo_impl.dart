@@ -110,6 +110,8 @@ class ReviewsRepoImpl extends ReviewsRepo {
       try {
         final result = await remoteSource.getReviews(productId, this.offset);
 
+        if (this.offset == 0) localSource.deleteReviewsOfProduct(productId);
+
         await localSource
             .insertReviews(ReviewTable.fromReviewsResult(result.results));
 

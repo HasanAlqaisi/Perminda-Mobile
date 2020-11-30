@@ -76,7 +76,13 @@ class OrderItemDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
-  Future<int> deleteOrderItems() => delete(orderItemTable).go();
+  Future<void> deleteOrderItems(List<OrdersResult> orders) async {
+    await batch((batch) {
+      orders.forEach((order) {
+        batch.deleteWhere(orderItemTable, (tbl) => tbl.order.equals(order.id));
+      });
+    });
+  }
 
   Future<int> deleteOrderItemById(String orderItemId) =>
       (delete(orderItemTable)..where((tbl) => tbl.id.equals(orderItemId))).go();

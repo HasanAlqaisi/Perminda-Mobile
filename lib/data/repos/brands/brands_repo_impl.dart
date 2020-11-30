@@ -24,6 +24,8 @@ class BrandsRepoImpl extends BrandsRepo {
       try {
         final result = await remoteSource.getBrands(this.offset);
 
+        if (this.offset == 0) await localSource.deleteBrands();
+
         await localSource
             .insertBrands(BrandTable.fromBrandsResult(result.results));
 

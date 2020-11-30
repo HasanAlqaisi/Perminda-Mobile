@@ -8,6 +8,8 @@ abstract class ReviewsLocalSource {
   Stream<List<ReviewData>> watchReviews(String productId);
 
   Future<int> deleteReviewById(String reviewId);
+
+  Future<int> deleteReviewsOfProduct(String productId);
 }
 
 class ReviewsLocalSourceImpl extends ReviewsLocalSource {
@@ -33,4 +35,7 @@ class ReviewsLocalSourceImpl extends ReviewsLocalSource {
   Future<int> deleteReviewById(String reviewId) {
     return reviewDao.deleteReviewById(reviewId);
   }
+
+  @override
+  Future<int> deleteReviewsOfProduct(String productId) => reviewDao.deleteReviewsOfProduct(productId);
 }

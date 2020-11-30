@@ -132,12 +132,14 @@ class ProductImageRepoImpl extends ProductImageRepo {
   }
 
   @override
-  Future<Either<Failure, ProductImages>> getImagesOfProducts(
+  Future<Either<Failure, ProductImages>> getImagesOfProduct(
       String productId) async {
     if (await netWorkInfo.isConnected()) {
       try {
         final result =
-            await remoteSource.getImagesOfProducts(productId, this.offset);
+            await remoteSource.getImagesOfProduct(productId, this.offset);
+
+        if (this.offset == 0) localSource.deleteImagesOfProduct(productId);
 
         await localSource.insertProductImages(
             ProductImageTable.fromImagesResult(result.results));

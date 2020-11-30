@@ -14,7 +14,8 @@ class OrderDao extends DatabaseAccessor<AppDatabase> with _$OrderDaoMixin {
     });
   }
 
-  Future<int> deleteOrders() => delete(orderTable).go();
+  Future<int> deleteOrders(String userId) =>
+      (delete(orderTable)..where((tbl) => tbl.user.equals(userId))).go();
 
   Future<int> deleteOrderById(String orderId) =>
       (delete(orderTable)..where((tbl) => tbl.id.equals(orderId))).go();

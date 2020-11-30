@@ -60,7 +60,8 @@ void main() {
       await appDatabase.productDao.insertProducts(
           [DummyModels.product1, DummyModels.product2, DummyModels.product3]);
 
-      final result = appDatabase.productDao.watchProductsByCategoryId('2');
+      final result =
+          appDatabase.productDao.watchProductsWithInfoByCategoryId('2');
 
       (await result.first).forEach((element) {
         print('product: ${element.product}');

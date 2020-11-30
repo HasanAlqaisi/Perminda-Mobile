@@ -8,7 +8,7 @@ import 'package:perminda/data/remote_models/product_images/results.dart';
 abstract class ProductImageRepo {
   Future<Either<Failure, ImagesResult>> getProductImage(String id);
 
-  Future<Either<Failure, ProductImages>> getImagesOfProducts(String productId);
+  Future<Either<Failure, ProductImages>> getImagesOfProduct(String productId);
 
   Future<Either<Failure, ImagesResult>> addProductImage(
     File image,

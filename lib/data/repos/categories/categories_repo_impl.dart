@@ -3,6 +3,7 @@ import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/categories/local_source.dart';
 import 'package:perminda/data/data_sources/categories/remote_soruce.dart';
+import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/category/category_table.dart';
 import 'package:perminda/data/remote_models/categories/categories.dart';
 import 'package:perminda/data/remote_models/categories/results.dart';
@@ -23,6 +24,8 @@ class CategoriesRepoImpl extends CategoriesRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getCategories(this.offset);
+
+        if (this.offset == 0) await localSource.deleteCategories();
 
         await localSource.insertCategories(
             CategoryTable.fromCategoriesResult(result.results));
@@ -63,4 +66,7 @@ class CategoriesRepoImpl extends CategoriesRepo {
       return Left(NoInternetFailure());
     }
   }
+
+  @override
+  Stream<List<CategoryData>> watchCategories() => localSource.watchCategories();
 }

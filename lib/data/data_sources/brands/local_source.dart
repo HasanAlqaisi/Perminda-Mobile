@@ -12,6 +12,8 @@ abstract class BrandLocalSource {
   Future<BrandData> getBrandById(String brandId);
 
   Future<int> deleteBrandById(String brandId);
+
+  Future<int> deleteBrands();
 }
 
 class BrandLocalSourceImpl extends BrandLocalSource {
@@ -47,4 +49,7 @@ class BrandLocalSourceImpl extends BrandLocalSource {
   Future<int> deleteBrandById(String brandId) {
     return brandDao.deleteBrandById(brandId);
   }
+
+  @override
+  Future<int> deleteBrands() => brandDao.deleteBrands();
 }

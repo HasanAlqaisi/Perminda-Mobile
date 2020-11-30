@@ -8,6 +8,7 @@ abstract class ShopsLocalSource {
   Stream<ShopData> watchShopById(String shopId);
   Stream<List<ShopData>> watchShops();
   Future<int> deleteShopById(String shopId);
+  Future<int> deleteShops();
 }
 
 class ShopsLocalSourceImpl extends ShopsLocalSource {
@@ -43,4 +44,7 @@ class ShopsLocalSourceImpl extends ShopsLocalSource {
   Future<int> deleteShopById(String shopId) {
     return shopDao.deleteShopById(shopId);
   }
+
+  @override
+  Future<int> deleteShops() => shopDao.deleteShops();
 }

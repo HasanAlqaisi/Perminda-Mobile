@@ -10,7 +10,7 @@ import 'package:perminda/data/remote_models/product_images/results.dart';
 abstract class ProductImageRemoteSource {
   Future<ImagesResult> getProductImage(String id);
 
-  Future<ProductImages> getImagesOfProducts(String productId, int offset);
+  Future<ProductImages> getImagesOfProduct(String productId, int offset);
 
   Future<ImagesResult> addProductImage(
     File image,
@@ -123,8 +123,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
   }
 
   @override
-  Future<ProductImages> getImagesOfProducts(
-      String productId, int offset) async {
+  Future<ProductImages> getImagesOfProduct(String productId, int offset) async {
     final response = await client.get(
       '$baseUrl/api/product-image?limit=10&offset=$offset',
       headers: {

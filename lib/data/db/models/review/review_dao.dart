@@ -23,7 +23,8 @@ class ReviewDao extends DatabaseAccessor<AppDatabase> with _$ReviewDaoMixin {
         .watch();
   }
 
-  Future<int> deleteReviews() => delete(reviewTable).go();
+  Future<int> deleteReviewsOfProduct(String productId) =>
+      (delete(reviewTable)..where((tbl) => tbl.product.equals(productId))).go();
 
   Future<int> deleteReviewById(String reviewId) =>
       (delete(reviewTable)..where((tbl) => tbl.id.equals(reviewId))).go();

@@ -63,6 +63,17 @@ void main() {
         expect(result, Right(packages));
       });
 
+      test('should delete old packages from database', () async {
+        when(remoteSource.getPackages(repo.offset))
+            .thenAnswer((_) async => packages);
+            
+        when(localSource.deletePackages()).thenAnswer((_) async => null);
+
+        await repo.getPackages();
+
+        verify(localSource.deletePackages());
+      });
+
       test('should cache the offset', () async {
         when(remoteSource.getPackages(repo.offset))
             .thenAnswer((_) async => packages);

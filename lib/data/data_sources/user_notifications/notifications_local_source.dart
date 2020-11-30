@@ -9,6 +9,8 @@ abstract class NotificationsLocalSource {
   Stream<List<NotificationData>> watchUserNotifications(String userId);
 
   Future<int> deleteUserNotificationById(String notificationId);
+
+  Future<int> deleteNotifications(String userId);
 }
 
 class NotificationsLocalSourceImpl extends NotificationsLocalSource {
@@ -34,5 +36,10 @@ class NotificationsLocalSourceImpl extends NotificationsLocalSource {
   @override
   Future<int> deleteUserNotificationById(String notificationId) {
     return userNotificationDao.deleteUserNotificationById(notificationId);
+  }
+
+  @override
+  Future<int> deleteNotifications(String userId) {
+    return userNotificationDao.deleteUserNotifications(userId);
   }
 }

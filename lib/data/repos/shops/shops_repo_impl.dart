@@ -24,6 +24,8 @@ class ShopsRepoImpl extends ShopsRepo {
       try {
         final result = await remoteSource.getShops(this.offset);
 
+        if (this.offset == 0) localSource.deleteShops();
+
         await localSource
             .insertShops(ShopTable.fromShopsResult(result.results));
 

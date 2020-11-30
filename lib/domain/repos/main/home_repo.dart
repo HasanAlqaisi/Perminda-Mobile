@@ -1,19 +1,24 @@
+import 'package:perminda/core/errors/failure.dart';
 import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/relations/order_item/product_info.dart';
-import 'package:perminda/data/db/relations/product/product_and_category_brand.dart';
 
 abstract class HomeRepo {
-  Stream<List<PackageData>> triggerPackages();
+  Future<Failure> triggerPackages();
 
   Stream<List<PackageData>> watchPackages();
 
-  Stream<List<ProductInfo>> triggerProductsOfPackage(String packageId);
+  Stream<Future<List<ProductInfo>>> watchProductsOfPackage(String packageId);
 
-  Stream<List<ProductInfo>> watchProductsOfPackage(String packageId);
+  Future<Failure> triggerCategories();
+
+  Stream<List<CategoryData>> watchCategories();
 
   /// List of [List of products in one category]
-  Stream<List<List<ProductAndCategoryAndBrandAndShop>>> triggerProducts();
+  Future<Failure> triggerProductsByCategory(String categoryId);
 
-  /// List of [List of products in one category]
-  Stream<List<List<ProductAndCategoryAndBrandAndShop>>> getProducts();
+  Stream<List<ProductData>> watchProductsByCategory(String categoryId);
+
+  // /// List of [List of products in one category]
+  // Stream<List<List<ProductAndCategoryAndBrandAndShop>>>
+  //     watchCategoiesWithProducts();
 }

@@ -41,8 +41,12 @@ class FavouriteItemDao extends DatabaseAccessor<AppDatabase>
             }).toList());
   }
 
-  Future<int> deleteFavouriteItems() => delete(favouriteItemTable).go();
+  Future<int> deleteFavouriteItems(String userId) =>
+      (delete(favouriteItemTable)..where((tbl) => tbl.user.equals(userId)))
+          .go();
 
-    Future<int> deleteFavouriteItemById(String favouriteItemId) =>
-      (delete(favouriteItemTable)..where((tbl) => tbl.id.equals(favouriteItemId))).go();
+  Future<int> deleteFavouriteItemById(String favouriteItemId) =>
+      (delete(favouriteItemTable)
+            ..where((tbl) => tbl.id.equals(favouriteItemId)))
+          .go();
 }

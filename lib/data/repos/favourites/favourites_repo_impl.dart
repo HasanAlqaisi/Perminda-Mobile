@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:perminda/core/api_helpers/api.dart';
+import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/favourites/favourites_local_source.dart';
@@ -71,6 +72,8 @@ class FavouritesRepoImpl extends FavouritesRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getFavourites(this.offset);
+
+        if (this.offset == 0) await localSource.deleteFavouriteItems(userId);
 
         await localSource.insertFavouriteItems(
             FavouriteItemTable.fromFavouritesResult(result.results));

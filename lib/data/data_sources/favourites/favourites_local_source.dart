@@ -11,6 +11,8 @@ abstract class FavouritesLocalSource {
       String userId);
 
   Future<int> deleteFavouriteItemById(String favouriteItemId);
+
+  Future<int> deleteFavouriteItems(String userId);
 }
 
 class FavouritesLocalSourceImpl extends FavouritesLocalSource {
@@ -38,4 +40,8 @@ class FavouritesLocalSourceImpl extends FavouritesLocalSource {
   Future<int> deleteFavouriteItemById(String favouriteItemId) {
     return favouriteItemDao.deleteFavouriteItemById(favouriteItemId);
   }
+
+  @override
+  Future<int> deleteFavouriteItems(String userId) =>
+      favouriteItemDao.deleteFavouriteItems(userId);
 }

@@ -11,6 +11,8 @@ abstract class OrdersLocalSource {
   Stream<Future<List<OrderWithProducts>>> watchOrders(String userId);
   Future<int> deleteOrderId(String orderId);
   Future<int> deleteOrderItemId(String orderItemId);
+  Future<int> deleteOrders(String userId);
+  Future<void> deleteOrderItems(List<OrdersResult> orders);
 }
 
 class OrdersLocalSourceImpl extends OrdersLocalSource {
@@ -51,4 +53,11 @@ class OrdersLocalSourceImpl extends OrdersLocalSource {
   Future<int> deleteOrderItemId(String orderItemId) {
     return orderItemDao.deleteOrderItemById(orderItemId);
   }
+
+  @override
+  Future<int> deleteOrders(String userId) => orderDao.deleteOrders(userId);
+
+  @override
+  Future<void> deleteOrderItems(List<OrdersResult> orders) =>
+      orderItemDao.deleteOrderItems(orders);
 }

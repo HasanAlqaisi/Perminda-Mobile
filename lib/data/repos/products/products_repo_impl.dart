@@ -5,6 +5,7 @@ import 'package:perminda/data/data_sources/products/products_local_source.dart';
 import 'package:perminda/data/data_sources/products/products_remote_source.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
+import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/product/product_table.dart';
 import 'package:perminda/data/remote_models/products/results.dart';
 import 'package:perminda/domain/repos/products_repo.dart';
@@ -24,6 +25,8 @@ class ProductsRepoImpl extends ProductsRepo {
       try {
         final products = await remoteSource.getProducts(
             this.offset, shopId, categoryId, brandId);
+
+        if (this.offset == 0) localSource.deleteProducts();
 
         await localSource
             .insertProducts(ProductTable.fromProductsesult(products.results));
@@ -45,4 +48,8 @@ class ProductsRepoImpl extends ProductsRepo {
   void cacheOffset(int offset) {
     this.offset = offset;
   }
+
+  @override
+  Stream<List<ProductData>> watchProductsByCategory(String categoryId) => localSource.watchProductsByCategoryId(categoryId);
+  
 }

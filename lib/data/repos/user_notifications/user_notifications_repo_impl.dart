@@ -1,4 +1,5 @@
 import 'package:perminda/core/api_helpers/api.dart';
+import 'package:perminda/core/constants/sensetive_constants.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/data/data_sources/user_notifications/notifications_local_source.dart';
@@ -70,6 +71,8 @@ class UserNotificationsRepoImpl extends UserNotificationsRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getNotificatons(this.offset);
+
+        if (this.offset == 0) localSource.deleteNotifications(userId);
 
         await localSource.insertUserNotifications(
             UserNotificationTable.fromNotificationsResult(result.results));

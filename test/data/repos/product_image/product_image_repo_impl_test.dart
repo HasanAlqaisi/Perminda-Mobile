@@ -338,41 +338,41 @@ void main() {
 
     group('getImagesOfProduct', () {
       test('should user has an internet connection', () async {
-        when(remoteSource.getImagesOfProducts(null, repo.offset))
+        when(remoteSource.getImagesOfProduct(null, repo.offset))
             .thenAnswer((_) async => productImages);
 
-        await repo.getImagesOfProducts(null);
+        await repo.getImagesOfProduct(null);
         verify(netWorkInfo.isConnected());
         expect(await netWorkInfo.isConnected(), true);
       });
 
       test('should return [ProductImages] if remote call is success', () async {
-        when(remoteSource.getImagesOfProducts(null, repo.offset))
+        when(remoteSource.getImagesOfProduct(null, repo.offset))
             .thenAnswer((_) async => productImages);
 
-        final result = await repo.getImagesOfProducts(null);
+        final result = await repo.getImagesOfProduct(null);
 
         expect(result, Right(productImages));
       });
 
       test('should cache the offset', () async {
-        when(remoteSource.getImagesOfProducts(null, repo.offset))
+        when(remoteSource.getImagesOfProduct(null, repo.offset))
             .thenAnswer((_) async => productImages);
 
-        await repo.getImagesOfProducts(null);
+        await repo.getImagesOfProduct(null);
 
         expect(repo.offset, 400);
       });
 
       test('should cache list of [productImage] in the databasee', () async {
-        when(remoteSource.getImagesOfProducts(null, repo.offset))
+        when(remoteSource.getImagesOfProduct(null, repo.offset))
             .thenAnswer((_) async => productImages);
 
         when(localSource.insertProductImages(
                 ProductImageTable.fromImagesResult(productImages.results)))
             .thenAnswer((_) async => null);
 
-        await repo.getImagesOfProducts(null);
+        await repo.getImagesOfProduct(null);
 
         verify(localSource.insertProductImages(any));
       });
@@ -380,10 +380,10 @@ void main() {
       test(
           'shuold return [UnknownFailure] if remote call throws [UnknownException]',
           () async {
-        when(remoteSource.getImagesOfProducts(null, repo.offset))
+        when(remoteSource.getImagesOfProduct(null, repo.offset))
             .thenThrow(UnknownException());
 
-        final result = await repo.getImagesOfProducts(null);
+        final result = await repo.getImagesOfProduct(null);
 
         expect(result, Left(UnknownFailure()));
       });
@@ -463,7 +463,7 @@ void main() {
       group('getImagesOfProduct', () {
         test('should return false if user has no internet connection',
             () async {
-          await repo.getImagesOfProducts(null);
+          await repo.getImagesOfProduct(null);
           verify(netWorkInfo.isConnected());
           expect(await netWorkInfo.isConnected(), false);
         });
@@ -471,7 +471,7 @@ void main() {
         test(
             'should return [NoInternetFailure] if user has no internet connection',
             () async {
-          final result = await repo.getImagesOfProducts(null);
+          final result = await repo.getImagesOfProduct(null);
 
           expect(result, Left(NoInternetFailure()));
         });

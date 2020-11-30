@@ -10,6 +10,8 @@ abstract class CartItemsLocalSource {
       String userId);
 
   Future<int> deleteCartItemById(String cartItemId);
+
+  Future<int> deleteCartItems(String userId);
 }
 
 class CartItemsLocalSourceImpl extends CartItemsLocalSource {
@@ -36,4 +38,7 @@ class CartItemsLocalSourceImpl extends CartItemsLocalSource {
   Future<int> deleteCartItemById(String cartItemId) {
     return cartItemDao.deleteCartItemById(cartItemId);
   }
+
+  @override
+  Future<int> deleteCartItems(String userId) => cartItemDao.deleteCartItems(userId);
 }

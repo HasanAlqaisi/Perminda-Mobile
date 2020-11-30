@@ -40,7 +40,7 @@ void main() {
     await db.categoryDao.insertCategories(
         [categoryOne, categoryTwo, categoryThree, categoryFour]);
 
-    final result = db.categoryDao.watchCategories();
+    final result = db.categoryDao.watchCategoriesWithParent();
 
     final categoryAndData = (await result.first)[2];
     print('Category: ' + categoryAndData.category.toString());

@@ -1,11 +1,12 @@
-
 import 'package:perminda/core/api_helpers/api.dart';
 import 'package:perminda/core/errors/exception.dart';
 import 'package:perminda/core/network/network_info.dart';
 import 'package:perminda/core/errors/failure.dart';
 import 'package:dartz/dartz.dart';
 import 'package:perminda/data/data_sources/packages/packages_local_source.dart';
+import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/data/db/models/package/package_table.dart';
+import 'package:perminda/data/db/relations/order_item/product_info.dart';
 import 'package:perminda/data/remote_models/packages/packages.dart';
 import 'package:perminda/domain/repos/packages_repo.dart';
 import 'package:perminda/data/data_sources/packages/packages_remote_source.dart';
@@ -28,6 +29,11 @@ class PackagesRepoImpl extends PackagesRepo {
       try {
         final result = await remoteSource.getPackages(this.offset);
 
+        if (this.offset == 0) {
+          await localSource.deletePackages();
+          await localSource.deletePackageItems();
+        }
+
         await localSource
             .insertPackages(PackageTable.fromPackagesResult(result.results));
 
@@ -45,4 +51,11 @@ class PackagesRepoImpl extends PackagesRepo {
       return Left(NoInternetFailure());
     }
   }
+
+  @override
+  Stream<List<PackageData>> watchPackages() => localSource.watchPackages();
+
+  @override
+  Stream<Future<List<ProductInfo>>> watchProductsOfPackage(String packageId) =>
+      localSource.watchProductsOfPackage(packageId);
 }

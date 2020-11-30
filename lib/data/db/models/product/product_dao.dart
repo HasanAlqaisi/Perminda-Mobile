@@ -45,8 +45,14 @@ class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
             .toList());
   }
 
-  Stream<List<ProductAndCategoryAndBrandAndShop>> watchProductsByCategoryId(
-      String categoryId) {
+  Stream<List<ProductData>> watchProductsByCategoryId(String categoryId) {
+    return (select(productTable)
+          ..where((productTable) => productTable.category.equals(categoryId)))
+        .watch();
+  }
+
+  Stream<List<ProductAndCategoryAndBrandAndShop>>
+      watchProductsWithInfoByCategoryId(String categoryId) {
     ///Every product has one shop, one category, one brand.. one-to-one
     return (select(productTable)
           ..where((productTable) => productTable.category.equals(categoryId)))

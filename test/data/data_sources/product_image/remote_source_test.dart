@@ -280,7 +280,7 @@ void main() {
     test('should return [productImages] if response code is 200', () async {
       do200Response();
 
-      final result = await remoteSource.getImagesOfProducts(null, null);
+      final result = await remoteSource.getImagesOfProduct(null, null);
 
       expect(result, productImages);
     });
@@ -292,7 +292,7 @@ void main() {
         headers: anyNamed('headers'),
       )).thenAnswer((_) async => http.Response(fixture('detail.json'), 500));
 
-      final result = remoteSource.getImagesOfProducts;
+      final result = remoteSource.getImagesOfProduct;
 
       expect(() => result(null, null), throwsA(isA<UnknownException>()));
     });
