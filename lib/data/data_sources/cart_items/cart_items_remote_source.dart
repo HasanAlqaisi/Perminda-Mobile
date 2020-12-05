@@ -32,7 +32,7 @@ class CartItemsRemoteSourceImpl extends CartItemsRemoteSource {
   Future<CartItemsResult> addCartItem(String productId, int quantity) async {
     final response = await client.post(
       '$baseUrl/api/cart-item/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
       body: {'product': productId, 'quantity': quantity},
     );
 
@@ -51,7 +51,7 @@ class CartItemsRemoteSourceImpl extends CartItemsRemoteSource {
   Future<bool> deleteCartItem(String id) async {
     final response = await client.delete(
       '$baseUrl/api/cart-item/$id/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 204) {
@@ -70,7 +70,7 @@ class CartItemsRemoteSourceImpl extends CartItemsRemoteSource {
       String id, String productId, int quantity) async {
     final response = await client.put(
       '$baseUrl/api/cart-item/$id/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
       body: {'product': productId, 'quantity': quantity},
     );
 
@@ -91,7 +91,7 @@ class CartItemsRemoteSourceImpl extends CartItemsRemoteSource {
   Future<CartItems> getCartItems(int offset) async {
     final response = await client.get(
       '$baseUrl/api/cart-item?limit=10&offset=$offset',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 200) {

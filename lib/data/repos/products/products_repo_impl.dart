@@ -14,42 +14,47 @@ class ProductsRepoImpl extends ProductsRepo {
   final NetWorkInfo netWorkInfo;
   final ProductsRemoteSource remoteSource;
   final ProductsLocalSource localSource;
-  int offset = 0;
+  int offset;
 
   ProductsRepoImpl({this.netWorkInfo, this.remoteSource, this.localSource});
 
   @override
   Future<Either<Failure, List<ProductsResult>>> getProducts(
-      String shopId, String categoryId, String brandId) async {
-    if (await netWorkInfo.isConnected()) {
-      try {
-        final products = await remoteSource.getProducts(
-            this.offset, shopId, categoryId, brandId);
+      String shopId, String categoryId, String brandId, int offset) async {
+      if (await netWorkInfo.isConnected()) {
+        try {
+          final products = await remoteSource.getProducts(
+              offset, shopId, categoryId, brandId);
 
-        if (this.offset == 0) localSource.deleteProducts();
+          if (offset == 0) {
+            if (categoryId != null) {
+              localSource.deleteProductsByCategoryId(categoryId);
+            } else {
+              localSource.deleteProducts();
+            }
+          }
 
-        await localSource
-            .insertProducts(ProductTable.fromProductsesult(products.results));
+          await localSource
+              .insertProducts(ProductTable.fromProductsesult(products.results));
 
-        int offset = API.offsetExtractor(products.nextPage);
+          // cacheOffset(offset);
 
-        cacheOffset(offset);
-
-        return Right(products.results);
-      } on UnknownException catch (error) {
-        print(error.message);
-        return Left(UnknownFailure());
-      }
-    } else {
-      return Left(NoInternetFailure());
+          return Right(products.results);
+        } on UnknownException catch (error) {
+          print(error.message);
+          return Left(UnknownFailure());
+        }
+      } else {
+        return Left(NoInternetFailure());
+      // }
     }
   }
 
-  void cacheOffset(int offset) {
-    this.offset = offset;
-  }
+  // void cacheOffset(int offset) {
+  //   this.offset = offset;
+  // }
 
   @override
-  Stream<List<ProductData>> watchProductsByCategory(String categoryId) => localSource.watchProductsByCategoryId(categoryId);
-  
+  Stream<List<ProductData>> watchProductsByCategory(String categoryId) =>
+      localSource.watchProductsByCategoryId(categoryId);
 }

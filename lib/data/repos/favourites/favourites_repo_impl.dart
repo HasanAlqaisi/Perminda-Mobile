@@ -73,7 +73,7 @@ class FavouritesRepoImpl extends FavouritesRepo {
       try {
         final result = await remoteSource.getFavourites(this.offset);
 
-        if (this.offset == 0) await localSource.deleteFavouriteItems(userId);
+        if (this.offset == 0) await localSource.deleteFavouriteItems(kUserId);
 
         await localSource.insertFavouriteItems(
             FavouriteItemTable.fromFavouritesResult(result.results));

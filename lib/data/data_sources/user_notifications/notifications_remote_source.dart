@@ -22,7 +22,7 @@ class NotificationsRemoteSourceImpl extends NotificationsRemoteSource {
   @override
   Future<bool> deleteNotification(String id) async {
     final response = await client.delete('$baseUrl/api/user-notification/$id/',
-        headers: {'Authorization': token});
+        headers: {'Authorization': kToken});
 
     if (response.statusCode == 204) {
       return true;
@@ -38,7 +38,7 @@ class NotificationsRemoteSourceImpl extends NotificationsRemoteSource {
   @override
   Future<UserNotificationsReusult> editNotification(String id) async {
     final response = await client.put('$baseUrl/api/user-notification/$id/',
-        headers: {'Authorization': token});
+        headers: {'Authorization': kToken});
 
     if (response.statusCode == 200) {
       return UserNotificationsReusult.fromJson(json.decode(response.body));
@@ -56,7 +56,7 @@ class NotificationsRemoteSourceImpl extends NotificationsRemoteSource {
     final response = await client.get(
         '$baseUrl/api/user-notification?limit=10&offset=$offset',
         headers: {
-          'Authorization': token,
+          'Authorization': kToken,
         });
 
     if (response.statusCode == 200) {

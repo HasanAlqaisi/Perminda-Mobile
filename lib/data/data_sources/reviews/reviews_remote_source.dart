@@ -40,7 +40,7 @@ class ReviewsRemoteSourceImpl extends ReviewsRemoteSource {
         'message': message,
         'product': productId,
       },
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 201) {
@@ -60,7 +60,7 @@ class ReviewsRemoteSourceImpl extends ReviewsRemoteSource {
   Future<bool> deleteReview(String reviewId) async {
     final response = await client.delete(
       '$baseUrl/api/review/$reviewId/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 204) {
@@ -79,7 +79,7 @@ class ReviewsRemoteSourceImpl extends ReviewsRemoteSource {
       String reviewId, int rate, String message, String productId) async {
     final response = await client.put(
       '$baseUrl/api/review/$reviewId/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 200) {

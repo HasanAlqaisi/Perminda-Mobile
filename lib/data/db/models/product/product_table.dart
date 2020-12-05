@@ -11,6 +11,7 @@ class ProductTable extends Table {
   TextColumn get brand =>
       text().nullable().customConstraint('NULL REFERENCES brand_table(id)')();
   TextColumn get name => text()();
+  TextColumn get image => text()();
   RealColumn get price => real()();
   IntColumn get sale => integer()();
   TextColumn get overview => text()();
@@ -40,6 +41,7 @@ class ProductTable extends Table {
             category: Value(result.categoryId),
             brand: Value(result.brandId),
             name: Value(result.name),
+            image: Value(result.image),
             price: Value(result.price),
             sale: Value(result.sale),
             overview: Value(result.overview),

@@ -52,7 +52,7 @@ void main() {
             .thenAnswer((_) async => user);
 
         when(remoteDataSource.loginUser(user.username, '3489'))
-            .thenAnswer((_) async => token);
+            .thenAnswer((_) async => kToken);
         when(userLocalSource
                 .cacheUserId('3fa85f64-5717-4562-b3fc-2c963f66afa6'))
             .thenAnswer((_) async => null);
@@ -169,7 +169,7 @@ void main() {
 
     group('loginUser', () {
       setUp(() {
-        when(remoteDataSource.loginUser('', '')).thenAnswer((_) async => token);
+        when(remoteDataSource.loginUser('', '')).thenAnswer((_) async => kToken);
         when(userLocalSource
                 .cacheUserId('3fa85f64-5717-4562-b3fc-2c963f66afa6'))
             .thenAnswer((_) async => null);
@@ -190,7 +190,7 @@ void main() {
       test('should save [token] if the login done successfully', () async {
         await authRepo.loginUser('', '');
 
-        verify(userLocalSource.cacheUserToken(token));
+        verify(userLocalSource.cacheUserToken(kToken));
       });
 
       test('should save [user] if the login done successfully', () async {
@@ -207,7 +207,7 @@ void main() {
       });
 
       test('should return [true] if the remote call success', () async {
-        when(remoteDataSource.loginUser('', '')).thenAnswer((_) async => token);
+        when(remoteDataSource.loginUser('', '')).thenAnswer((_) async => kToken);
 
         final result = await authRepo.loginUser('', '');
 

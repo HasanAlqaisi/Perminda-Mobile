@@ -9,3 +9,7 @@ class LoginClicked extends LoginEvent {
 
   LoginClicked(this.username, this.password);
 }
+
+class CheckAuthEvent extends LoginEvent {
+
+}

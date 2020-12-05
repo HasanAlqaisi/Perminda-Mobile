@@ -72,7 +72,7 @@ class UserNotificationsRepoImpl extends UserNotificationsRepo {
       try {
         final result = await remoteSource.getNotificatons(this.offset);
 
-        if (this.offset == 0) localSource.deleteNotifications(userId);
+        if (this.offset == 0) localSource.deleteNotifications(kUserId);
 
         await localSource.insertUserNotifications(
             UserNotificationTable.fromNotificationsResult(result.results));

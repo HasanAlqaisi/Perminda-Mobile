@@ -8,6 +8,7 @@ abstract class ProductsRepo {
     String shopId,
     String categoryId,
     String brandId,
+    int offset
   );
 
   Stream<List<ProductData>> watchProductsByCategory(String categoryId);

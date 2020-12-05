@@ -20,6 +20,8 @@ abstract class ProductsLocalSource {
   Future<int> deleteProductById(String productId);
 
   Future<int> deleteProducts();
+
+  Future<int> deleteProductsByCategoryId(String categoryId);
 }
 
 class ProductsLocalSourceImpl extends ProductsLocalSource {
@@ -60,4 +62,8 @@ class ProductsLocalSourceImpl extends ProductsLocalSource {
 
   @override
   Future<int> deleteProducts() => productDao.deleteProducts();
+
+  @override
+  Future<int> deleteProductsByCategoryId(String categoryId) =>
+      productDao.deleteProductByCategoryId(categoryId);
 }

@@ -14,7 +14,7 @@ abstract class HomeRepo {
   Stream<List<CategoryData>> watchCategories();
 
   /// List of [List of products in one category]
-  Future<Failure> triggerProductsByCategory(String categoryId);
+  Future<Failure> triggerProductsByCategory(String categoryId, int offset);
 
   Stream<List<ProductData>> watchProductsByCategory(String categoryId);
 

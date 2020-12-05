@@ -14,12 +14,15 @@ class ProductsResult extends Equatable {
   @JsonKey(nullable: true, name: 'brand')
   final String brandId;
   final String name;
+  final String image;
   final double price;
   final int sale;
   final String overview;
+  @JsonKey(name: 'delivery_time')
   final int deliveryTime;
   final double rate;
   final int buyers;
+  @JsonKey(name: 'nf_reviews')
   final int nfReviews;
   final bool active;
   final int quantity;
@@ -36,6 +39,7 @@ class ProductsResult extends Equatable {
       this.categoryId,
       this.brandId,
       this.name,
+      this.image,
       this.price,
       this.sale,
       this.overview,
@@ -62,6 +66,7 @@ class ProductsResult extends Equatable {
       categoryId,
       brandId,
       name,
+      image,
       price,
       sale,
       overview,

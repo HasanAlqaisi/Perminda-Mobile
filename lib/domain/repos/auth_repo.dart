@@ -28,4 +28,6 @@ abstract class AuthRepo {
     String image,
     String address,
   );
+
+  String getUserToken();
 }

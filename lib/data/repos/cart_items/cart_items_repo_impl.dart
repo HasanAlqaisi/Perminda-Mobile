@@ -100,7 +100,7 @@ class CartItemsRepoImpl extends CartItemsRepo {
       try {
         final result = await remoteSource.getCartItems(this.offset);
 
-        if (this.offset == 0) await localSource.deleteCartItems(userId);
+        if (this.offset == 0) await localSource.deleteCartItems(kUserId);
 
         await localSource
             .insertCartItems(CartItemTable.fromCartItemsResult(result.results));

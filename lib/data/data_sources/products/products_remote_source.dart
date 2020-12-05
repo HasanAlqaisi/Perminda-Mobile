@@ -28,9 +28,11 @@ class ProductsRemoteSourceImpl extends ProductsRemoteSource {
     String brandId,
   ) async {
     final response = await client.get(
-        '$baseUrl/api/product?limit=10&offset=$offset&shop=$shopId&category=$categoryId&brand=$brandId');
+        '$baseUrl/api/product?limit=3&offset=$offset&shop=$shopId&category=$categoryId&brand=$brandId');
 
     if (response.statusCode == 200) {
+      print(
+          'Products URL: $baseUrl/api/product?limit=3&offset=$offset&shop=$shopId&category=$categoryId&brand=$brandId');
       return Products.fromJson(json.decode(response.body));
     } else {
       throw UnknownException();

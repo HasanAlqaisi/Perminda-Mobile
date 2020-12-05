@@ -79,7 +79,7 @@ class OrdersRepoImpl extends OrdersRepo {
         final result = await remoteSource.getOrders(this.offset);
 
         if (this.offset == 0) {
-          await localSource.deleteOrders(userId);
+          await localSource.deleteOrders(kUserId);
           await localSource.deleteOrderItems(result.results);
         }
 

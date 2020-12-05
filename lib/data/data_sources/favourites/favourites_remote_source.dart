@@ -23,7 +23,7 @@ class FavouritesRemoteSourceImpl extends FavouritesRemoteSource {
   Future<FavouritesResult> addFavourite(String productId) async {
     final response = await client.post(
       '$baseUrl/api/favourite/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
       body: {'product': productId},
     );
 
@@ -42,7 +42,7 @@ class FavouritesRemoteSourceImpl extends FavouritesRemoteSource {
   Future<bool> deleteFavourite(String id) async {
     final response = await client.delete(
       '$baseUrl/api/favourite/$id/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 204) {
@@ -60,7 +60,7 @@ class FavouritesRemoteSourceImpl extends FavouritesRemoteSource {
   Future<Favourites> getFavourites(int offset) async {
     final response = await client.get(
       '$baseUrl/api/favourite?limit=10&offset=$offset',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 200) {

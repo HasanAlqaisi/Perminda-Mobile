@@ -111,7 +111,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       String address) async {
     final response = await client.put(
       '$baseUrl/api/accounts/user/',
-      headers: {'Authorization': '$token'},
+      headers: {'Authorization': '$kToken'},
       body: {
         'first_name': firstName,
         'last_name': lastName,
@@ -139,7 +139,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   Future<User> getUser() async {
     final response = await client.get(
       '$baseUrl/api/accounts/user/',
-      headers: {'Authorization': '$token'},
+      headers: {'Authorization': '$kToken'},
     );
 
     if (response.statusCode == 200) {

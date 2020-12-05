@@ -67,9 +67,9 @@ class HomeRepoImpl extends HomeRepo {
   //   }
   // }
 
-  Future<Failure> triggerProductsByCategory(String categoryId) async {
+  Future<Failure> triggerProductsByCategory(String categoryId, int offset) async {
     if (await netWorkInfo.isConnected()) {
-      final products = await productsRepo.getProducts(null, categoryId, null);
+      final products = await productsRepo.getProducts(null, categoryId, null, offset);
       return products.fold((failure) => failure, (_) => null);
     } else {
       return NoInternetFailure();

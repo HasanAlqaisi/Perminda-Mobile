@@ -44,6 +44,8 @@ dependencies:
   moor_ffi: ^0.8.0
   rxdart: ^0.24.1
   shared_preferences: ^0.5.12+4
+  carousel_slider: ^2.3.1
+  cached_network_image: ^2.4.1
 
 
 dev_dependencies:

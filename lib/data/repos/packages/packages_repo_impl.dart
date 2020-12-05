@@ -28,6 +28,7 @@ class PackagesRepoImpl extends PackagesRepo {
     if (await netWorkInfo.isConnected()) {
       try {
         final result = await remoteSource.getPackages(this.offset);
+        print('RESULT' + result.results.toString());
 
         if (this.offset == 0) {
           await localSource.deletePackages();
@@ -53,7 +54,10 @@ class PackagesRepoImpl extends PackagesRepo {
   }
 
   @override
-  Stream<List<PackageData>> watchPackages() => localSource.watchPackages();
+  Stream<List<PackageData>> watchPackages() {
+    print('watchPackages called from the packagesRepo');
+    return localSource.watchPackages();
+  }
 
   @override
   Stream<Future<List<ProductInfo>>> watchProductsOfPackage(String packageId) =>

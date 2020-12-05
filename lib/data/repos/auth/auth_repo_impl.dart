@@ -148,4 +148,9 @@ class AuthRepoImpl extends AuthRepo {
       return Left(NoInternetFailure());
     }
   }
+
+  @override
+  String getUserToken() {
+    return userLocalSource.getUserToken();
+  }
 }

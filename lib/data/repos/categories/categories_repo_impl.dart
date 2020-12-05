@@ -21,25 +21,31 @@ class CategoriesRepoImpl extends CategoriesRepo {
 
   @override
   Future<Either<Failure, Categories>> getCategories() async {
-    if (await netWorkInfo.isConnected()) {
-      try {
-        final result = await remoteSource.getCategories(this.offset);
+    if (this.offset != null) {
+      if (await netWorkInfo.isConnected()) {
+        try {
+          final result = await remoteSource.getCategories(this.offset);
 
-        if (this.offset == 0) await localSource.deleteCategories();
+          print('CATEGORIES RESULT' + result.toString());
 
-        await localSource.insertCategories(
-            CategoryTable.fromCategoriesResult(result.results));
+          if (this.offset == 0) await localSource.deleteCategories();
 
-        final offset = API.offsetExtractor(result.nextPage);
+          await localSource.insertCategories(
+              CategoryTable.fromCategoriesResult(result.results));
 
-        cacheOffset(offset);
+          final offset = API.offsetExtractor(result.nextPage);
 
-        return Right(result);
-      } on UnknownException {
-        return Left(UnknownFailure());
+          cacheOffset(offset);
+
+          return Right(result);
+        } on UnknownException {
+          return Left(UnknownFailure());
+        }
+      } else {
+        return Left(NoInternetFailure());
       }
     } else {
-      return Left(NoInternetFailure());
+      return Left(NoMorePagesFailure());
     }
   }
 

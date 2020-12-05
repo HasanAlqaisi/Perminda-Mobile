@@ -33,7 +33,7 @@ class OrdersRemoteSourceImpl extends OrdersRemoteSource {
 
     final response = await client.post(
       url,
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
       body: {'address': address},
     );
 
@@ -52,7 +52,7 @@ class OrdersRemoteSourceImpl extends OrdersRemoteSource {
   Future<OrdersResult> editOrder(String id, String address) async {
     final response = await client.put(
       '$baseUrl/api/order/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
       body: {'address': address},
     );
 
@@ -73,7 +73,7 @@ class OrdersRemoteSourceImpl extends OrdersRemoteSource {
   Future<Orders> getOrders(int offset) async {
     final response = await client.get(
       '$baseUrl/api/order?limit=10&offset=$offset',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 200) {

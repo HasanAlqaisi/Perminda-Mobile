@@ -19,9 +19,12 @@ class CategoriesRemoteSourceImpl extends CategoriesRemoteSource {
   @override
   Future<Categories> getCategories(int offset) async {
     final response =
-        await client.get('$baseUrl/api/category?limit=10&offset=$offset');
+        await client.get('$baseUrl/api/category?limit=3&offset=$offset');
+
+    print('Categories URL API: $baseUrl/api/category?limit=3&offset=$offset');
 
     if (response.statusCode == 200) {
+      print('Categories API body: ' + response.body);
       return Categories.fromJson(json.decode(response.body));
     } else {
       throw UnknownException();

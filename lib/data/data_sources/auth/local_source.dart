@@ -14,6 +14,8 @@ abstract class UserLocalSource {
   Future<void> cacheUserToken(String token);
 
   Future<void> cacheUserId(String userId);
+
+  String getUserToken();
 }
 
 class UserLocalSourceImpl extends UserLocalSource {
@@ -43,11 +45,18 @@ class UserLocalSourceImpl extends UserLocalSource {
 
   @override
   Future<void> cacheUserToken(String token) {
+    kToken = 'Token ' + token;
     return sharedPref.setString(cachedTokenKey, token);
   }
 
   @override
   Future<void> cacheUserId(String userId) {
+    kUserId = userId;
     return sharedPref.setString(cachedUserIdKey, userId);
+  }
+
+  @override
+  String getUserToken() {
+    return sharedPref.getString(cachedTokenKey);
   }
 }

@@ -43,7 +43,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
         'type': type,
         'product': productId,
       },
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 201) {
@@ -63,7 +63,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
   Future<bool> deleteProductImage(String id) async {
     final response = await client.delete(
       '$baseUrl/api/product-image/$id/',
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 204) {
@@ -89,7 +89,7 @@ class ProductImageRemoteSourceImpl extends ProductImageRemoteSource {
         'type': type,
         'product': productId,
       },
-      headers: {'Authorization': token},
+      headers: {'Authorization': kToken},
     );
 
     if (response.statusCode == 200) {

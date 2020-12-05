@@ -186,3 +186,8 @@ class CacheFailure extends Equatable implements Failure {
   @override
   List<Object> get props => [];
 }
+
+class NoMorePagesFailure extends Equatable implements Failure {
+  @override
+  List<Object> get props => [];
+}

@@ -43,10 +43,19 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    context.read<LoginBloc>().add(CheckAuthEvent());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
-        if (state is LoginError) {
+        if (state is AuthedState) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, Home.route, (route) => false);
+        } else if (state is LoginError) {
           if (state.failure is NonFieldsFailure) {
             Fluttertoast.showToast(
                 msg: (state.failure as NonFieldsFailure)?.errors?.first);

@@ -14,3 +14,5 @@ class LoginError extends LoginState {
 
   LoginError({this.failure});
 }
+
+class AuthedState extends LoginState {}

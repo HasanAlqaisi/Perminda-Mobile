@@ -99,4 +99,8 @@ class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
 
   Future<int> deleteProductById(String productId) =>
       (delete(productTable)..where((tbl) => tbl.id.equals(productId))).go();
+
+  Future<int> deleteProductByCategoryId(String categoryId) =>
+      (delete(productTable)..where((tbl) => tbl.category.equals(categoryId)))
+          .go();
 }
