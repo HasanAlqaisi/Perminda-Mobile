@@ -5,6 +5,7 @@ import 'package:perminda/core/mappers/failure_to_string_mapper.dart';
 import 'package:perminda/presentation/features/home/bloc/products_by_category_bloc/productsbycategory_bloc.dart';
 import 'package:perminda/presentation/features/home/widgets/product_show.dart';
 import 'package:perminda/data/db/app_database/app_database.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProductsByCategoryConsumer extends StatefulWidget {
   final CategoryData categoryData;
@@ -51,6 +52,23 @@ class _ProductsByCategoryConsumerState
                 initialData: [],
                 builder: (context, snapshot) {
                   final productsData = snapshot.data;
+                  if (snapshot.data == null || snapshot.data.isEmpty) {
+                    return Shimmer.fromColors(
+                        child: ListView.builder(
+                          itemCount: 5,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              color: Colors.grey[300],
+                              width: 160,
+                              height: 250,
+                              margin: EdgeInsets.all(5),
+                            );
+                          },
+                        ),
+                        baseColor: Colors.grey[300],
+                        highlightColor: Colors.grey[100]);
+                  }
                   return NotificationListener<ScrollNotification>(
                     onNotification: (notification) {
                       if (notification is ScrollEndNotification &&

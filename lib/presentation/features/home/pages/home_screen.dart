@@ -15,6 +15,7 @@ import 'package:perminda/presentation/features/home/widgets/customized_appbar.da
 import 'package:perminda/presentation/features/home/widgets/packages_consumer.dart';
 import 'package:perminda/presentation/features/home/widgets/product_show.dart';
 import 'package:perminda/injection_container.dart' as di;
+import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -59,6 +60,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
         children: [
           PackagesConsumer(),
           CategoriesConsumer(),
+          
         ],
       ),
     );
