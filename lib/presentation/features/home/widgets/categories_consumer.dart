@@ -7,6 +7,7 @@ import 'package:perminda/presentation/features/home/bloc/categories_bloc/categor
 import 'package:perminda/data/db/app_database/app_database.dart';
 import 'package:perminda/presentation/features/home/pages/test_screen.dart';
 import 'package:perminda/presentation/features/home/widgets/products_by_category_consumer.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class CategoriesConsumer extends StatefulWidget {
   @override
@@ -51,10 +52,11 @@ class _CategoriesConsumerState extends State<CategoriesConsumer> {
                                       fontSize: 18.0, color: Colors.black),
                                 ),
                                 GestureDetector(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => TestScreen())),
+                                  onTap: () => pushNewScreen(
+                                    context,
+                                    screen: TestScreen(),
+                                    withNavBar: false,
+                                  ),
                                   child: Text(
                                     'See more',
                                     style: TextStyle(

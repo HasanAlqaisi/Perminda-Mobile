@@ -36,47 +36,36 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PersistentTabView(
+      context,
+      controller: _navController,
+      screens: navigationWidgets,
+      items: _buildItems(),
+      handleAndroidBackButtonPress: true,
+      navBarStyle: NavBarStyle.simple,
       // body: navigationWidgets[_currentIndex],
-      body: SafeArea(
-        child: IndexedStack(
-          index: _currentIndex,
-          children: navigationWidgets,
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.black,
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'home',
-            backgroundColor: Colors.blue,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.apps_outlined),
-            label: 'categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: 'cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outlined),
-            label: 'profile',
-          ),
-        ],
-      ),
     );
+  }
+
+  List<PersistentBottomNavBarItem> _buildItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.home_outlined),
+        title: 'home',
+        activeColor: Colors.blue,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.apps_outlined),
+        title: 'categories',
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.shopping_cart_outlined),
+        title: 'cart',
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.person_outlined),
+        title: 'profile',
+      ),
+    ];
   }
 }

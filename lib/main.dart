@@ -3,6 +3,7 @@ import 'package:perminda/presentation/features/forgot_password/pages/forgot_pass
 import 'package:perminda/presentation/features/login/pages/login_screen.dart';
 import 'package:perminda/presentation/features/nav/pages/home.dart';
 import 'package:perminda/presentation/features/registration/pages/register_screen.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
