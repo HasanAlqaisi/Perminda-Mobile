@@ -5,6 +5,7 @@ import 'package:perminda/core/mappers/failure_to_string_mapper.dart';
 import 'package:perminda/presentation/features/home/bloc/categories_bloc/categories_bloc.dart';
 
 import 'package:perminda/data/db/app_database/app_database.dart';
+import 'package:perminda/presentation/features/home/pages/test_screen.dart';
 import 'package:perminda/presentation/features/home/widgets/products_by_category_consumer.dart';
 
 class CategoriesConsumer extends StatefulWidget {
@@ -49,10 +50,16 @@ class _CategoriesConsumerState extends State<CategoriesConsumer> {
                                   style: TextStyle(
                                       fontSize: 18.0, color: Colors.black),
                                 ),
-                                Text(
-                                  'See more',
-                                  style: TextStyle(
-                                      fontSize: 10.0, color: Colors.red),
+                                GestureDetector(
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TestScreen())),
+                                  child: Text(
+                                    'See more',
+                                    style: TextStyle(
+                                        fontSize: 10.0, color: Colors.red),
+                                  ),
                                 ),
                               ],
                             ),

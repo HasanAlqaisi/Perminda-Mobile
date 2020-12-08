@@ -3,7 +3,7 @@ import 'package:perminda/presentation/features/cart/pages/cart_screen.dart';
 import 'package:perminda/presentation/features/categories/pages/categories_screen.dart';
 import 'package:perminda/presentation/features/home/pages/home_screen.dart';
 import 'package:perminda/presentation/features/profile/pages/profile_screen.dart';
-
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class Home extends StatefulWidget {
   static const String route = '/home';
@@ -13,6 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  PersistentTabController _navController;
   int _currentIndex = 0;
   List<Widget> navigationWidgets = [
     HomeScreen(),
@@ -22,9 +23,27 @@ class _HomeState extends State<Home> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _navController = PersistentTabController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _navController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationWidgets[_currentIndex],
+      // body: navigationWidgets[_currentIndex],
+      body: SafeArea(
+        child: IndexedStack(
+          index: _currentIndex,
+          children: navigationWidgets,
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         showSelectedLabels: false,
