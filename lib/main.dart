@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:perminda/presentation/features/forgot_password/pages/forgot_password_screen.dart';
 import 'package:perminda/presentation/features/login/pages/login_screen.dart';
 import 'package:perminda/presentation/features/nav/pages/home.dart';
@@ -17,12 +18,12 @@ void main() async {
 class Perminda extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: LoginScreen.route,
+      initialRoute: Home.route,
       routes: {
         LoginScreen.route: (context) => LoginScreen(),
         RegisterScreen.route: (context) => RegisterScreen(),

@@ -48,6 +48,7 @@ dependencies:
   cached_network_image: ^2.4.1
   shimmer: ^1.1.2
   persistent_bottom_nav_bar: ^3.1.0
+  get: ^3.22.2
 
 dev_dependencies:
   flutter_test:

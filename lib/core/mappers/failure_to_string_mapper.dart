@@ -15,7 +15,9 @@ String failureToString(Failure failure) {
     return 'Item not found!';
   } else if (failure is NoMorePagesFailure) {
     return 'No more results';
+  } else if (failure is NonFieldsFailure) {
+    return failure?.errors?.first;
   } else {
-    return 'Not mapped';
+    return 'Unknown';
   }
 }

@@ -44,7 +44,7 @@ import 'package:perminda/presentation/features/home/bloc/categories_bloc/categor
 import 'package:perminda/presentation/features/home/bloc/home_bloc.dart';
 import 'package:perminda/presentation/features/home/bloc/packages_bloc/packages_bloc.dart';
 import 'package:perminda/presentation/features/home/bloc/products_by_category_bloc/productsbycategory_bloc.dart';
-import 'package:perminda/presentation/features/login/bloc/login_bloc.dart';
+import 'package:perminda/presentation/features/login/controller/login_controller.dart';
 import 'package:perminda/presentation/features/registration/bloc/register_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:perminda/data/data_sources/packages/packages_remote_source.dart';
@@ -67,10 +67,12 @@ final sl = GetIt.asNewInstance();
 Future<void> init() async {
   //! Auth
 
+  // Controllers
+  sl.registerFactory(() => LoginController(sl()));
+
   // bloc
   sl.registerFactory(() => RegisterBloc(registerUseCase: sl()));
-  sl.registerFactory(
-      () => LoginBloc(loginUserUseCase: sl(), getTokenUseCase: sl()));
+
   sl.registerFactory(() => ForgotPasswordBloc(forgotPassUseCase: sl()));
   // sl.registerFactory(() => HomeBloc(
   //       triggerCategoriesCase: sl(),
