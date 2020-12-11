@@ -40,10 +40,7 @@ import 'package:perminda/domain/usecases/home/watch_categories_usecase.dart';
 import 'package:perminda/domain/usecases/home/watch_packages_usecase.dart';
 import 'package:perminda/domain/usecases/home/watch_products_by_category.dart';
 import 'package:perminda/presentation/features/forgot_password/bloc/forgot_password_bloc.dart';
-import 'package:perminda/presentation/features/home/bloc/categories_bloc/categories_bloc.dart';
-import 'package:perminda/presentation/features/home/bloc/home_bloc.dart';
-import 'package:perminda/presentation/features/home/bloc/packages_bloc/packages_bloc.dart';
-import 'package:perminda/presentation/features/home/bloc/products_by_category_bloc/productsbycategory_bloc.dart';
+import 'package:perminda/presentation/features/home/controller/home_controller.dart';
 import 'package:perminda/presentation/features/login/controller/login_controller.dart';
 import 'package:perminda/presentation/features/registration/bloc/register_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,31 +66,14 @@ Future<void> init() async {
 
   // Controllers
   sl.registerFactory(() => LoginController(sl()));
+  sl.registerFactory(() => HomeController(sl(), sl(), sl(), sl(), sl(), sl()));
 
   // bloc
   sl.registerFactory(() => RegisterBloc(registerUseCase: sl()));
 
   sl.registerFactory(() => ForgotPasswordBloc(forgotPassUseCase: sl()));
-  // sl.registerFactory(() => HomeBloc(
-  //       triggerCategoriesCase: sl(),
-  //       triggerPackagesCase: sl(),
-  //       triggerProductsByCategoryCase: sl(),
-  //       watchPackagesCase: sl(),
-  //       watchProductsByCategoryCase: sl(),
-  //       watchCategoriesUseCase: sl(),
-  //     ));
-  sl.registerFactory(() => PackagesBloc(
-        triggerPackagesCase: sl(),
-        watchPackagesCase: sl(),
-      ));
-  sl.registerFactory(() => CategoriesBloc(
-        triggerCategoriesCase: sl(),
-        watchCategoriesUseCase: sl(),
-      ));
-  sl.registerFactory(() => ProductsbycategoryBloc(
-        triggerProductsByCategoryCase: sl(),
-        watchProductsByCategoryCase: sl(),
-      ));
+
+  //! Use Cases
 
   // registerUseCase
   sl.registerLazySingleton(() => RegisterUserUseCase(authRepo: sl()));
